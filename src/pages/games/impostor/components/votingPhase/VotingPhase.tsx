@@ -61,7 +61,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
     }
 
     if (seconds === 0) {
-      handleVote("NULO");
+      handleVote(null);
       return;
     }
 
@@ -120,7 +120,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
 
     const voteCount: Record<string, number> = {};
     votes.forEach((v) => {
-      if (v.voted !== "NULO")
+      if (v.voted !== null)
         voteCount[v.voted] = (voteCount[v.voted] || 0) + 1;
     });
 
@@ -191,7 +191,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
         : votes;
 
     votesSource.forEach((v) => {
-      if (v.voted !== "NULO")
+      if (v.voted !== null)
         voteCount[v.voted] = (voteCount[v.voted] || 0) + 1;
     });
 
@@ -326,7 +326,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
                         &gt;{" "}
                         {alivePlayers.find((p: any) => p.id === v.voter)?.name}{" "}
                         VOTOU EM{" "}
-                        {v.voted === "NULO"
+                        {v.voted === null
                           ? "NULO"
                           : alivePlayers.find((p: any) => p.id === v.voted)
                               ?.name}
