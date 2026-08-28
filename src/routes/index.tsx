@@ -4,7 +4,8 @@ import { Impostor } from "../pages/games/impostor";
 import { OfflineImpostorGame } from "../pages/games/impostor/OffLineImpostor";
 import { OnlineImpostorGame } from "../pages/games/impostor/OnlineImpostor";
 import { SecretWordGame } from "../pages/games/secretWord/secretWordGame";
-import { SecretWordLobby } from "../pages/games/secretWord/Lobby/secreteWordLobby";
+import CriptographyLobby from "../pages/games/secretWord/Lobby";
+import { OnlineCryptoGame } from "../pages/games/secretWord/OnlineCryptoGame";
 
 export function AppRoutes() {
   return (
@@ -19,7 +20,8 @@ export function AppRoutes() {
         />
         <Route path="/games/impostor/online" element={<OnlineImpostorGame />} />
         <Route path="/games/secretWord/game" element={<SecretWordGame />} />
-        <Route path="/games/secretWord/lobby" element={<SecretWordLobby />} />
+        <Route path="/games/secretWord/lobby" element={<CriptographyLobby />} />
+        <Route path="/games/secretWord/online" element={<OnlineCryptoGame />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,50 @@
+.game-content {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+}
+
+.toggleWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 16px 20px 0;
+}
+
+.segmentedControl {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 4px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.segBtn {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary, #94a3b8);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segBtn:hover {
+  color: #e2e8f0;
+}
+
+.activeSeg {
+  background: var(--cyan, #00f2ff);
+  color: #04070d;
+  box-shadow: 0 0 18px rgba(0, 242, 255, 0.35);
+}
+
+.activeSeg:hover {
+  color: #04070d;
+}

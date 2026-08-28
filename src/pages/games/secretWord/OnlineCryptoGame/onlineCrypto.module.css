@@ -1,0 +1,669 @@
+.gameShell {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px 20px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---------------- TOP BAR ---------------- */
+.gameTopBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.exitBtn {
+  background: rgba(255, 0, 60, 0.12);
+  border: 1px solid rgba(255, 0, 60, 0.4);
+  color: #ffb3c1;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.gameRoomCode {
+  color: var(--tech-cyan);
+  font-weight: 800;
+  letter-spacing: 2px;
+  font-size: 13px;
+}
+
+.gameRole {
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* ---------------- CABEÇALHOS DE FASE ---------------- */
+.phaseHeader {
+  text-align: center;
+  margin: 10px 0 4px;
+}
+
+.phaseHeader h1 {
+  font-size: 22px;
+  letter-spacing: 2px;
+  margin: 6px 0 0;
+}
+
+.badge {
+  color: var(--tech-cyan);
+  font-size: 11px;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+
+.cyan {
+  color: var(--tech-cyan);
+}
+
+/* ---------------- HUD ---------------- */
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid;
+  border-radius: 14px;
+  padding: 12px 16px;
+}
+
+.hudLabel {
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.hudTeam {
+  margin: 3px 0 6px;
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hudStats {
+  display: flex;
+  gap: 8px;
+}
+
+.statPill {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: var(--text-default);
+}
+
+.timer {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--tech-cyan);
+  min-width: 90px;
+  text-align: center;
+  text-shadow: 0 0 14px var(--tech-glow);
+}
+
+.timerCritical {
+  color: var(--danger-neon);
+  text-shadow: 0 0 14px var(--danger-glow);
+}
+
+.timerPaused {
+  color: var(--text-muted);
+  text-shadow: none;
+}
+
+/* ---------------- ÁREA DE AÇÃO ---------------- */
+.actionArea {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 560px;
+  width: 100%;
+  margin: 6px auto;
+}
+
+.actionRow {
+  display: flex;
+  gap: 10px;
+}
+
+.actionRow > button {
+  flex: 1;
+}
+
+.bigCyanBtn,
+.successBtn,
+.dangerBtn,
+.ghostBtn,
+.primaryBtn,
+.secondaryBtn {
+  padding: 14px;
+  border-radius: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+
+.bigCyanBtn {
+  background: var(--button-tech);
+  color: #04070d;
+  box-shadow: 0 0 18px var(--tech-glow);
+}
+
+.successBtn {
+  background: var(--success);
+  color: #04070d;
+}
+
+.dangerBtn {
+  background: var(--danger-neon);
+  color: #fff;
+}
+
+.dangerBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ghostBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--text-default);
+}
+
+.primaryBtn {
+  background: var(--button-tech);
+  color: #04070d;
+  box-shadow: 0 0 18px var(--tech-glow);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.secondaryBtn {
+  background: var(--button-system);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-default);
+}
+
+/* ---------------- TELA DE ESPERA ---------------- */
+.waitingPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 28px 20px;
+  max-width: 560px;
+  width: 100%;
+  margin: 6px auto;
+  text-align: center;
+}
+
+.waitingIcon {
+  font-size: 44px;
+}
+
+.waitingPanel h2 {
+  margin: 0;
+  letter-spacing: 2px;
+  font-size: 18px;
+}
+
+.waitingPanel p {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.waitingSub strong {
+  font-weight: 800;
+}
+
+.wordPeek {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 14px;
+  border: 1px dashed rgba(0, 242, 255, 0.4);
+  border-radius: 14px;
+  background: rgba(0, 242, 255, 0.04);
+}
+
+.wordPeekLabel {
+  color: var(--tech-cyan);
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.wordPeekValue {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-default);
+  letter-spacing: 1px;
+}
+
+.wordPeekHidden {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ---------------- SCOREBOARD / MEMBROS ---------------- */
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.scoreRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 9px;
+}
+
+.scoreDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.scoreName {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.scoreValue {
+  margin-left: auto;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--tech-cyan);
+}
+
+.memberChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.memberChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.chipEmoji {
+  font-size: 14px;
+}
+
+.chipDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.dotOnline {
+  background: #4ade80;
+}
+
+.dotPresent {
+  background: var(--tech-cyan);
+}
+
+.dotOffline {
+  background: #f87171;
+}
+
+/* ---------------- TEAM REVEAL ---------------- */
+.teamsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.teamCard {
+  padding: 16px;
+  border-top: 3px solid;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.teamCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.teamCardHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.teamIndex {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.startingBadge {
+  font-size: 9px;
+  color: var(--caution-amber);
+  letter-spacing: 1px;
+  font-weight: 800;
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  padding: 3px 7px;
+  border-radius: 6px;
+}
+
+.teamScore {
+  margin-left: auto;
+  color: var(--tech-cyan);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.operatorLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+}
+
+.operatorSelect {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-default);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.operatorSelect:disabled {
+  opacity: 0.55;
+}
+
+.phaseFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.startingPicker {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.startingPicker > span {
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+.startingPicker button {
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-default);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.startingPicker .startingActive {
+  background: rgba(255, 255, 255, 0.08);
+  border-width: 2px;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+}
+
+.footerButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.waitingNote {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ---------------- INTERCEPTAÇÃO ---------------- */
+.matchProgress {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.progressBg {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--tech-cyan);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* ---------------- RESULTADO ---------------- */
+.podium {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.resultCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-left: 4px solid;
+  position: relative;
+}
+
+.winnerCard {
+  box-shadow: 0 0 24px var(--tech-glow);
+}
+
+.rankBadge {
+  position: absolute;
+  top: -12px;
+  left: -8px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--button-tech);
+  color: #04070d;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 14px var(--tech-glow);
+}
+
+.resultMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.resultTeamName {
+  margin: 0 0 6px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 17px;
+}
+
+.resultScoreBlock {
+  text-align: right;
+}
+
+.resultScoreRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.roundGain {
+  color: #4ade80;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.resultScore {
+  font-size: 34px;
+  font-weight: 900;
+  color: var(--tech-cyan);
+}
+
+.resultScoreLabel {
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.resultStats {
+  display: flex;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.logBtn {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-default);
+  border-radius: 9px;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.wordsLog {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.wordTag {
+  background: rgba(0, 242, 255, 0.1);
+  border: 1px solid rgba(0, 242, 255, 0.35);
+  color: var(--tech-cyan);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.noWords {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.auditPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+}
+
+.auditPanel h2 {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+}
+
+.hint {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin: 0;
+}
+
+.auditTable {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auditRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 9px;
+  padding: 8px 12px;
+}
+
+.auditWord {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.auditSelect {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-default);
+  border-radius: 8px;
+  padding: 7px;
+  font-size: 12px;
+}

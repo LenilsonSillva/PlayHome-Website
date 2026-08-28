@@ -24,7 +24,7 @@ export default function Home() {
         "Comunicação tática! Dê dicas precisas para sua equipe descriptografar a palavra.",
       minPlayers: 2,
       maxPlayers: 20,
-      route: "/games/secretWord/game",
+      route: "/games/secretWord/lobby",
       icon: "🔑",
       accent: "var(--tech-cyan)",
       btn: "var(--button-tech)",
