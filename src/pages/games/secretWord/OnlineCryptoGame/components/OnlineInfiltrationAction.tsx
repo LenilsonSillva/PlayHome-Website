@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import type { CryptoView } from "../../../../../types/cryptoOnline";
-import { OperatorWordPanel, Scoreboard, TeamHud, TeamMembers } from "./shared";
+import { OperatorWordPanel, Scoreboard, TeamMembers, useCountdown } from "./shared";
+import { CryptoHud } from "../../components/CryptoHud";
 import styles from "../onlineCrypto.module.css";
 
 type Props = {
@@ -15,6 +16,11 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
   const isMemberOfCurrentTeam = view.myTeamIndex === view.currentTeamIndex;
   const [feedback, setFeedback] = useState<"none" | "success" | "skip">("none");
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdown = useCountdown(view);
+
+  const operator = currentTeam.players.find(
+    (p) => p.id === currentTeam.operatorId,
+  );
 
   const flash = useCallback((type: "success" | "skip") => {
     setFeedback(type);
@@ -31,13 +37,25 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
 
   return (
     <div className={styles.container}>
-      <TeamHud
-        view={view}
-        extraStats={
-          isController || isMemberOfCurrentTeam
-            ? [{ label: "PULOS:", value: view.skipsLeft === 999 ? "∞" : view.skipsLeft }]
-            : undefined
-        }
+      <CryptoHud
+        label="JOGANDO AGORA"
+        teamName={currentTeam.name}
+        teamColor={currentTeam.color}
+        operatorName={operator?.name ?? null}
+        stats={[
+          { text: "✅", value: currentTeam.roundScore, tone: "success" },
+          ...(isController || isMemberOfCurrentTeam
+            ? [
+                {
+                  text: "PULOS:",
+                  value: view.skipsLeft === 999 ? "∞" : view.skipsLeft,
+                  tone: "warning" as const,
+                },
+              ]
+            : []),
+        ]}
+        countdown={countdown}
+        totalTime={view.config.roundTime}
       />
 
       {isController ? (

@@ -4,13 +4,14 @@
   padding: 20px 20px 100px;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.6rem;
   animation: fadeIn 0.6s ease-out;
 }
 
 .header {
   text-align: center;
 }
+
 .badge {
   font-size: 0.8rem;
   color: var(--tech-cyan);
@@ -18,168 +19,73 @@
   font-weight: 800;
   margin-bottom: 10px;
 }
+
 .title {
   font-size: clamp(2.5rem, 8vw, 3.5rem);
   font-weight: 900;
   text-transform: uppercase;
   margin: 0;
 }
+
 .title span {
   color: transparent;
   -webkit-text-stroke: 1px var(--gray-400);
 }
 
+.roundLabel {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+/* BANNER DE VITÓRIA DA RODADA */
+.victoryBanner {
+  text-align: center;
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 242, 255, 0.25);
+  box-shadow: 0 0 40px rgba(0, 242, 255, 0.08);
+}
+
+.victoryTitle {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 4px;
+  color: var(--text-muted);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.victoryNames {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.victoryName {
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow: 0 0 24px currentColor;
+}
+
+.victoryHits {
+  margin: 10px 0 0;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--success);
+}
+
+/* RANKING GERAL */
 .podium {
   display: flex;
   flex-direction: column;
   gap: 25px;
-}
-
-.teamCard {
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-left: 8px solid var(--team-color);
-  padding: 25px;
-  border-radius: 20px;
-  position: relative;
-}
-
-.winner {
-  background: rgba(0, 242, 255, 0.05);
-  border-color: var(--tech-cyan);
-  box-shadow: 0 0 40px rgba(0, 242, 255, 0.1);
-  transform: scale(1.02);
-}
-
-.rankBadge {
-  position: absolute;
-  top: -12px;
-  right: 25px;
-  background: var(--gray-900);
-  border: 2px solid var(--team-color);
-  padding: 4px 15px;
-  border-radius: 50px;
-  font-weight: 900;
-  color: var(--team-color);
-  font-size: 1rem;
-}
-
-.teamMainInfo {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.teamName {
-  font-size: 1.8rem;
-  font-weight: 800;
-  margin: 0;
-  color: #fff;
-}
-
-.membersList {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin-top: 5px;
-  font-style: italic;
-}
-
-.scoreDisplay {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.scoreRow {
-  display: flex;
-  align-items: center; /* Alinha a base dos números */
-  gap: 12px;
-}
-
-.roundPointsGain {
-  font-size: 1.8rem; /* Menor que o principal */
-  font-weight: 800;
-  color: var(--success); /* Verde para indicar ganho */
-  background: rgba(16, 185, 129, 0.1);
-  padding: 1px 7px;
-  border-radius: 8px;
-  animation: pulseGain 2s infinite;
-}
-
-.scoreValue {
-  font-size: 4rem;
-  font-weight: 900;
-  line-height: 1;
-  color: #fff;
-  text-shadow: 0 0 20px var(--team-color);
-}
-
-@keyframes pulseGain {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.05);
-  }
-}
-
-.scoreLabel {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--gray-400);
-}
-
-.logBtn {
-  background: transparent;
-  border: 1px solid var(--gray-600);
-  color: var(--gray-400);
-  padding: 10px;
-  border-radius: 50px; /* Estilo pílula */
-  font-size: 0.75rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  cursor: pointer;
-  width: 100%;
-  transition: all 0.4s;
-}
-
-.logBtn:hover {
-  border-color: var(--tech-cyan);
-  color: var(--tech-cyan);
-  text-shadow: 0 0 8px var(--tech-glow);
-  box-shadow:
-    inset 0 0 10px rgba(0, 242, 255, 0.2),
-    0 0 15px rgba(0, 242, 255, 0.1);
-}
-
-.wordsLog {
-  margin-top: 20px;
-  padding: 15px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 12px;
-  animation: slideDown 0.3s ease-out;
-}
-
-.wordsGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.wordTag {
-  background: var(--gray-800);
-  color: var(--tech-cyan);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border: 1px solid rgba(0, 242, 255, 0.1);
+  margin-top: 10px;
 }
 
 .actions {
@@ -188,6 +94,7 @@
   gap: 12px;
   margin-top: 1rem;
 }
+
 .nextBtn {
   background: var(--button-tech);
   color: white;
@@ -199,6 +106,11 @@
   cursor: pointer;
   text-transform: uppercase;
 }
+
+.nextBtn:hover {
+  box-shadow: 0 5px 25px rgba(0, 242, 255, 0.3);
+}
+
 .lobbyBtn {
   background: transparent;
   border: 2px solid var(--gray-600);
@@ -211,35 +123,18 @@
   text-transform: uppercase;
 }
 
-@keyframes slideDown {
+.lobbyBtn:hover {
+  border-color: var(--danger-neon);
+  color: var(--danger-neon);
+}
+
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@media (max-width: 600px) {
-  .teamMainInfo {
-    flex-direction: row;
-    gap: 15px;
-  }
-  .scoreDisplay {
-    text-align: left;
-  }
-  .teamName {
-    font-size: 1.4rem;
-  }
-  .scoreValue {
-    font-size: 2.8rem;
-  }
-  .scoreRow {
-    justify-content: center;
-  }
-  .roundPointsGain {
-    font-size: 1.1rem;
   }
 }

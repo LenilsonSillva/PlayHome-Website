@@ -1,0 +1,151 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* PROGRESSO DA PARTIDA */
+.progressIndicator {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.progressBg {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--tech-cyan);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+/* CONTROLES DE FLUXO */
+.actionsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.setupActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.startTimerBtn {
+  background: var(--button-tech);
+  color: white;
+  border: none;
+  padding: 22px;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(0, 242, 255, 0.25);
+}
+
+.startTimerBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.rerollBtn {
+  background: transparent;
+  color: var(--tech-cyan);
+  border: 1px solid rgba(0, 242, 255, 0.35);
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rerollBtn:hover {
+  background: rgba(0, 242, 255, 0.08);
+}
+
+.gameActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.failBtn {
+  background: var(--gray-700);
+  color: var(--danger-neon);
+  border: none;
+  padding: 20px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.winBtn {
+  background: var(--button-tech);
+  color: white;
+  border: none;
+  padding: 20px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 242, 255, 0.2);
+}
+
+.winBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* STATUS DOS TIMES NO RODAPÉ */
+.teamsStatus {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.teamDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  opacity: 0.3;
+  transition: all 0.2s;
+}
+
+.activeDot {
+  opacity: 1;
+  transform: scale(1.5);
+}
+
+@keyframes pulseButton {
+  0%,
+  100% {
+    box-shadow: 0 5px 20px rgba(0, 242, 255, 0.25);
+  }
+  50% {
+    box-shadow: 0 5px 32px rgba(0, 242, 255, 0.45);
+  }
+}
+
+@media (max-width: 480px) {
+  .gameActions {
+    grid-template-columns: 1fr;
+  }
+}

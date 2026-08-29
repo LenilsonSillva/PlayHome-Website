@@ -1,109 +1,113 @@
-import { useState, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./index-secret.module.css";
-import type { SecretTeam, SecretWordGameState } from "./GameLogistic/types";
+import type { CryptoRouteState } from "./GameLogistic/types";
+import { usePlayers } from "../../../contexts/contextHook";
+import { useOfflineCryptography } from "./GameLogistic/useOfflineCryptography";
 import { SecretTeamReveal } from "./SecretTeamReveal/SecretTeamReveal";
-import { getNewWord } from "./GameLogistic/gameLogistic";
-import { BlitzAction } from "./BlitzAction/BlitzAction";
+import { InfiltrationAction } from "./InfiltrationAction/InfiltrationAction";
+import { InterceptionAction } from "./InterceptionAction/InterceptionAction";
 import { ResultPhase } from "./ResultPhase/ResultPhase";
-import { DuelAction } from "./DualAction/DuelAction";
 import resultSd from "./../../../assets/sounds/win.mp3";
+
+// Fase da partida (porta do fluxo do OfflineCryptographyGameScreen do RN)
+const PHASE_LABELS: Record<string, string> = {
+  "team-reveal": "RECONHECIMENTO",
+  "infiltration-action": "INFILTRAÇÃO",
+  "interception-action": "INTERCEPTAÇÃO",
+  "round-result": "RESULTADO",
+};
 
 export function SecretWordGame() {
   const location = useLocation();
   const navigate = useNavigate();
   const resultSound = useRef(new Audio(resultSd));
 
-  const playSound = (audioRef: React.RefObject<HTMLAudioElement>) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0; // Reinicia o áudio se ele já estiver tocando
-      audioRef.current.play().catch(() => {}); // Evita erro de interação do navegador
-    }
-  };
+  const {
+    gameState,
+    startGame,
+    setOperator,
+    setStartingTeam,
+    setRandomOperators,
+    beginActionPhase,
+    startTimer,
+    handleInfiltrationWord,
+    finishInfiltrationTurn,
+    handleInterceptionResult,
+    passInterceptionTurn,
+    rerollWord,
+    reassignWord,
+    nextRound,
+    persistWords,
+    quitGame,
+  } = useOfflineCryptography();
 
-  const [gameState, setGameState] = useState<SecretWordGameState | null>(
-    location.state?.data || null,
-  );
+  const routeState = (location.state as CryptoRouteState | null) ?? null;
+  const { players } = usePlayers();
 
+  // Inicia o jogo apenas 1x, com os dados do lobby
   useEffect(() => {
-    if (!gameState) {
+    if (!routeState?.config) {
+      navigate("/games/secretWord/lobby");
+      return;
+    }
+
+    if (!gameState && players.length > 0) {
+      startGame(
+        players,
+        routeState.config,
+        routeState.manualAssignments,
+        routeState.globalUsedWords,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [players.length]);
+
+  // Aviso ao sair/atualizar (proteção contra saída acidental — RN)
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (gameState) {
+        e.preventDefault();
+        e.returnValue = "";
+        return "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [gameState]);
+
+  // Salva as palavras usadas ao sair da tela (paridade com o RN)
+  const persistRef = useRef(persistWords);
+  persistRef.current = persistWords;
+  useEffect(() => {
+    return () => {
+      if (gameState?.usedWords && gameState.usedWords.length > 0) {
+        persistRef.current();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const playSound = useCallback((audioRef: React.RefObject<HTMLAudioElement>) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {});
+    }
+  }, []);
+
+  const handleExit = useCallback(() => {
+    if (window.confirm("Sair da partida? O jogo será encerrado.")) {
+      quitGame();
       navigate("/games/secretWord/lobby");
     }
-  }, [gameState, navigate]);
+  }, [quitGame, navigate]);
 
-  const updateTeams = (updatedTeams: SecretTeam[]) => {
-    setGameState((prev) => (prev ? { ...prev, teams: updatedTeams } : null));
-  };
-
-  const updateGameState = (newData: Partial<SecretWordGameState>) => {
-    setGameState((prev) => (prev ? { ...prev, ...newData } : null));
-  };
-
-  // --- LOGICA: PRÓXIMA RODADA (Botão no ResultPhase) ---
-  const handleNextRound = () => {
-    setGameState((prev) => {
-      if (!prev) return null;
-
-      const firstWord = getNewWord(prev.selectedCategories, prev.usedWords);
-
-      return {
-        ...prev,
-        currentTeamIdx: 0,
-        currentMatchIdx: 0,
-        currentWord: firstWord,
-        phase: "team-reveal",
-        // Reseta o roundScore (ganho da rodada) mas mantém o score total e wordsGuessed
-        teams: prev.teams.map((t) => ({ ...t, roundScore: 0 })),
-      };
-    });
-  };
-
-  // --- LOGICA: FINALIZAR TURNO BLITZ ---
-  const handleFinishRound = (teamScore: number, correctlyGuessed: string[]) => {
-    setGameState((prev) => {
-      if (!prev) return null;
-
-      // 1. Atualiza o time que acabou de jogar
-      const updatedTeams = prev.teams.map((team, idx) => {
-        if (idx === prev.currentTeamIdx) {
-          return {
-            ...team,
-            score: team.score + teamScore,
-            roundScore: teamScore, // O quanto ele fez agora
-            // Salva apenas as palavras que ele acertou de fato
-            wordsGuessed: [...(team.wordsGuessed || []), ...correctlyGuessed],
-          };
-        }
-        return team;
-      });
-
-      // 2. Alimenta o banco de palavras usadas (para não repetir nunca na sessão)
-      const newUsedWords = [...prev.usedWords, ...correctlyGuessed];
-
-      const nextTeamIdx = prev.currentTeamIdx + 1;
-      const isLastTeam = nextTeamIdx >= prev.teams.length;
-
-      if (isLastTeam) {
-        return {
-          ...prev,
-          teams: updatedTeams,
-          usedWords: newUsedWords,
-          phase: "result",
-        };
-      } else {
-        // Sorteia palavra para o próximo time
-        const nextWord = getNewWord(prev.selectedCategories, newUsedWords);
-        return {
-          ...prev,
-          teams: updatedTeams,
-          usedWords: newUsedWords,
-          currentTeamIdx: nextTeamIdx,
-          currentWord: nextWord,
-          phase: "action",
-        };
-      }
-    });
-  };
+  // Som de vitória na tela de resultado
+  useEffect(() => {
+    if (gameState?.phase === "round-result") {
+      playSound(resultSound);
+    }
+  }, [gameState?.phase, playSound]);
 
   const renderPhase = () => {
     if (!gameState) return null;
@@ -113,87 +117,45 @@ export function SecretWordGame() {
         return (
           <SecretTeamReveal
             data={gameState}
-            onUpdateTeams={updateTeams}
-            onConfirm={() => {
-              const firstWord = getNewWord(
-                gameState.selectedCategories,
-                gameState.usedWords,
-              );
-              updateGameState({ currentWord: firstWord, phase: "action" });
-            }}
-            onEdit={() => navigate("/games/secretWord/lobby")}
+            onSelectOperator={setOperator}
+            onSetStartingTeam={setStartingTeam}
+            onRandomizeOperators={setRandomOperators}
+            onConfirm={beginActionPhase}
+            onEdit={handleExit}
           />
         );
 
-      case "action":
-        if (gameState.mode === "blitz") {
-          return (
-            <BlitzAction
-              key={`blitz-${gameState.currentTeamIdx}`} // Reseta ao mudar de time
-              data={gameState}
-              onFinishRound={handleFinishRound}
-              onUpdateGameState={updateGameState}
-            />
-          );
-        } else {
-          return (
-            <DuelAction
-              key={`duel-round-${gameState.currentMatchIdx}`} // Reseta ao mudar de palavra
-              data={gameState}
-              onReroll={() => {
-                const nextWord = getNewWord(
-                  gameState.selectedCategories,
-                  gameState.usedWords,
-                );
-                updateGameState({ currentWord: nextWord });
-              }}
-              onFinishMatch={(winnerIdx, wordsUsed) => {
-                setGameState((prev) => {
-                  if (!prev) return null;
+      case "infiltration-action":
+        return (
+          <InfiltrationAction
+            data={gameState}
+            onAction={(type) =>
+              handleInfiltrationWord(type === "correct")
+            }
+            onTimeUp={finishInfiltrationTurn}
+            onStartTimer={startTimer}
+          />
+        );
 
-                  // Atualiza o time vencedor do duelo
-                  const updatedTeams = prev.teams.map((t, idx) =>
-                    idx === winnerIdx
-                      ? {
-                          ...t,
-                          score: t.score + 1,
-                          roundScore: (t.roundScore || 0) + 1,
-                          wordsGuessed: [
-                            ...(t.wordsGuessed || []),
-                            ...wordsUsed,
-                          ],
-                        }
-                      : t,
-                  );
+      case "interception-action":
+        return (
+          <InterceptionAction
+            data={gameState}
+            onFinishMatch={handleInterceptionResult}
+            onPassTurn={passInterceptionTurn}
+            onStartTimer={startTimer}
+            onReroll={rerollWord}
+          />
+        );
 
-                  const nextMatchIdx = prev.currentMatchIdx + 1;
-                  const isGameOver = nextMatchIdx >= prev.matchLimit;
-
-                  if (isGameOver) {
-                    return { ...prev, teams: updatedTeams, phase: "result" };
-                  } else {
-                    const nextWord = getNewWord(prev.selectedCategories, [
-                      ...prev.usedWords,
-                      ...wordsUsed,
-                    ]);
-                    return {
-                      ...prev,
-                      teams: updatedTeams,
-                      usedWords: [...prev.usedWords, ...wordsUsed],
-                      currentMatchIdx: nextMatchIdx,
-                      currentWord: nextWord,
-                      currentTeamIdx: winnerIdx, // Vencedor começa a próxima
-                    };
-                  }
-                });
-              }}
-            />
-          );
-        }
-
-      case "result":
-        playSound(resultSound);
-        return <ResultPhase data={gameState} onNextRound={handleNextRound} />;
+      case "round-result":
+        return (
+          <ResultPhase
+            data={gameState}
+            onNextRound={nextRound}
+            onReassign={reassignWord}
+          />
+        );
 
       default:
         return <div>Carregando sistemas...</div>;
@@ -203,7 +165,25 @@ export function SecretWordGame() {
   return (
     <div className={styles.mainContainer}>
       <div className={styles.ambientLight} />
-      <div className={styles.contentWrapper}>{renderPhase()}</div>
+      <div className={styles.contentWrapper}>
+        {gameState && (
+          <div className={styles.gameTopBar}>
+            <button className={styles.exitBtn} onClick={handleExit}>
+              ← SAIR
+            </button>
+            <span className={styles.gameInfo}>
+              RODADA {gameState.roundNumber} ·{" "}
+              {PHASE_LABELS[gameState.phase] ?? gameState.phase}
+            </span>
+            <span className={styles.gameMode}>
+              {gameState.config.mode === "infiltration"
+                ? "⚡ INFILTRAÇÃO"
+                : "⚔️ INTERCEPTAÇÃO"}
+            </span>
+          </div>
+        )}
+        {renderPhase()}
+      </div>
     </div>
   );
 }

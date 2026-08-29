@@ -1,0 +1,139 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* PLACAR */
+.statsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.statBox {
+  background: var(--gray-800);
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--gray-700);
+}
+
+.statBox label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: block;
+  letter-spacing: 2px;
+}
+
+.statBox span {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--gray-100);
+}
+
+/* BOTÕES */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 15px;
+}
+
+.skipBtn {
+  background: var(--gray-700);
+  color: var(--gray-300);
+  border: none;
+  padding: 20px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.skipBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.correctBtn {
+  background: var(--button-tech);
+  color: white;
+  border: none;
+  padding: 20px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 242, 255, 0.2);
+  transition: all 0.15s;
+}
+
+.correctBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Botão de iniciar o cronômetro (antes do 1º toque) */
+.startBtn {
+  background: var(--button-tech);
+  color: white;
+  border: none;
+  padding: 22px;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(0, 242, 255, 0.25);
+  animation: pulseButton 1.6s infinite;
+}
+
+@keyframes pulseButton {
+  0%,
+  100% {
+    box-shadow: 0 5px 20px rgba(0, 242, 255, 0.25);
+  }
+  50% {
+    box-shadow: 0 5px 32px rgba(0, 242, 255, 0.45);
+  }
+}
+
+/* Indicador da fila de esquadrões */
+.queueIndicator {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.queueDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  opacity: 0.3;
+  transition: all 0.2s;
+}
+
+.queueDotActive {
+  opacity: 1;
+  transform: scale(1.5);
+}
+
+@keyframes blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions {
+    grid-template-columns: 1fr;
+  }
+}

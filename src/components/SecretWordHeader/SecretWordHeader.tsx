@@ -1,9 +1,10 @@
 import styles from "./secretWordHeader.module.css";
 import "../../../src/styles/theme.css";
 import { useNavigate } from "react-router-dom";
+import type { CryptoMode } from "../../pages/games/secretWord/GameLogistic/types";
 
 type ChildProps = {
-  mode: (value: "blitz" | "duel") => void;
+  mode: (value: CryptoMode) => void;
   currentMode: string | null;
 };
 
@@ -32,16 +33,16 @@ export function SecretWordHeader({ mode, currentMode }: ChildProps) {
 
         <div className={styles.modeSelector}>
           <button
-            className={`${styles.modeBtn} ${currentMode === "blitz" ? styles.active : ""}`}
-            onClick={() => mode("blitz")}
+            className={`${styles.modeBtn} ${currentMode === "infiltration" ? styles.active : ""}`}
+            onClick={() => mode("infiltration")}
           >
             <span className={styles.btnIcon}>⚡</span>
             <span className={styles.btnText}>Infiltração</span>
           </button>
 
           <button
-            className={`${styles.modeBtn} ${currentMode === "duel" ? styles.active : ""}`}
-            onClick={() => mode("duel")}
+            className={`${styles.modeBtn} ${currentMode === "interception" ? styles.active : ""}`}
+            onClick={() => mode("interception")}
           >
             <span className={styles.btnIcon}>⚔️</span>
             <span className={styles.btnText}>INTERCEPTAÇÃO</span>
@@ -49,7 +50,7 @@ export function SecretWordHeader({ mode, currentMode }: ChildProps) {
 
           {/* O slider aqui usa a cor Ciano/Azul por padrão do jogo */}
           <div
-            className={`${styles.slider} ${currentMode === "duel" ? styles.slideRight : ""}`}
+            className={`${styles.slider} ${currentMode === "interception" ? styles.slideRight : ""}`}
           />
         </div>
       </div>

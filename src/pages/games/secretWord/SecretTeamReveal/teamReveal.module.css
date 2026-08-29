@@ -258,3 +258,53 @@
     width: 100%;
   }
 }
+
+/* NOVOS ELEMENTOS (paridade com o PlayHome-RN) */
+
+.roundTag {
+  margin: 6px 0 0;
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.randomAllBtn {
+  display: block;
+  margin: 0 auto 10px;
+  background: rgba(0, 242, 255, 0.07);
+  border: 1px solid rgba(0, 242, 255, 0.4);
+  color: var(--tech-cyan);
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.randomAllBtn:hover {
+  background: rgba(0, 242, 255, 0.15);
+  box-shadow: 0 0 18px rgba(0, 242, 255, 0.25);
+}
+
+.startTeamBtn {
+  background: transparent;
+  border: 1px solid var(--gray-600);
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.startTeamActive {
+  background: var(--team-color);
+  border-color: var(--team-color);
+  color: #fff;
+}

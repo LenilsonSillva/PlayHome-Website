@@ -1,104 +1,100 @@
+/* Área da palavra (segure para revelar) — compartilhada entre o
+   Criptografia offline e online (WordRevealBox) */
+
 .wordDisplay {
   height: 250px;
-  background: #0f172a; /* Fundo sólido é MUITO mais leve que transparente */
-  border: 2px dashed #334155;
+  background: rgba(15, 23, 42, 0.6);
+  border: 2px dashed var(--gray-600);
   border-radius: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-
-  /* IMPEDIR LAG NO MOBILE */
-  touch-action: none;
+  cursor: pointer;
   user-select: none;
+  touch-action: none; /* Previne scroll ao segurar */
+  transition: all 0.2s;
+  text-align: center;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
-
-  /* Avisa a GPU para se preparar */
   will-change: transform, background-color, border-color;
 }
 
-/* Em vez de mudar tudo no hover/active, usamos um pseudo-elemento para o brilho */
-.wordDisplay::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 24px;
-  box-shadow: inset 0 0 30px var(--tech-glow);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
-}
-
 .wordDisplay.active {
-  background: #111e36;
+  background: rgba(0, 242, 255, 0.05);
   border: 2px solid var(--tech-cyan);
+  box-shadow: inset 0 0 30px var(--tech-glow);
+}
+
+.wordDisplay.waiting {
+  opacity: 0.75;
   border-style: solid;
-}
-
-.wordDisplay.active::after {
-  opacity: 1; /* O brilho entra suavemente sem travar a CPU */
-}
-
-.hiddenContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .hiddenContent p {
   font-weight: bold;
   letter-spacing: 1px;
-  margin: 0;
 }
+
 .hiddenContent small {
   color: var(--text-muted);
   display: block;
   margin-top: 5px;
 }
+
 .pressIcon {
   font-size: 3rem;
   margin-bottom: 10px;
 }
 
+.revealedContent .label {
+  font-size: 0.7rem;
+  color: var(--tech-cyan);
+  letter-spacing: 3px;
+}
+
 .revealedContent .word {
   font-size: 3rem;
   color: #fff;
-  margin: 5px 0;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-}
-
-.label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  letter-spacing: 2px;
-  font-weight: 800;
+  margin: 10px 0;
   text-transform: uppercase;
 }
 
-/* Remover o Blur no Mobile em tempo de execução */
+/* Feedback visual de acerto */
+.successFlash {
+  background-color: var(--success) !important;
+  border-color: #fff !important;
+  box-shadow: 0 0 40px var(--success) !important;
+  transform: scale(1.05);
+}
+
+/* Feedback visual de pular/erro */
+.skipFlash {
+  background-color: var(--warning) !important;
+  border-color: #fff !important;
+  box-shadow: 0 0 40px var(--warning) !important;
+  transform: scale(0.98);
+}
+
+/* Feedback visual de erro (interceptação) */
+.failFlash {
+  background-color: var(--danger-neon) !important;
+  border-color: #fff !important;
+  box-shadow: 0 0 40px var(--danger-neon) !important;
+  transform: scale(0.98);
+}
+
+/* Garante transição suave ao sair do flash */
+.wordDisplay {
+  transition: all 0.1s ease-in;
+}
+
 @media (max-width: 768px) {
   .wordDisplay {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    /* Sombras simples consomem menos bateria e CPU */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
   }
-}
-/* Responsividade Mobile */
-@media (max-width: 480px) {
-  .timer {
+
+  .revealedContent .word {
     font-size: 2.2rem;
-  }
-  .teamName {
-    font-size: 1.4rem;
-  }
-  .wordDisplay .word {
-    font-size: 2.2rem;
-  }
-  .startTimerBtn {
-    font-size: 1rem;
   }
 }

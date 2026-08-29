@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import type { CryptoView } from "../../../../../types/cryptoOnline";
-import { OperatorWordPanel, Scoreboard, TeamHud, TeamMembers } from "./shared";
+import { OperatorWordPanel, Scoreboard, TeamMembers, useCountdown } from "./shared";
+import { CryptoHud } from "../../components/CryptoHud";
 import styles from "../onlineCrypto.module.css";
 
 type Props = {
@@ -14,6 +15,11 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
   const isController = view.controls.canControl;
   const [feedback, setFeedback] = useState<"none" | "success" | "skip">("none");
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const countdown = useCountdown(view);
+
+  const operator = currentTeam.players.find(
+    (p) => p.id === currentTeam.operatorId,
+  );
 
   const flash = useCallback((type: "success" | "skip") => {
     setFeedback(type);
@@ -40,7 +46,15 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
         </div>
       </div>
 
-      <TeamHud view={view} />
+      <CryptoHud
+        label="VEZ DE"
+        teamName={currentTeam.name}
+        teamColor={currentTeam.color}
+        operatorName={operator?.name ?? null}
+        stats={[{ text: "✅", value: currentTeam.roundScore, tone: "success" }]}
+        countdown={countdown}
+        totalTime={view.config.roundTime}
+      />
 
       {isController ? (
         /* ================= OPERADOR DA VEZ (OU HOST) ================= */

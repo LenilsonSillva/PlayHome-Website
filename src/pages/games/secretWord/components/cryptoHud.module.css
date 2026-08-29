@@ -1,0 +1,119 @@
+.hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 14px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left-width: 4px;
+}
+
+.hudLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hudLabel {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hudTeamRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hudTeam {
+  font-size: 1.35rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.hudOperator {
+  font-size: 0.95rem;
+  color: var(--gray-300);
+  margin: 0;
+}
+
+.hudOperator strong {
+  color: #fff;
+}
+
+.hudStats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.statPill {
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--gray-200);
+  white-space: nowrap;
+}
+
+.statPillSuccess {
+  color: var(--success);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.statPillWarning {
+  color: var(--warning);
+  border-color: rgba(250, 204, 21, 0.35);
+}
+
+.timer {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--tech-cyan);
+  font-family: monospace;
+  line-height: 1;
+  text-align: right;
+  min-width: 70px;
+}
+
+.timerPaused {
+  color: var(--gray-500);
+}
+
+.timerCritical {
+  color: var(--danger-neon);
+  animation: hudBlink 0.5s infinite alternate;
+}
+
+@keyframes hudBlink {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.55;
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 768px) {
+  .timer {
+    font-size: 1.9rem;
+    min-width: 56px;
+  }
+
+  .hudTeam {
+    font-size: 1.1rem;
+  }
+}

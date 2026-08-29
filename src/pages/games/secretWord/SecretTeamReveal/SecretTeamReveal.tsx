@@ -1,52 +1,35 @@
-import type { SecretWordGameState } from "../GameLogistic/types";
-import { usePlayers } from "../../../../contexts/contextHook";
+import type { CryptoGameState } from "../GameLogistic/types";
 import styles from "./teamReveal.module.css";
-import { useEffect } from "react";
 
 type Props = {
-  data: SecretWordGameState;
-  onUpdateTeams: (teams: any[]) => void;
+  data: CryptoGameState;
+  onSelectOperator: (teamId: string, playerId: string) => void;
+  onSetStartingTeam: (teamIndex: number) => void;
+  onRandomizeOperators: () => void;
   onConfirm: () => void;
   onEdit: () => void;
 };
 
+// RECONHECIMENTO DE UNIDADES — mesmo fluxo do PlayHome-RN:
+// escolha do operador por esquadrão, sorteio geral, definição de quem
+// inicia a rodada (1ª rodada) e validação antes de começar.
 export function SecretTeamReveal({
   data,
-  onUpdateTeams,
+  onSelectOperator,
+  onSetStartingTeam,
+  onRandomizeOperators,
   onConfirm,
   onEdit,
 }: Props) {
-  const { players } = usePlayers();
-
-  // Sorteia operadores aleatórios para times que ainda não tem um definido
-  useEffect(() => {
-    const needsUpdate = data.teams.some((t) => !t.operatorId);
-    if (needsUpdate) {
-      const updatedTeams = data.teams.map((team) => {
-        if (!team.operatorId) {
-          const randomIdx = Math.floor(Math.random() * team.playerIds.length);
-          return { ...team, operatorId: team.playerIds[randomIdx] };
-        }
-        return team;
-      });
-      onUpdateTeams(updatedTeams);
+  const handleConfirm = () => {
+    const missingOperators = data.teams.some((t) => !t.operatorId);
+    if (missingOperators) {
+      alert(
+        "Atenção: cada esquadrão precisa de um Operador definido antes de prosseguir!",
+      );
+      return;
     }
-  }, []);
-
-  const handleSelectOperator = (teamId: string, playerId: string) => {
-    const updatedTeams = data.teams.map((t) =>
-      t.id === teamId ? { ...t, operatorId: playerId } : t,
-    );
-    onUpdateTeams(updatedTeams);
-  };
-
-  const handleRandomOperator = (teamId: string) => {
-    const team = data.teams.find((t) => t.id === teamId);
-    if (!team) return;
-    const otherPlayers = team.playerIds;
-    const randomPlayerId =
-      otherPlayers[Math.floor(Math.random() * otherPlayers.length)];
-    handleSelectOperator(teamId, randomPlayerId);
+    onConfirm();
   };
 
   return (
@@ -54,7 +37,13 @@ export function SecretTeamReveal({
       <header className={styles.header}>
         <div className={styles.badge}>RECONHECIMENTO DE UNIDADES</div>
         <h2 className={styles.title}>ESQUADRÕES FORMADOS</h2>
+        <p className={styles.roundTag}>RODADA {data.roundNumber}</p>
       </header>
+
+      {/* 🎲 SORTEIO GERAL DE OPERADORES */}
+      <button className={styles.randomAllBtn} onClick={onRandomizeOperators}>
+        🎲 SORTEAR TODOS OS OPERADORES
+      </button>
 
       <div className={styles.teamsGrid}>
         {data.teams.map((team, idx) => (
@@ -66,24 +55,40 @@ export function SecretTeamReveal({
             <div className={styles.teamHeader}>
               <span className={styles.teamIndex}>0{idx + 1}</span>
               <h3 className={styles.teamName}>{team.name}</h3>
+
+              {/* ⭐ QUEM INICIA A RODADA (apenas na 1ª rodada) */}
+              {data.roundNumber === 1 && (
+                <button
+                  className={`${styles.startTeamBtn} ${
+                    data.currentTeamIndex === idx ? styles.startTeamActive : ""
+                  }`}
+                  onClick={() => onSetStartingTeam(idx)}
+                >
+                  {data.currentTeamIndex === idx
+                    ? "⭐ COMEÇA A RODADA"
+                    : "DEFINIR COMO PRIMEIRO"}
+                </button>
+              )}
             </div>
 
             <div className={styles.membersList}>
               <p className={styles.roleLabel}>
                 SELECIONE O OPERADOR (QUEM DÁ AS DICAS):
               </p>
-              {team.playerIds.map((id) => {
-                const player = players.find((p) => p.id === id);
-                const isOperator = team.operatorId === id;
+              {team.players.map((player) => {
+                const isOperator = team.operatorId === player.id;
                 return (
                   <button
-                    key={id}
+                    key={player.id}
                     className={`${styles.memberBtn} ${isOperator ? styles.activeOperator : ""}`}
-                    onClick={() => handleSelectOperator(team.id, id)}
+                    onClick={() => onSelectOperator(team.id, player.id)}
                   >
                     <div className={styles.memberInfo}>
-                      <span className={styles.statusDot} />
-                      {player?.name}
+                      <span
+                        className={styles.statusDot}
+                        style={{ background: player.color }}
+                      />
+                      {player.name}
                     </div>
                     {isOperator && (
                       <span className={styles.operatorBadge}>OPERADOR</span>
@@ -95,7 +100,13 @@ export function SecretTeamReveal({
 
             <button
               className={styles.randomSubBtn}
-              onClick={() => handleRandomOperator(team.id)}
+              onClick={() => {
+                const randomPlayer =
+                  team.players[
+                    Math.floor(Math.random() * team.players.length)
+                  ];
+                if (randomPlayer) onSelectOperator(team.id, randomPlayer.id);
+              }}
             >
               🎲 SORTEAR JOGADOR
             </button>
@@ -112,8 +123,8 @@ export function SecretTeamReveal({
           <button className={styles.editBtn} onClick={onEdit}>
             ⚙️ EDITAR TIMES
           </button>
-          <button className={styles.confirmBtn} onClick={onConfirm}>
-            INICIAR REVELAÇÃO 🚀
+          <button className={styles.confirmBtn} onClick={handleConfirm}>
+            INICIAR AÇÃO 🚀
           </button>
         </div>
       </div>

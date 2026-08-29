@@ -78,3 +78,23 @@ WEBSITE_BRANCH=feature/nova-branch ./sync-website-to-playhome.sh   # branch nova
 O script copia este conteúdo para o repositório
 `LenilsonSillva/PlayHome-Website`, commita e faz push **com a sua conta GitHub**
 (a branch é criada a partir do `main` quando não existe).
+
+## Criptografia offline (paridade com o PlayHome-RN)
+
+O modo local usa o mesmo motor do app: reducers portados 1:1 em
+`src/pages/games/secretWord/GameLogistic/` (infiltração/interceptação,
+cronômetro bomba-relógio, pulos, ranking oficial, auditoria com limites,
+persistência das palavras usadas).
+
+### Componentes compartilhados (offline ↔ online)
+
+`src/pages/games/secretWord/components/`:
+
+- `WordRevealBox` — palavra "segure para revelar"
+- `CryptoHud` — cabeçalho das ações (time da vez + stats + cronômetro)
+- `ResultCard` — card de relatório do esquadrão (ranking oficial)
+- `RoundAudit` — auditoria/reatribuição de palavras da rodada
+- `ranking.ts` — desempate Acertos → Eficiência → Tempo médio
+
+A partida online (`OnlineCryptoGame/`) consome esses mesmos componentes,
+renderizando a visão autoritativa do servidor (`crypto:game-update`).

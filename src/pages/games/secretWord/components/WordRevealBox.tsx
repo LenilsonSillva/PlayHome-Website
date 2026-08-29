@@ -1,5 +1,5 @@
 import { memo, useRef, useCallback } from "react";
-import styles from "../BlitzAction/blitzAction.module.css";
+import styles from "./revealBox.module.css";
 
 type WordRevealBoxProps = {
   word: string | null;
