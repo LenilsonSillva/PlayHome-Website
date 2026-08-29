@@ -20,7 +20,8 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
   const currentTeam = view.teams[view.currentTeamIndex];
   const running = view.roundEndTime != null;
   const isController = view.controls.canControl;
-  const isMemberOfCurrentTeam = view.myTeamIndex === view.currentTeamIndex;
+  const isMemberOfCurrentTeam =
+    !view.isSpectator && view.myTeamIndex === view.currentTeamIndex;
   const [timeLeft, setTimeLeft] = useState(view.config.roundTime);
   const [isRevealing, setIsRevealing] = useState(false);
   const [hasViewedWord, setHasViewedWord] = useState(false);

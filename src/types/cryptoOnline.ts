@@ -42,7 +42,7 @@ export interface CryptoWaitingPlayer {
   emoji?: string;
   color?: string;
   groupId: string | null;
-  connection: "online";
+  connection: "online" | "disconnected";
 }
 
 export interface CryptoGroupView {
@@ -119,6 +119,8 @@ export interface CryptoControls {
   canReroll: boolean;
   canRequestWordChange: boolean;
   canApproveWordChange: boolean;
+  /** Cancela a solicitação e mantém a palavra atual. */
+  canRejectWordChange: boolean;
   canPassTurn: boolean;
 }
 

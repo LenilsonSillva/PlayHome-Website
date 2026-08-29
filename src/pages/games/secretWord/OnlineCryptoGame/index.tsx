@@ -59,16 +59,23 @@ export function OnlineCryptoGame() {
       }
     }
 
+    function onForceLobby() {
+      alert("A partida foi encerrada porque não há grupos válidos suficientes.");
+      navigate("/games/secretWord/lobby");
+    }
+
     socket.on("crypto:game-update", onGameUpdate);
     socket.on("crypto:player-left", onPlayerLeft);
     socket.on("crypto:host-changed", onHostChanged);
+    socket.on("crypto:force-lobby", onForceLobby);
 
     return () => {
       socket.off("crypto:game-update", onGameUpdate);
       socket.off("crypto:player-left", onPlayerLeft);
       socket.off("crypto:host-changed", onHostChanged);
+      socket.off("crypto:force-lobby", onForceLobby);
     };
-  }, [socket]);
+  }, [socket, navigate]);
 
   // ---------------- aviso ao sair/atualizar ----------------
   useEffect(() => {

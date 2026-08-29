@@ -112,6 +112,12 @@ export function OnlineCryptoLobby() {
       }
     }
 
+    function onForceLobby() {
+      setRoom(null);
+      setInRoom(false);
+      alert("A partida foi encerrada porque não há grupos válidos suficientes.");
+    }
+
     function onDisconnect() {
       setInRoom((currently) => {
         if (currently) {
@@ -126,6 +132,7 @@ export function OnlineCryptoLobby() {
     socket.on("crypto:game-update", onGameUpdate);
     socket.on("crypto:player-left", onPlayerLeft);
     socket.on("crypto:host-changed", onHostChanged);
+    socket.on("crypto:force-lobby", onForceLobby);
     socket.on("disconnect", onDisconnect);
 
     return () => {
@@ -133,6 +140,7 @@ export function OnlineCryptoLobby() {
       socket.off("crypto:game-update", onGameUpdate);
       socket.off("crypto:player-left", onPlayerLeft);
       socket.off("crypto:host-changed", onHostChanged);
+      socket.off("crypto:force-lobby", onForceLobby);
       socket.off("disconnect", onDisconnect);
     };
   }, [socket, navigate]);
@@ -228,6 +236,17 @@ export function OnlineCryptoLobby() {
   const handleCreateGroup = async () => {
     if (!room) return;
     const res = await emitAck("crypto:create-group", { roomCode: room.code });
+    if (fail(res)) return;
+  };
+
+  const handleDeleteGroup = async (groupId: string) => {
+    if (!room || !window.confirm("Apagar este grupo? Os jogadores voltarão a ficar sem grupo.")) {
+      return;
+    }
+    const res = await emitAck("crypto:delete-group", {
+      roomCode: room.code,
+      groupId,
+    });
     if (fail(res)) return;
   };
 
@@ -426,9 +445,22 @@ export function OnlineCryptoLobby() {
   }
 
   const ungroupedOnline = room.players.filter((p) => p.groupId == null);
+  const ungroupedPresent = room.presentPlayers.filter((p) => p.groupId == null);
   const myGroupId = room.players.find((p) => p.socketId === socket.id)?.groupId ?? null;
-  const canCreateGroup = myPlayer?.connection === "online";
-  const canStart = room.groups.length >= 2;
+  const canCreateGroup =
+    myPlayer?.connection === "online" && (isHost || myGroups.length === 0);
+  const groupsWithoutOnline = room.groups.filter(
+    (group) =>
+      !room.players.some(
+        (player) =>
+          player.groupId === group.id && player.connection === "online",
+      ),
+  );
+  // Jogadores online sem grupo ainda podem ser distribuídos no início;
+  // o backend continua sendo a autoridade sobre o resultado final.
+  const canStart =
+    room.groups.length >= 2 &&
+    ungroupedOnline.length >= groupsWithoutOnline.length;
 
   return (
     <div className={styles.container}>
@@ -461,7 +493,7 @@ export function OnlineCryptoLobby() {
                 room.groups.length >= (room.config?.teamCount ?? 10)
               }
             >
-              ＋ CRIAR GRUPO (VIRA LÍDER)
+              ＋ {isHost ? "CRIAR GRUPO" : "CRIAR GRUPO (VIRA LÍDER)"}
             </button>
           </div>
 
@@ -483,12 +515,20 @@ export function OnlineCryptoLobby() {
                 <div className={styles.groupHeader}>
                   <span className={styles.groupDot} style={{ background: group.color }} />
                   <h3>{group.name}</h3>
+                  {!group.subHostId && (
+                    <span className={styles.noLeaderBadge}>SEM LÍDER</span>
+                  )}
                   <span className={styles.memberCount}>{members.length} integrantes</span>
                 </div>
 
                 <div className={styles.membersList}>
                   {members.map((m) => {
                     const isSub = group.subHostId === m.id;
+                    const isLeaderElsewhere = room.groups.some(
+                      (otherGroup) =>
+                        otherGroup.id !== group.id &&
+                        otherGroup.subHostId === m.id,
+                    );
                     const conn = m.connection;
                     const isMe = m.id === myId;
                     return (
@@ -505,11 +545,17 @@ export function OnlineCryptoLobby() {
                         >
                           {conn === "online" ? "ONLINE" : conn === "present" ? "PRESENCIAL" : "DESCONECTADO"}
                         </span>
-                        {isHost && !isSub && conn !== "present" && (
-                          <button className={styles.miniBtn} onClick={() => handleSetSubHost(group.id, m.id)}>
-                            👑
-                          </button>
-                        )}
+                        {isHost &&
+                          !isSub &&
+                          !isLeaderElsewhere &&
+                          conn !== "present" && (
+                            <button
+                              className={styles.miniBtn}
+                              onClick={() => handleSetSubHost(group.id, m.id)}
+                            >
+                              👑
+                            </button>
+                          )}
                         {(isHost || (iAmLeader && conn === "present")) && (
                           <button className={styles.miniBtnDanger} onClick={() => handleRemovePlayer(m.id)}>
                             ✕
@@ -532,23 +578,29 @@ export function OnlineCryptoLobby() {
                     </button>
                   ) : null}
 
-                  {canManageGroup(group.id) && ungroupedOnline.length > 0 && (
-                    <select
-                      className={styles.assignSelect}
-                      defaultValue=""
-                      onChange={(e) => {
-                        if (e.target.value) handleAssignToGroup(e.target.value, group.id);
-                        e.target.value = "";
-                      }}
-                    >
-                      <option value="">＋ mover jogador para cá</option>
-                      {ungroupedOnline.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
+                  {canManageGroup(group.id) &&
+                    (ungroupedOnline.length > 0 || ungroupedPresent.length > 0) && (
+                      <select
+                        className={styles.assignSelect}
+                        defaultValue=""
+                        onChange={(e) => {
+                          if (e.target.value) handleAssignToGroup(e.target.value, group.id);
+                          e.target.value = "";
+                        }}
+                      >
+                        <option value="">＋ mover jogador para cá</option>
+                        {ungroupedOnline.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name} · ONLINE
+                          </option>
+                        ))}
+                        {ungroupedPresent.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.name} · PRESENCIAL
+                          </option>
+                        ))}
+                      </select>
+                    )}
 
                   {canManageGroup(group.id) && (
                     <div className={styles.presentForm}>
@@ -567,6 +619,15 @@ export function OnlineCryptoLobby() {
                         ＋ PRESENCIAL
                       </button>
                     </div>
+                  )}
+
+                  {canManageGroup(group.id) && (
+                    <button
+                      className={styles.deleteGroupBtn}
+                      onClick={() => handleDeleteGroup(group.id)}
+                    >
+                      🗑️ APAGAR GRUPO
+                    </button>
                   )}
                 </div>
               </div>
@@ -590,6 +651,25 @@ export function OnlineCryptoLobby() {
                 )}
               </div>
             ))}
+            {ungroupedPresent.length > 0 && (
+              <>
+                <h3 className={styles.unassignedTitle}>PRESENCIAIS SEM GRUPO</h3>
+                {ungroupedPresent.map((p) => (
+                  <div key={p.id} className={styles.memberRow}>
+                    <span className={styles.memberEmoji}>{p.emoji ?? "🏠"}</span>
+                    <span className={styles.memberName}>{p.name}</span>
+                    <span className={styles.connBadge + " " + styles.connPresent}>
+                      PRESENCIAL
+                    </span>
+                    {isHost && (
+                      <button className={styles.miniBtnDanger} onClick={() => handleRemovePlayer(p.id)}>
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </>
+            )}
           </div>
 
           {isHost ? (
@@ -761,7 +841,11 @@ export function OnlineCryptoLobby() {
                 </button>
               </div>
               {!canStart && (
-                <p className={styles.hint}>São necessários pelo menos 2 grupos para começar.</p>
+                <p className={styles.hint}>
+                  {room.groups.length < 2
+                    ? "São necessários pelo menos 2 grupos para começar."
+                    : "Cada grupo precisa de pelo menos um jogador online."}
+                </p>
               )}
             </div>
           ) : (

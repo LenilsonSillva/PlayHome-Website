@@ -153,6 +153,16 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
     });
   };
 
+  const rejectWordChange = () => {
+    const request = view.wordChangeRequest;
+    if (!request || !view.controls.canRejectWordChange) return;
+    initAudio();
+    emit("crypto:reject-reroll-word", {
+      roomCode: view.roomCode,
+      requestId: request.id,
+    });
+  };
+
   const operator = currentTeam.players.find(
     (p) => p.id === currentTeam.operatorId,
   );
@@ -232,10 +242,20 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
             {agreedOperators} / {totalOperators} OPERADORES DE ACORDO
           </div>
 
-          {view.controls.canApproveWordChange ? (
-            <button className={styles.primaryBtn} onClick={approveWordChange}>
-              ✅ ACEITAR TROCA DE PALAVRA
-            </button>
+          {view.controls.canApproveWordChange ||
+          view.controls.canRejectWordChange ? (
+            <div className={styles.consensusActions}>
+              {view.controls.canApproveWordChange && (
+                <button className={styles.primaryBtn} onClick={approveWordChange}>
+                  ✅ ACEITAR TROCA
+                </button>
+              )}
+              {view.controls.canRejectWordChange && (
+                <button className={styles.rejectBtn} onClick={rejectWordChange}>
+                  ❌ RECUSAR E CONTINUAR
+                </button>
+              )}
+            </div>
           ) : request.requesterId === myId ? (
             <p className={styles.waitingNote}>
               ✅ Solicitação registrada. Aguardando os outros operadores...
