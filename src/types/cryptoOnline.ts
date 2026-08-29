@@ -35,6 +35,16 @@ export interface CryptoPresentPlayer {
   connection: "present";
 }
 
+export interface CryptoWaitingPlayer {
+  socketId: string;
+  id: string;
+  name: string;
+  emoji?: string;
+  color?: string;
+  groupId: string | null;
+  connection: "online";
+}
+
 export interface CryptoGroupView {
   id: string;
   name: string;
@@ -66,7 +76,7 @@ export interface CryptoRoomView {
   players: CryptoLobbyPlayer[];
   presentPlayers: CryptoPresentPlayer[];
   groups: CryptoGroupView[];
-  waitingPlayers: unknown[];
+  waitingPlayers: CryptoWaitingPlayer[];
 }
 
 // ---------------- JOGO ----------------
@@ -105,8 +115,19 @@ export interface CryptoControls {
   canSetStartingTeam: boolean;
   canNextRound: boolean;
   canReassign: boolean;
+  /** Solicita a troca; o servidor só aplica após o consenso. */
   canReroll: boolean;
+  canRequestWordChange: boolean;
+  canApproveWordChange: boolean;
   canPassTurn: boolean;
+}
+
+export interface CryptoWordChangeRequest {
+  id: string;
+  requesterId: string;
+  requesterName: string;
+  operatorIds: string[];
+  approvedBy: string[];
 }
 
 export interface CryptoRoundHistoryItem {
@@ -124,6 +145,8 @@ export interface CryptoView {
   isSpectator: boolean;
   mySocketId: string;
   myPlayerId: string | null;
+  /** ID do operador lógico quando o dispositivo está sendo delegado. */
+  actingPlayerId: string | null;
   myName: string;
   myEmoji: string;
   myColor: string;
@@ -152,5 +175,6 @@ export interface CryptoView {
   roundEndTime: number | null;
   lastActionTime: number | null;
   roundHistory: CryptoRoundHistoryItem[];
+  wordChangeRequest: CryptoWordChangeRequest | null;
   controls: CryptoControls;
 }

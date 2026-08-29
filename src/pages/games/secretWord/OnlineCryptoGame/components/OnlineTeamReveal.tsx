@@ -25,7 +25,8 @@ export function OnlineTeamReveal({
       <header className={styles.phaseHeader}>
         <span className={styles.badge}>RECONHECIMENTO DE UNIDADES</span>
         <h1>
-          ESQUADRÕES FORMADOS <span className={styles.cyan}>— RODADA {view.roundNumber}</span>
+          ESQUADRÕES FORMADOS{" "}
+          <span className={styles.cyan}>— RODADA {view.roundNumber}</span>
         </h1>
       </header>
 
@@ -56,14 +57,23 @@ export function OnlineTeamReveal({
                 onChange={(e) => onSelectOperator(team.id, e.target.value)}
               >
                 <option value="" disabled>
-                  {team.canSetOperator ? "Selecione..." : "Escolhido pelo líder/host"}
+                  {team.canSetOperator
+                    ? "Selecione..."
+                    : "Escolhido pelo líder/host"}
                 </option>
                 {team.players
-                  .filter((p) => p.connection === "online")
+                  .filter(
+                    (p) =>
+                      p.connection === "online" || p.connection === "present",
+                  )
                   .map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name}
-                      {p.isSubHost ? " 🎖️" : ""}
+                      {p.connection === "present"
+                        ? " 🏠"
+                        : p.isSubHost
+                          ? " 🎖️"
+                          : ""}
                     </option>
                   ))}
               </select>
@@ -80,7 +90,9 @@ export function OnlineTeamReveal({
               {view.teams.map((t, idx) => (
                 <button
                   key={t.id}
-                  className={view.startingTeamIndex === idx ? styles.startingActive : ""}
+                  className={
+                    view.startingTeamIndex === idx ? styles.startingActive : ""
+                  }
                   style={{ borderColor: t.color }}
                   onClick={() => onSetStartingTeam(idx)}
                 >
@@ -90,7 +102,10 @@ export function OnlineTeamReveal({
             </div>
 
             <div className={styles.footerButtons}>
-              <button className={styles.secondaryBtn} onClick={onRandomizeOperators}>
+              <button
+                className={styles.secondaryBtn}
+                onClick={onRandomizeOperators}
+              >
                 🎲 SORTEAR OPERADORES
               </button>
               <button

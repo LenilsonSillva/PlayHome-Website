@@ -48,10 +48,15 @@ export function OnlineCryptoLobby() {
   // ---------------- formulários de presencial ----------------
   const [presentName, setPresentName] = useState<string>("");
 
-  const myId = useMemo(() => {
-    const me = room?.players.find((p) => p.socketId === socket.id);
-    return me?.id ?? null;
+  const myPlayer = useMemo(() => {
+    if (!room) return null;
+    return (
+      room.players.find((p) => p.socketId === socket.id) ??
+      room.waitingPlayers.find((p) => p.socketId === socket.id) ??
+      null
+    );
   }, [room, socket.id]);
+  const myId = myPlayer?.id ?? null;
 
   const isHost = !!room?.isHost;
   const myGroups = useMemo(() => {
@@ -81,7 +86,9 @@ export function OnlineCryptoLobby() {
     if (saved) setLastRoomCode(saved);
 
     function onRoomUpdated(data: CryptoRoomView) {
-      const stillInRoom = data.players.some((p) => p.socketId === socket.id);
+      const stillInRoom =
+        data.players.some((p) => p.socketId === socket.id) ||
+        (data.waitingPlayers ?? []).some((p) => p.socketId === socket.id);
       if (!stillInRoom) return;
       setRoom(data);
       setInRoom(true);
@@ -197,13 +204,25 @@ export function OnlineCryptoLobby() {
     if (fail(res)) return;
     localStorage.setItem("lastCryptoRoomCode", roomCodeInput.trim().toUpperCase());
     setLastRoomCode(roomCodeInput.trim().toUpperCase());
-    if (!res.waiting) setInRoom(true);
+    setInRoom(true);
   };
 
   const handleLeave = () => {
     if (room) socket.emit("crypto:leave-room", { roomCode: room.code });
     setInRoom(false);
     setRoom(null);
+  };
+
+  const handleChooseWaitingGroup = async (groupId: string) => {
+    if (!room || busy) return;
+    setBusy(true);
+    setError(null);
+    const res = await emitAck("crypto:choose-waiting-group", {
+      roomCode: room.code,
+      groupId,
+    });
+    setBusy(false);
+    if (fail(res)) return;
   };
 
   const handleCreateGroup = async () => {
@@ -327,8 +346,88 @@ export function OnlineCryptoLobby() {
 
   if (!room) return <div className={styles.container}>Carregando sala...</div>;
 
+  const waitingSelf = room.waitingPlayers.find(
+    (player) => player.socketId === socket.id,
+  );
+
+  if (room.phase === "playing" && waitingSelf) {
+    return (
+      <div className={styles.container}>
+        <div className={`glass-panel ${styles.roomHeader}`}>
+          <div>
+            <span className={styles.roomLabel}>SALA</span>
+            <span className={styles.roomCode}>{room.code}</span>
+          </div>
+          <button className={styles.leaveBtn} onClick={handleLeave}>
+            SAIR
+          </button>
+        </div>
+
+        {error && <div className={styles.errorBox}>{error}</div>}
+
+        <div className={`glass-panel ${styles.waitingJoinPanel}`}>
+          <span className={styles.badge}>PARTIDA EM ANDAMENTO</span>
+          <h1>ESCOLHA SEU GRUPO</h1>
+          <p className={styles.hint}>
+            Veja os grupos e escolha onde você vai jogar. Você assiste à rodada
+            atual e entra no grupo escolhido quando começar a próxima rodada.
+          </p>
+
+          <div className={styles.waitingJoinGroups}>
+            {room.groups.map((group) => {
+              const members = [
+                ...room.players,
+                ...room.presentPlayers,
+              ].filter((player) => group.playerIds.includes(player.id));
+              const selected = waitingSelf.groupId === group.id;
+
+              return (
+                <article
+                  key={group.id}
+                  className={`${styles.waitingJoinGroup} ${
+                    selected ? styles.waitingJoinGroupSelected : ""
+                  }`}
+                  style={{ borderColor: group.color }}
+                >
+                  <div className={styles.groupHeader}>
+                    <span
+                      className={styles.groupDot}
+                      style={{ background: group.color }}
+                    />
+                    <h2>{group.name}</h2>
+                    <span className={styles.memberCount}>
+                      {members.length} integrantes
+                    </span>
+                  </div>
+
+                  <div className={styles.waitingJoinMembers}>
+                    {members.map((member) => (
+                      <span key={member.id} className={styles.waitingJoinMember}>
+                        {member.emoji ?? "👤"} {member.name}
+                      </span>
+                    ))}
+                  </div>
+
+                  <button
+                    className={styles.waitingJoinBtn}
+                    style={{ borderColor: group.color }}
+                    onClick={() => handleChooseWaitingGroup(group.id)}
+                    disabled={busy}
+                  >
+                    {selected ? "ENTRANDO..." : "ENTRAR NESTE GRUPO"}
+                  </button>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const ungroupedOnline = room.players.filter((p) => p.groupId == null);
   const myGroupId = room.players.find((p) => p.socketId === socket.id)?.groupId ?? null;
+  const canCreateGroup = myPlayer?.connection === "online";
   const canStart = room.groups.length >= 2;
 
   return (
@@ -357,7 +456,10 @@ export function OnlineCryptoLobby() {
             <button
               className={styles.createGroupBtn}
               onClick={handleCreateGroup}
-              disabled={room.groups.length >= (room.config?.teamCount ?? 10)}
+              disabled={
+                !canCreateGroup ||
+                room.groups.length >= (room.config?.teamCount ?? 10)
+              }
             >
               ＋ CRIAR GRUPO (VIRA LÍDER)
             </button>
@@ -365,8 +467,8 @@ export function OnlineCryptoLobby() {
 
           {room.groups.length === 0 && (
             <div className={`glass-panel ${styles.emptyGroups}`}>
-              Nenhum grupo ainda. Qualquer jogador pode criar o primeiro grupo e
-              virar seu líder (subHost).
+              Nenhum grupo ainda. Qualquer jogador online pode criar o primeiro
+              grupo e virar seu líder.
             </div>
           )}
 

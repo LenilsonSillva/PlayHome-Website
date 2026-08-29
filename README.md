@@ -23,10 +23,12 @@ intenções.
 
 - 👑 **Host** — cria a sala, configura (modo, grupos, tempos, categorias e as
   flags de visibilidade) e arbitra (operadores, auditoria, próxima rodada).
-- 🎖️ **subHost** — cria/lidera um grupo; define o operador do grupo.
+- 🎖️ **Líder do grupo** — cria/lidera um grupo; define o operador do grupo.
 - 👤 **Jogadores online** + 🏠 **presenciais** (sem celular, adicionados pelo
-  host/subHost) — os 3 cenários convivem na mesma sala.
-- 👀 **Espectador** — entra com a partida em andamento.
+  host/líder do grupo) — os 3 cenários convivem na mesma sala. Um presencial
+  também pode ser operador usando o dispositivo do líder do seu grupo.
+- 👀 **Espectador** — ao entrar com a partida em andamento, escolhe o grupo
+  antes de assistir e passa a integrar esse grupo na próxima rodada.
 
 ### Arquivos novos
 

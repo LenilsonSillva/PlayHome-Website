@@ -105,6 +105,92 @@
   line-height: 1.5;
 }
 
+/* ---------------- ENTRADA DURANTE PARTIDA ---------------- */
+.waitingJoinPanel {
+  max-width: 900px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.waitingJoinPanel h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 2px;
+}
+
+.waitingJoinGroups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.waitingJoinGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid;
+  border-left-width: 4px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.waitingJoinGroupSelected {
+  background: rgba(0, 242, 255, 0.08);
+  box-shadow: 0 0 18px rgba(0, 242, 255, 0.12);
+}
+
+.waitingJoinGroup .groupHeader {
+  margin-bottom: 0;
+}
+
+.waitingJoinGroup h2 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.waitingJoinMembers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.waitingJoinMember {
+  padding: 5px 8px;
+  border-radius: 8px;
+  color: var(--text-default);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 12px;
+}
+
+.waitingJoinBtn {
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-default);
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.waitingJoinBtn:hover:not(:disabled),
+.waitingJoinGroupSelected .waitingJoinBtn {
+  background: rgba(0, 242, 255, 0.14);
+}
+
+.waitingJoinBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 /* ---------------- ROOM HEADER ---------------- */
 .roomHeader {
   display: flex;
