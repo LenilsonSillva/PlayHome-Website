@@ -1,25 +1,23 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { OfflineImpostorLobby } from "./OfflineImpostorLobby";
 import { OnlineImpostorLobby } from "./OnlineImpostorLobby";
 import { ImpostorHeader } from "../../../../components/ImpostorHeader/ImpostorHeader";
 import styles from "./index-Lobby.module.css";
 
-export default function LobbyImportor() {
-  const [gameMode, setGameMode] = useState<string | null>("local");
+type ConnectionMode = "local" | "online";
 
-  function handleChildValue(value: string) {
-    setGameMode(value);
-  }
+export default function LobbyImportor() {
+  const [searchParams] = useSearchParams();
+  const [gameMode, setGameMode] = useState<ConnectionMode>(() =>
+    searchParams.get("mode") === "online" ? "online" : "local",
+  );
 
   return (
-    <div className={styles["game-content"]}>
-      <ImpostorHeader mode={handleChildValue} currentMode={gameMode} />
-      <div>
-        {gameMode === "local" ? (
-          <OfflineImpostorLobby />
-        ) : gameMode === "online" ? (
-          <OnlineImpostorLobby />
-        ) : null}
+    <div className={styles.gameContent}>
+      <ImpostorHeader mode={setGameMode} currentMode={gameMode} />
+      <div className={styles.lobbyStage}>
+        {gameMode === "local" ? <OfflineImpostorLobby /> : <OnlineImpostorLobby />}
       </div>
     </div>
   );

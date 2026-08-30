@@ -1,8 +1,9 @@
 import styles from "./roundAudit.module.css";
+import { useI18n } from "../../../../i18n";
 
 // Painel de auditoria da rodada — compartilhado entre o resultado offline
 // (valida limites localmente) e o online (o servidor valida). No modo
-// infiltração a palavra fica travada ao esquadrão dono (regra do RN).
+// infiltration keeps each word locked to its owning group (the mobile rule).
 
 export interface AuditItem {
   word: string;
@@ -35,9 +36,10 @@ export function RoundAudit({
   teamMeta,
   onReassign,
 }: RoundAuditProps) {
+  const { t } = useI18n();
   const warnLimit = (teamName: string, limit: number) => {
     alert(
-      `Limite de ajustes da equipe ${teamName.toUpperCase()} atingido (${limit} por rodada).`,
+      `${t("games.cryptography_result_audit_limit_reached", "Adjustment limit reached for this team.")} (${teamName.toUpperCase()} · ${limit})`,
     );
   };
 
@@ -48,14 +50,14 @@ export function RoundAudit({
     const locked =
       item.ownerTeamIndex !== null && item.ownerTeamIndex !== undefined;
 
-    // INFILTRAÇÃO: palavra travada ao esquadrão dono
+    // INFILTRATION: word locked to its owning group
     if (locked) {
       const ownerIdx = item.ownerTeamIndex!;
       const owner = teams[ownerIdx];
 
       if (newWinnerIndex !== null && newWinnerIndex !== ownerIdx) {
         alert(
-          `${owner.name.toUpperCase()} é a equipe responsável por essa palavra.`,
+          `${owner.name.toUpperCase()} ${t("games.cryptography_result_audit_lockedWord", "is responsible for this word.")}`,
         );
         return;
       }
@@ -70,7 +72,7 @@ export function RoundAudit({
           if (
             item.winnerTeamIndex !== null &&
             !window.confirm(
-              `Remover o acerto de ${owner.name.toUpperCase()}?`,
+              `${t("games.cryptography_result_audit_removeHit", "Remove the hit from")} ${owner.name.toUpperCase()}?`,
             )
           ) {
             return;
@@ -82,7 +84,7 @@ export function RoundAudit({
           }
           if (
             !window.confirm(
-              `Atribuir esta palavra a ${owner.name.toUpperCase()}?`,
+              `${t("games.cryptography_result_audit_assignWord", "Assign this word to")} ${owner.name.toUpperCase()}?`,
             )
           ) {
             return;
@@ -94,7 +96,7 @@ export function RoundAudit({
       return;
     }
 
-    // INTERCEPTAÇÃO (ou palavra sem dono)
+    // INTERCEPTION (or a word without an owner)
     if (newWinnerIndex === null) {
       if (item.winnerTeamIndex !== null) {
         const meta = teamMeta?.[item.winnerTeamIndex];
@@ -104,7 +106,7 @@ export function RoundAudit({
         }
         if (
           !window.confirm(
-            `Remover o acerto de ${teams[item.winnerTeamIndex].name.toUpperCase()}?`,
+            `${t("games.cryptography_result_audit_removeHit", "Remove the hit from")} ${teams[item.winnerTeamIndex].name.toUpperCase()}?`,
           )
         ) {
           return;
@@ -131,20 +133,19 @@ export function RoundAudit({
   const optionLabel = (teamIdx: number) => {
     const meta = teamMeta?.[teamIdx];
     return meta
-      ? `${teams[teamIdx].name} (A ${meta.addUsed}/${meta.limit})`
+      ? `${teams[teamIdx].name} (${t("games.cryptography_result_audit_added", "ADDED")} ${meta.addUsed}/${meta.limit})`
       : teams[teamIdx].name;
   };
 
   return (
     <div className={`glass-panel ${styles.auditPanel}`}>
-      <h2 className={styles.auditTitle}>📡 AUDITORIA DA RODADA (REATRIBUIR PONTOS)</h2>
+      <h2 className={styles.auditTitle}>📡 {t("games.cryptography_result_audit_title", "ROUND AUDIT")}</h2>
       <p className={styles.auditHint}>
-        Toque na palavra para corrigir o vencedor. Cada esquadrão tem um
-        limite de ajustes por rodada.
+        {t("games.cryptography_result_audit_clickToEdit", "Click to reassign points")}. {t("games.cryptography_result_audit_subtitle", "Adjust the result")}
       </p>
 
       {items.length === 0 ? (
-        <p className={styles.auditHint}>Nenhuma palavra nesta rodada.</p>
+        <p className={styles.auditHint}>{t("games.cryptography_result_audit_empty", "No words recorded.")}</p>
       ) : (
         <div className={styles.auditTable}>
           {items.map((item, idx) => (
@@ -154,7 +155,7 @@ export function RoundAudit({
                 {item.ownerTeamIndex !== null &&
                   item.ownerTeamIndex !== undefined && (
                     <span className={styles.auditOwner}>
-                      RESPONSÁVEL: {teams[item.ownerTeamIndex]?.name}
+                      {t("games.cryptography_result_audit_responsible", "RESPONSIBLE:")} {teams[item.ownerTeamIndex]?.name}
                     </span>
                   )}
               </div>
@@ -169,7 +170,7 @@ export function RoundAudit({
                   );
                 }}
               >
-                <option value={-1}>— sem vencedor</option>
+                <option value={-1}>— {t("games.cryptography_result_noWord", "no winner")}</option>
                 {optionsFor(item).map((tIdx) => (
                   <option key={teams[tIdx].id} value={tIdx}>
                     {optionLabel(tIdx)}

@@ -1,34 +1,54 @@
 .container {
-  max-width: 1100px;
+  width: min(100% - 2.4rem, 116rem);
   margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: 100vh;
+  padding: 1rem 0 4rem;
 }
 
-/* ---------------- JOIN PANEL ---------------- */
+.joinPanel,
+.roomHeader,
+.playersPanel,
+.configPanel,
+.groupCard,
+.waitingJoinPanel,
+.emptyGroups {
+  border-radius: 1.8rem;
+}
+
 .joinPanel {
-  margin: 40px auto;
-  max-width: 440px;
-  width: 100%;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  width: min(100%, 54rem);
+  margin: 1rem auto 0;
+  padding: 2rem 1.6rem;
+}
+
+.badge,
+.roomLabel,
+.sectionHeader h2,
+.playersPanel h2,
+.configPanel h2,
+.field > span,
+.configSection > label {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
 .badge {
+  display: inline-flex;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(85, 230, 224, 0.3);
+  border-radius: 99rem;
+  background: rgba(85, 230, 224, 0.08);
   color: var(--tech-cyan);
-  font-size: 11px;
-  letter-spacing: 3px;
-  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 .title {
-  font-size: 26px;
-  letter-spacing: 1px;
+  margin: 1.5rem 0 2rem;
+  color: var(--gray-100);
+  font-size: clamp(2.7rem, 8vw, 4.8rem);
+  letter-spacing: -0.07em;
+  line-height: 0.98;
 }
 
 .cyan {
@@ -36,656 +56,648 @@
 }
 
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+}
+
+.field > span {
   color: var(--text-muted);
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.input,
+.presentInput,
+.assignSelect,
+.manualRow select {
+  min-height: 5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 1.1rem;
+  outline: 0;
+  background: var(--surface-strong);
+  color: var(--text-default);
 }
 
 .input {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  padding: 12px;
-  color: var(--text-default);
-  font-size: 15px;
-  letter-spacing: 1px;
-  outline: none;
+  width: 100%;
+  padding: 0 1.3rem;
 }
 
-.input:focus {
+.input:focus,
+.presentInput:focus,
+.assignSelect:focus,
+.manualRow select:focus {
   border-color: var(--tech-cyan);
-  box-shadow: 0 0 12px var(--tech-glow);
+  box-shadow: var(--focus-ring);
 }
 
 .errorBox {
-  background: rgba(255, 0, 60, 0.12);
-  border: 1px solid rgba(255, 0, 60, 0.4);
-  color: #ffb3c1;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 13px;
+  margin-top: 1.2rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid rgba(255, 93, 127, 0.42);
+  border-radius: 1rem;
+  background: rgba(255, 93, 127, 0.1);
+  color: var(--text-error);
+  font-size: 1.3rem;
 }
 
-.joinActions {
-  display: flex;
-  gap: 10px;
+.joinActions,
+.configActions {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1.6rem;
 }
 
 .createBtn,
-.joinBtn {
-  flex: 1;
-  padding: 13px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 800;
-  letter-spacing: 1px;
+.joinBtn,
+.saveConfigBtn,
+.startBtn,
+.createGroupBtn,
+.leaveBtn,
+.joinGroupBtn,
+.leaveGroupBtn,
+.deleteGroupBtn,
+.presentBtn,
+.waitingJoinBtn,
+.miniBtn,
+.miniBtnDanger,
+.timeOptions button,
+.segmented button,
+.catGrid button {
+  min-height: 4.6rem;
+  border-radius: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  color: #04070d;
-  font-size: 13px;
+  transition: transform 160ms ease, filter 160ms ease, background 160ms ease, border-color 160ms ease;
 }
 
-.createBtn {
+.createBtn,
+.joinBtn,
+.saveConfigBtn,
+.startBtn,
+.waitingJoinBtn,
+.joinGroupBtn {
+  border: 0;
+}
+
+.createBtn,
+.startBtn {
   background: var(--button-tech);
-  box-shadow: 0 0 16px var(--tech-glow);
+  color: var(--gray-900);
 }
 
-.joinBtn {
-  background: var(--button-system);
-  color: var(--text-default);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+.joinBtn,
+.saveConfigBtn,
+.joinGroupBtn {
+  border: 1px solid rgba(174, 140, 255, 0.38);
+  background: rgba(174, 140, 255, 0.12);
+  color: var(--violet);
+}
+
+.createBtn:hover,
+.joinBtn:hover,
+.saveConfigBtn:hover,
+.startBtn:hover:not(:disabled),
+.joinGroupBtn:hover,
+.waitingJoinBtn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-0.15rem);
 }
 
 .hint {
+  margin: 1.3rem 0 0;
   color: var(--text-muted);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 1.25rem;
+  line-height: 1.55;
 }
 
-/* ---------------- ENTRADA DURANTE PARTIDA ---------------- */
-.waitingJoinPanel {
-  max-width: 900px;
-  width: 100%;
-  margin: 20px auto;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.waitingJoinPanel h1 {
-  margin: 0;
-  font-size: 24px;
-  letter-spacing: 2px;
-}
-
-.waitingJoinGroups {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 12px;
-  margin-top: 6px;
-}
-
-.waitingJoinGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 15px;
-  border: 1px solid;
-  border-left-width: 4px;
-  border-radius: 13px;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.waitingJoinGroupSelected {
-  background: rgba(0, 242, 255, 0.08);
-  box-shadow: 0 0 18px rgba(0, 242, 255, 0.12);
-}
-
-.waitingJoinGroup .groupHeader {
-  margin-bottom: 0;
-}
-
-.waitingJoinGroup h2 {
-  margin: 0;
-  font-size: 16px;
-  letter-spacing: 1px;
-}
-
-.waitingJoinMembers {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-height: 28px;
-}
-
-.waitingJoinMember {
-  padding: 5px 8px;
-  border-radius: 8px;
-  color: var(--text-default);
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 12px;
-}
-
-.waitingJoinBtn {
-  padding: 10px;
-  border: 1px solid;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-default);
-  font-weight: 800;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.waitingJoinBtn:hover:not(:disabled),
-.waitingJoinGroupSelected .waitingJoinBtn {
-  background: rgba(0, 242, 255, 0.14);
-}
-
-.waitingJoinBtn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-/* ---------------- ROOM HEADER ---------------- */
 .roomHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 14px 18px;
-}
-
-.roomLabel {
-  color: var(--text-muted);
-  font-size: 11px;
-  letter-spacing: 2px;
-  margin-right: 10px;
-}
-
-.roomCode {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: 4px;
-  color: var(--tech-cyan);
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.3rem 1.4rem;
 }
 
 .roomHeaderRight {
   display: flex;
-  gap: 10px;
   align-items: center;
+  justify-content: flex-end;
+  gap: 0.7rem;
+}
+
+.roomLabel {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.roomCode {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--tech-cyan);
+  font-family: "Space Grotesk", monospace;
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.hostBadge,
+.noLeaderBadge,
+.subBadge,
+.connBadge,
+.memberCount {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.4rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 99rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .hostBadge {
+  background: rgba(255, 200, 87, 0.13);
   color: var(--caution-amber);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 1px;
 }
 
 .leaveBtn {
-  background: rgba(255, 0, 60, 0.15);
-  border: 1px solid rgba(255, 0, 60, 0.5);
-  color: #ffb3c1;
-  padding: 8px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 12px;
+  min-height: 4rem;
+  padding: 0 1.1rem;
+  border: 1px solid rgba(255, 77, 120, 0.35);
+  background: rgba(255, 77, 120, 0.1);
+  color: var(--danger-neon);
 }
 
-/* ---------------- LAYOUT ---------------- */
 .columns {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  gap: 16px;
-  align-items: start;
+  gap: 1.4rem;
+  margin-top: 1.4rem;
 }
 
-@media (max-width: 860px) {
-  .columns {
-    grid-template-columns: 1fr;
-  }
+.mainColumn,
+.sideColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-width: 0;
 }
 
 .sectionHeader {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .sectionHeader h2,
 .playersPanel h2,
 .configPanel h2 {
-  font-size: 14px;
-  letter-spacing: 2px;
-  color: var(--text-muted);
   margin: 0;
+  color: var(--gray-200);
+  font-size: 1.3rem;
 }
 
 .createGroupBtn {
-  background: var(--button-tech);
-  border: none;
-  color: #04070d;
-  font-weight: 800;
-  font-size: 12px;
-  padding: 9px 14px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.createGroupBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+  min-height: 4.2rem;
+  padding: 0 1rem;
+  border: 1px solid rgba(85, 230, 224, 0.35);
+  background: rgba(85, 230, 224, 0.1);
+  color: var(--tech-cyan);
+  font-size: 1.05rem;
 }
 
 .emptyGroups {
-  padding: 18px;
+  padding: 1.6rem;
   color: var(--text-muted);
-  font-size: 13px;
+  text-align: center;
 }
 
-/* ---------------- GROUPS ---------------- */
+.groupCard,
+.playersPanel,
+.configPanel,
+.waitingJoinPanel {
+  padding: 1.5rem;
+}
+
 .groupCard {
-  padding: 16px;
-  border-left: 4px solid;
-  margin-bottom: 12px;
+  border-left: 0.35rem solid var(--tech-cyan);
 }
 
 .groupHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--line);
 }
 
-.groupHeader h3 {
+.groupHeader h2,
+.groupHeader h3,
+.waitingJoinPanel h1,
+.waitingJoinGroup h2 {
   margin: 0;
-  font-size: 16px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  color: var(--gray-100);
+  font-size: 1.7rem;
+  letter-spacing: -0.03em;
 }
 
 .groupDot {
-  width: 10px;
-  height: 10px;
+  flex: 0 0 1rem;
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
-  box-shadow: 0 0 8px currentColor;
+  box-shadow: 0 0 1.1rem currentColor;
 }
 
 .memberCount {
   margin-left: auto;
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-muted);
-  font-size: 11px;
+}
+
+.noLeaderBadge {
+  background: rgba(255, 200, 87, 0.12);
+  color: var(--caution-amber);
 }
 
 .membersList {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  gap: 0.6rem;
+  padding-top: 1rem;
 }
 
 .memberRow {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  min-width: 0;
+  min-height: 4rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.035);
 }
 
 .memberEmoji {
-  font-size: 18px;
+  flex: 0 0 2.4rem;
+  font-size: 1.8rem;
+  text-align: center;
 }
 
 .memberName {
-  font-size: 13px;
-  color: var(--text-default);
+  flex: 1 1 8rem;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--gray-200);
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .memberName em {
   color: var(--tech-cyan);
+  font-size: 1.05rem;
   font-style: normal;
-  font-size: 11px;
 }
 
 .subBadge {
-  font-size: 10px;
-  color: var(--caution-amber);
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-.noLeaderBadge {
-  color: var(--text-muted);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-}
-
-.deleteGroupBtn {
-  padding: 8px 10px;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: 9px;
-  background: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  cursor: pointer;
-}
-
-.deleteGroupBtn:hover {
-  background: rgba(239, 68, 68, 0.2);
-}
-
-.unassignedTitle {
-  margin: 6px 0 0;
-  color: var(--text-muted);
-  font-size: 10px;
-  letter-spacing: 1.2px;
+  background: rgba(174, 140, 255, 0.14);
+  color: var(--violet);
 }
 
 .connBadge {
   margin-left: auto;
-  font-size: 9px;
-  letter-spacing: 1px;
-  padding: 3px 7px;
-  border-radius: 6px;
-  font-weight: 800;
 }
 
 .connOnline {
-  color: #4ade80;
-  background: rgba(16, 185, 129, 0.12);
+  background: rgba(80, 223, 170, 0.11);
+  color: var(--success);
 }
 
 .connPresent {
-  color: var(--tech-cyan);
-  background: rgba(0, 242, 255, 0.12);
+  background: rgba(255, 200, 87, 0.12);
+  color: var(--caution-amber);
 }
 
 .connOffline {
-  color: #f87171;
-  background: rgba(239, 68, 68, 0.12);
+  background: rgba(141, 162, 189, 0.12);
+  color: var(--text-muted);
 }
 
 .miniBtn,
 .miniBtnDanger {
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: grid;
+  flex: 0 0 3rem;
+  width: 3rem;
+  min-height: 3rem;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line-strong);
   background: rgba(255, 255, 255, 0.05);
-  color: var(--text-default);
-  border-radius: 6px;
-  width: 26px;
-  height: 26px;
-  cursor: pointer;
-  font-size: 12px;
+  color: var(--gray-200);
 }
 
 .miniBtnDanger {
-  color: #f87171;
-  border-color: rgba(239, 68, 68, 0.4);
+  border-color: rgba(255, 77, 120, 0.3);
+  background: rgba(255, 77, 120, 0.1);
+  color: var(--danger-neon);
 }
 
 .groupActions {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.1rem;
 }
 
-.joinGroupBtn,
-.leaveGroupBtn {
-  padding: 9px;
-  border-radius: 10px;
-  font-weight: 800;
-  font-size: 12px;
-  cursor: pointer;
-  border: none;
-}
-
-.joinGroupBtn {
-  background: var(--button-tech);
-  color: #04070d;
-}
-
-.leaveGroupBtn {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-muted);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+.leaveGroupBtn,
+.deleteGroupBtn {
+  border: 1px solid rgba(255, 77, 120, 0.28);
+  background: rgba(255, 77, 120, 0.08);
+  color: var(--danger-neon);
 }
 
 .assignSelect {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--text-default);
-  border-radius: 8px;
-  padding: 8px;
-  font-size: 12px;
+  width: 100%;
+  padding: 0 1rem;
+  font-size: 1.2rem;
 }
 
 .presentForm {
-  display: flex;
-  gap: 6px;
+  display: grid;
+  gap: 0.7rem;
 }
 
 .presentInput {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  padding: 8px 10px;
-  color: var(--text-default);
-  font-size: 12px;
-  outline: none;
+  width: 100%;
+  padding: 0 1rem;
 }
 
 .presentBtn {
-  background: rgba(0, 242, 255, 0.15);
-  border: 1px solid var(--tech-cyan);
-  color: var(--tech-cyan);
-  border-radius: 8px;
-  padding: 8px 10px;
-  font-weight: 700;
-  font-size: 11px;
-  cursor: pointer;
-}
-
-/* ---------------- SIDE PANELS ---------------- */
-.sideColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  position: sticky;
-  top: 20px;
+  border: 1px solid rgba(255, 200, 87, 0.32);
+  background: rgba(255, 200, 87, 0.1);
+  color: var(--caution-amber);
 }
 
 .playersPanel,
 .configPanel {
-  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 1rem;
+}
+
+.unassignedTitle {
+  margin: 0.8rem 0 0;
+  color: var(--caution-amber);
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .configSection {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.4rem;
 }
 
 .configSection > label {
   color: var(--text-muted);
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  font-weight: 700;
+  font-size: 1.05rem;
 }
 
 .segmented {
-  display: flex;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 4px;
-  border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0.4rem;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
+  background: var(--surface-inset);
 }
 
 .segmented button {
-  flex: 1;
+  padding: 0.7rem;
+  border: 0;
   background: transparent;
-  border: none;
   color: var(--text-muted);
-  padding: 9px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 800;
-  cursor: pointer;
+  font-size: 1.05rem;
 }
 
 .segmented .segActive {
-  background: var(--tech-cyan);
-  color: #04070d;
+  background: rgba(85, 230, 224, 0.15);
+  color: var(--tech-cyan);
 }
 
 .counter {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: space-between;
+  padding: 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 1.1rem;
 }
 
 .counter button {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  border: 1px solid var(--tech-cyan);
-  background: transparent;
-  color: var(--tech-cyan);
-  font-size: 18px;
+  width: 4.3rem;
+  height: 4.3rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0.9rem;
+  background: var(--surface-soft);
+  color: var(--gray-100);
+  font-size: 2rem;
   cursor: pointer;
 }
 
 .counter span {
-  font-size: 20px;
-  font-weight: 800;
+  color: var(--tech-cyan);
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.manualList {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.manualRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  color: var(--gray-300);
+  font-size: 1.2rem;
+}
+
+.manualRow select {
+  min-height: 3.7rem;
+  padding: 0 0.6rem;
 }
 
 .timeOptions {
-  display: flex;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
 }
 
 .timeOptions button {
-  flex: 1;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: transparent;
-  color: var(--text-muted);
-  font-weight: 800;
-  font-size: 12px;
-  cursor: pointer;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--gray-300);
 }
 
 .timeOptions .timeActive {
-  background: var(--tech-cyan);
   border-color: var(--tech-cyan);
-  color: #04070d;
+  background: rgba(85, 230, 224, 0.14);
+  color: var(--tech-cyan);
 }
 
 .catGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  max-height: 140px;
-  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
 }
 
 .catGrid button {
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 11px;
-  cursor: pointer;
+  min-height: 4rem;
+  padding: 0.5rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--gray-300);
+  font-size: 1.05rem;
 }
 
 .catGrid .catActive {
-  background: rgba(0, 242, 255, 0.15);
   border-color: var(--tech-cyan);
+  background: rgba(85, 230, 224, 0.13);
   color: var(--tech-cyan);
 }
 
 .checkRow {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-default);
-  font-size: 12px;
-  letter-spacing: 0;
-  font-weight: 400;
+  align-items: flex-start;
+  gap: 0.8rem;
+  color: var(--text-muted);
+  font-family: "DM Sans", system-ui, sans-serif !important;
+  font-size: 1.2rem;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.45;
+  text-transform: none !important;
 }
 
 .checkRow input {
+  flex: 0 0 1.8rem;
+  width: 1.8rem;
+  height: 1.8rem;
   accent-color: var(--tech-cyan);
 }
 
-.manualList {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.manualRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-}
-
-.manualRow select {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--text-default);
-  border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 12px;
-}
-
 .configActions {
+  grid-template-columns: 1fr;
+}
+
+.configActions .startBtn {
+  margin-top: 0;
+}
+
+.waitingJoinPanel > h1 {
+  margin: 1.3rem 0 0.5rem;
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+.waitingJoinGroups {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.waitingJoinGroup {
+  padding: 1.2rem;
+  border: 1px solid var(--line-strong);
+  border-left-width: 0.4rem;
+  border-radius: 1.4rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.waitingJoinGroupSelected {
+  background: rgba(85, 230, 224, 0.1);
+  box-shadow: 0 0 0 1px rgba(85, 230, 224, 0.2);
+}
+
+.waitingJoinMembers {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
 }
 
-.saveConfigBtn,
-.startBtn {
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  cursor: pointer;
-  border: none;
-  font-size: 13px;
+.waitingJoinMember {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 99rem;
+  color: var(--gray-300);
+  font-size: 1.1rem;
 }
 
-.saveConfigBtn {
-  background: var(--button-system);
-  color: var(--text-default);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+.waitingJoinBtn {
+  width: 100%;
+  min-height: 4.6rem;
+  border: 1px solid var(--tech-cyan);
+  background: rgba(85, 230, 224, 0.1);
+  color: var(--tech-cyan);
 }
 
-.startBtn {
-  background: var(--button-tech);
-  color: #04070d;
-  box-shadow: 0 0 18px var(--tech-glow);
+@media (min-width: 700px) {
+  .container {
+    width: min(100% - 6rem, 116rem);
+    padding-top: 2rem;
+  }
+
+  .waitingJoinGroups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .joinPanel {
+    padding: 3.2rem;
+  }
+
+  .joinActions,
+  .configActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .columns {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .sideColumn {
+    position: static;
+  }
+
+  .presentForm {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .presentBtn {
+    padding: 0 1rem;
+  }
+
+  .catGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-.startBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+@media (min-width: 860px) {
+  .columns {
+    grid-template-columns: minmax(0, 1.25fr) minmax(26rem, 0.75fr);
+  }
+
+  .sideColumn {
+    position: sticky;
+    top: 1.6rem;
+  }
 }

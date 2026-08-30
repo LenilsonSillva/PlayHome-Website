@@ -1,310 +1,299 @@
 .container {
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  animation: fadeIn 0.5s ease-out;
+  gap: 1.4rem;
+  width: min(100%, 100rem);
+  margin: 0 auto;
+  padding-bottom: 3rem;
 }
 
 .header {
+  padding: 0.8rem 0 1rem;
   text-align: center;
 }
 
 .badge {
-  font-size: 0.7rem;
-  letter-spacing: 4px;
+  display: inline-flex;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(85, 230, 224, 0.32);
+  border-radius: 99rem;
+  background: rgba(85, 230, 224, 0.08);
   color: var(--tech-cyan);
-  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
 .title {
-  font-size: clamp(2rem, 6vw, 3rem);
-  font-weight: 900;
-  margin: 0;
-  text-transform: uppercase;
+  margin: 1.2rem 0 0;
+  color: var(--gray-100);
+  font-size: clamp(2.5rem, 9vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -0.07em;
+  line-height: 0.98;
 }
 
-/* GRID RESPONSIVO: 1 col no mobile, 2 ou 3 no PC */
+.roundTag {
+  margin: 0.7rem 0 0;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.randomAllBtn {
+  align-self: center;
+  min-height: 4.8rem;
+  padding: 0 1.3rem;
+  border: 1px solid rgba(85, 230, 224, 0.3);
+  border-radius: 1.2rem;
+  background: rgba(85, 230, 224, 0.1);
+  color: var(--tech-cyan);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.randomAllBtn:hover,
+.randomSubBtn:hover,
+.editBtn:hover,
+.confirmBtn:hover,
+.startTeamBtn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-0.15rem);
+}
+
 .teamsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .teamCard {
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-left: 5px solid var(--team-color);
-  transition: transform 0.3s ease;
+  min-width: 0;
+  padding: 1.4rem;
+  border-left: 0.35rem solid var(--team-color, var(--tech-cyan));
+  transition: transform 180ms ease, border-color 180ms ease;
 }
 
 .teamCard:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-0.2rem);
 }
 
 .teamHeader {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .teamIndex {
-  font-family: monospace;
-  font-size: 1.3rem;
-  color: var(--team-color);
-  font-weight: bold;
+  color: var(--team-color, var(--tech-cyan));
+  font-family: "Space Grotesk", monospace;
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .teamName {
-  font-size: 1.5rem;
+  flex: 1;
+  min-width: 8rem;
   margin: 0;
   color: var(--gray-100);
+  font-size: 1.85rem;
+  letter-spacing: -0.04em;
 }
 
 .membersList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.memberItem {
-  display: flex;
-  align-items: center;
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: var(--gray-300);
-}
-
-.dot {
-  width: 6px;
-  height: 6px;
-  background: var(--team-color);
-  border-radius: 50%;
-  margin-right: 12px;
-  box-shadow: 0 0 8px var(--team-color);
-}
-
-.footer {
-  text-align: center;
-  margin-top: 2rem;
-  padding-bottom: 4rem;
-}
-
-.instruction {
-  color: var(--text-muted);
-  margin-bottom: 2rem;
-  font-size: 1rem;
-}
-
-.buttonGroup {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  gap: 0.7rem;
+  padding-top: 1.2rem;
 }
 
 .roleLabel {
-  font-size: 0.8rem;
-  color: var(--tech-cyan);
-  letter-spacing: 1px;
-  margin-bottom: 10px;
-  font-weight: bold;
+  margin: 0 0 0.2rem;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
 }
 
 .memberBtn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 12px 15px;
-  border-radius: 8px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--gray-300);
+  justify-content: space-between;
+  gap: 0.8rem;
   width: 100%;
+  min-height: 4.8rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--gray-300);
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
 }
 
 .memberBtn:hover {
+  border-color: var(--line-strong);
   background: rgba(255, 255, 255, 0.08);
 }
 
 .activeOperator {
-  background: rgba(0, 242, 255, 0.1) !important;
-  border-color: var(--tech-cyan) !important;
-  color: #fff !important;
-  box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+  border-color: var(--tech-cyan);
+  background: rgba(85, 230, 224, 0.12);
+  color: var(--gray-100);
 }
 
 .memberInfo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 1.5rem;
-  font-weight: bold;
+  gap: 0.8rem;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .statusDot {
-  width: 6px;
-  height: 6px;
+  flex: 0 0 0.8rem;
+  width: 0.8rem;
+  height: 0.8rem;
   border-radius: 50%;
   background: var(--gray-500);
 }
 
 .activeOperator .statusDot {
   background: var(--tech-cyan);
-  box-shadow: 0 0 8px var(--tech-cyan);
+  box-shadow: 0 0 1rem var(--tech-cyan);
 }
 
 .operatorBadge {
-  font-size: 0.6rem;
-  font-weight: 900;
+  flex-shrink: 0;
+  padding: 0.4rem 0.55rem;
+  border-radius: 99rem;
   background: var(--tech-cyan);
   color: var(--gray-900);
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .randomSubBtn {
-  margin-top: 15px;
+  align-self: flex-start;
+  min-height: 3.8rem;
+  margin-top: 0.4rem;
+  padding: 0 0.8rem;
+  border: 0;
   background: transparent;
-  border: none;
   color: var(--text-muted);
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  text-decoration: underline;
-  opacity: 0.7;
 }
 
-.randomSubBtn:hover {
-  opacity: 1;
+.startingAutoNotice {
+  display: grid;
+  gap: 0.25rem;
+  width: min(100%, 62rem);
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--team-color, var(--tech-cyan));
+  border-radius: 1rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--tech-cyan) 10%, var(--surface-strong)), var(--surface-strong));
+  text-align: center;
+  box-shadow: var(--shadow-float);
+}
+
+.startingAutoLabel {
   color: var(--tech-cyan);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
+.startingAutoNotice strong {
+  color: var(--gray-100);
+  font-size: 1.05rem;
+}
+
+.startingAutoNotice small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding-top: 0.5rem;
+}
+
+.instruction {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.buttonGroup {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+.editBtn,
+.confirmBtn {
+  min-height: 5.4rem;
+  border-radius: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
 }
 
 .editBtn {
-  flex: 1;
-  padding: 18px;
-  border-radius: 12px;
-  border: 1px solid var(--gray-500);
+  border: 1px solid var(--line-strong);
   background: rgba(255, 255, 255, 0.05);
-  color: var(--text-muted);
-  font-size: 1rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: 0.3s;
-  text-transform: uppercase;
-}
-
-.editBtn:hover {
-  border-color: var(--gray-300);
-  color: var(--gray-100);
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--gray-300);
 }
 
 .confirmBtn {
-  flex: 2; /* O botão de iniciar é maior e ganha mais destaque */
-  padding: 18px;
-  border-radius: 12px;
-  border: none;
+  border: 0;
   background: var(--button-tech);
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 10px 20px rgba(0, 242, 255, 0.2);
-  transition: 0.3s;
-  text-transform: uppercase;
+  color: var(--gray-900);
+  box-shadow: 0 1rem 2.5rem rgba(85, 230, 224, 0.15);
 }
 
-.confirmBtn:hover {
-  transform: scale(1.05);
-  filter: brightness(1.2);
-}
+@media (min-width: 680px) {
+  .teamsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 600px) {
-  .teamName {
-    font-size: 1.4rem;
-  }
-  .memberItem {
-    font-size: 1.1rem;
-  }
   .buttonGroup {
-    flex-direction: column-reverse; /* No mobile o Iniciar fica em cima do Editar */
-    padding: 0 10px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
   }
-
-  .confirmBtn,
-  .editBtn {
-    width: 100%;
-  }
-}
-
-/* NOVOS ELEMENTOS (paridade com o PlayHome-RN) */
-
-.roundTag {
-  margin: 6px 0 0;
-  font-size: 0.8rem;
-  letter-spacing: 3px;
-  color: var(--text-muted);
-  font-weight: 800;
-}
-
-.randomAllBtn {
-  display: block;
-  margin: 0 auto 10px;
-  background: rgba(0, 242, 255, 0.07);
-  border: 1px solid rgba(0, 242, 255, 0.4);
-  color: var(--tech-cyan);
-  font-weight: 900;
-  font-size: 0.8rem;
-  letter-spacing: 2px;
-  padding: 12px 22px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.randomAllBtn:hover {
-  background: rgba(0, 242, 255, 0.15);
-  box-shadow: 0 0 18px rgba(0, 242, 255, 0.25);
 }
 
 .startTeamBtn {
+  min-height: 3.8rem;
+  margin-left: auto;
+  padding: 0 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 99rem;
   background: transparent;
-  border: 1px solid var(--gray-600);
   color: var(--text-muted);
-  font-size: 0.6rem;
-  font-weight: 900;
-  letter-spacing: 1px;
-  padding: 6px 10px;
-  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 700;
   cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
 }
 
 .startTeamActive {
-  background: var(--team-color);
-  border-color: var(--team-color);
-  color: #fff;
+  border-color: var(--team-color, var(--tech-cyan));
+  background: var(--team-color, var(--tech-cyan));
+  color: var(--gray-900);
 }

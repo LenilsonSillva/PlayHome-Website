@@ -1,119 +1,128 @@
 .hud {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 14px 20px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-left-width: 4px;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1.4rem;
+  border-left: 0.4rem solid var(--tech-cyan);
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, var(--surface-strong), var(--surface));
+  box-shadow: var(--shadow-float);
 }
 
 .hudLeft {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
   min-width: 0;
 }
 
-.hudLabel {
-  font-size: 0.7rem;
+.hudLabel,
+.statPill,
+.hudOperator {
   color: var(--text-muted);
-  letter-spacing: 2px;
-  font-weight: 800;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.hudLabel {
+  display: block;
   text-transform: uppercase;
 }
 
 .hudTeamRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 0.7rem;
 }
 
 .hudTeam {
-  font-size: 1.35rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  margin: 0;
+  margin: 0.3rem 0 0;
+  overflow: hidden;
+  font-size: clamp(2rem, 7vw, 3rem);
+  letter-spacing: -0.07em;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .hudOperator {
-  font-size: 0.95rem;
-  color: var(--gray-300);
-  margin: 0;
+  margin: 0.7rem 0 0;
+  letter-spacing: 0;
 }
 
 .hudOperator strong {
-  color: #fff;
+  color: var(--gray-200);
 }
 
 .hudStats {
   display: flex;
-  gap: 8px;
   flex-wrap: wrap;
-  margin-top: 2px;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
 }
 
 .statPill {
-  font-size: 0.8rem;
-  font-weight: 800;
-  padding: 3px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 99rem;
   background: rgba(255, 255, 255, 0.04);
-  color: var(--gray-200);
-  white-space: nowrap;
+  letter-spacing: 0;
 }
 
 .statPillSuccess {
+  border-color: rgba(80, 223, 170, 0.35);
   color: var(--success);
-  border-color: rgba(16, 185, 129, 0.35);
 }
 
 .statPillWarning {
-  color: var(--warning);
-  border-color: rgba(250, 204, 21, 0.35);
+  border-color: rgba(255, 200, 87, 0.35);
+  color: var(--caution-amber);
 }
 
 .timer {
-  font-size: 2.5rem;
-  font-weight: 900;
+  display: grid;
+  flex: 0 0 7rem;
+  width: 7rem;
+  height: 7rem;
+  place-items: center;
+  border: 1px solid rgba(85, 230, 224, 0.35);
+  border-radius: 50%;
+  background: rgba(85, 230, 224, 0.1);
   color: var(--tech-cyan);
-  font-family: monospace;
-  line-height: 1;
-  text-align: right;
-  min-width: 70px;
-}
-
-.timerPaused {
-  color: var(--gray-500);
+  font-family: "Space Grotesk", monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  box-shadow: inset 0 0 2.4rem rgba(85, 230, 224, 0.08);
 }
 
 .timerCritical {
+  border-color: var(--danger-neon);
+  background: rgba(255, 77, 120, 0.13);
   color: var(--danger-neon);
-  animation: hudBlink 0.5s infinite alternate;
+  animation: pulse 800ms ease-in-out infinite alternate;
 }
 
-@keyframes hudBlink {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
+.timerPaused {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--gray-300);
+}
+
+@keyframes pulse {
   to {
-    opacity: 0.55;
-    transform: scale(1.08);
+    transform: scale(1.04);
+    box-shadow: 0 0 2rem var(--danger-glow);
   }
 }
 
-@media (max-width: 768px) {
-  .timer {
-    font-size: 1.9rem;
-    min-width: 56px;
+@media (max-width: 420px) {
+  .hud {
+    align-items: flex-start;
   }
 
-  .hudTeam {
-    font-size: 1.1rem;
+  .timer {
+    flex-basis: 6rem;
+    width: 6rem;
+    height: 6rem;
+    font-size: 1.7rem;
   }
 }

@@ -22,6 +22,9 @@ export type GameData = {
   howManyImpostors: number;
   twoWordsMode: boolean;
   impostorHasHint: boolean;
+  impostorTrap: boolean;
+  impostorCat: boolean;
+  impostorsUnited: boolean;
   selectedCategories: string[];
   whoStart?: string;
   impostorCanStart: boolean;
@@ -33,11 +36,15 @@ export type GameRouteState = {
     howManyImpostors: number;
     impostorCanStart: boolean;
     impostorHint: boolean;
+    impostorTrap: boolean;
+    impostorCat: boolean;
+    impostorsUnited: boolean;
     selectedCategories: string[];
     twoWordsMode: boolean;
     whoStart: string | undefined;
     phase: ImpostorGameState["phase"];
     isHost?: boolean;
     roomCode?: string;
+    language?: string;
   };
 };

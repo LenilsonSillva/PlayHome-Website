@@ -10,6 +10,7 @@ import endSfx from "../../../../../assets/sounds/end.wav";
 import silentWav from "../../../../../assets/sounds/silent.wav";
 import { useIOSAudioUnlock } from "../../../../../hooks/useIOSAudioUnlock";
 import styles from "../onlineCrypto.module.css";
+import { useI18n } from "../../../../../i18n";
 
 type Props = {
   view: CryptoView;
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export function OnlineInterceptionAction({ view, emit }: Props) {
+  const { t } = useI18n();
   const currentTeam = view.teams[view.currentTeamIndex];
   const running = view.roundEndTime != null;
   const isController = view.controls.canControl;
@@ -189,7 +191,7 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
       {/* PROGRESSO DA PARTIDA */}
       <div className={styles.matchProgress}>
         <span>
-          PALAVRA {view.currentMatchIndex + 1} DE {view.config.wordLimit}
+          {t("games.cryptography_action_wordOf", "WORD")} {view.currentMatchIndex + 1} {t("games.cryptography_action_of", "OF")} {view.config.wordLimit}
         </span>
         <div className={styles.progressBg}>
           <div
@@ -206,7 +208,7 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
       </div>
 
       <CryptoHud
-        label="VEZ DE"
+        label={t("games.cryptography_action_turnOf", "TURN OF")}
         teamName={currentTeam.name}
         teamColor={currentTeam.color}
         operatorName={operator?.name ?? "---"}
@@ -219,27 +221,26 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
         /* ================= CONSENSO DOS OPERADORES ================= */
         <div className={styles.waitingPanel}>
           <span className={styles.waitingIcon}>🗳️</span>
-          <h2>TROCA DE PALAVRA SOLICITADA</h2>
+          <h2>{t("games.cryptography_action_wordChangeRequested", "WORD CHANGE REQUESTED")}</h2>
           <p className={styles.waitingSub}>
-            <strong>{request.requesterName}</strong> solicitou uma nova palavra.
-            A troca só acontece quando todos os operadores aceitarem.
+            <strong>{request.requesterName}</strong> {t("games.cryptography_action_requestedNewWord", "requested a new word.")} {t("games.cryptography_action_changeNeedsConsensus", "The change happens only when all operators accept.")}
           </p>
 
           <div className={styles.wordPeek}>
             {waitingWord ? (
               <>
-                <span className={styles.wordPeekLabel}>PALAVRA EM DISPUTA</span>
+                <span className={styles.wordPeekLabel}>{t("games.cryptography_action_contestedWord", "WORD UNDER REVIEW")}</span>
                 <span className={styles.wordPeekValue}>{waitingWord}</span>
               </>
             ) : (
               <span className={styles.wordPeekHidden}>
-                🔒 Palavra visível apenas conforme as regras da partida
+                🔒 {t("games.cryptography_action_wordVisibilityRules", "Word visibility follows the match rules")}
               </span>
             )}
           </div>
 
           <div className={styles.consensusStatus}>
-            {agreedOperators} / {totalOperators} OPERADORES DE ACORDO
+            {agreedOperators} / {totalOperators} {t("games.cryptography_action_operatorsAgreed", "OPERATORS AGREED")}
           </div>
 
           {view.controls.canApproveWordChange ||
@@ -247,26 +248,26 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
             <div className={styles.consensusActions}>
               {view.controls.canApproveWordChange && (
                 <button className={styles.primaryBtn} onClick={approveWordChange}>
-                  ✅ ACEITAR TROCA
+                  ✅ {t("games.cryptography_action_acceptChange", "ACCEPT CHANGE")}
                 </button>
               )}
               {view.controls.canRejectWordChange && (
                 <button className={styles.rejectBtn} onClick={rejectWordChange}>
-                  ❌ RECUSAR E CONTINUAR
+                  ❌ {t("games.cryptography_action_rejectContinue", "REJECT AND CONTINUE")}
                 </button>
               )}
             </div>
           ) : request.requesterId === myId ? (
             <p className={styles.waitingNote}>
-              ✅ Solicitação registrada. Aguardando os outros operadores...
+              ✅ {t("games.cryptography_action_requestRegistered", "Request registered. Waiting for the other operators...")}
             </p>
           ) : hasApproved ? (
             <p className={styles.waitingNote}>
-              ✅ Você já aceitou. Aguardando os outros operadores...
+              ✅ {t("games.cryptography_action_alreadyAccepted", "You already accepted. Waiting for the other operators...")}
             </p>
           ) : (
             <p className={styles.waitingNote}>
-              ⏳ Aguardando os operadores aceitarem a troca...
+              ⏳ {t("games.cryptography_action_waitingConsensus", "Waiting for the operators to accept the change...")}
             </p>
           )}
 
@@ -288,14 +289,14 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
                   !view.controls.canReroll
                 }
               >
-                🔄 SOLICITAR TROCA
+                🔄 {t("games.cryptography_action_requestChange", "REQUEST CHANGE")}
               </button>
               <button
                 className={styles.bigCyanBtn}
                 onClick={startTurnTimer}
                 disabled={!view.controls.canStartTimer || !hasViewedWord}
               >
-                ⏱️ DICA DADA! INICIAR RESPOSTA
+                ⏱️ {t("games.cryptography_action_hintGivenBtn", "HINT GIVEN! START TIMER")}
               </button>
             </div>
           ) : (
@@ -305,7 +306,7 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
                 onClick={handlePass}
                 disabled={isProcessing || !view.controls.canPassTurn}
               >
-                ❌ ERROU / PASSAR
+                ❌ {t("games.cryptography_action_missPassBtn", "MISSED / PASS")}
               </button>
               <button
                 className={styles.successBtn}
@@ -314,7 +315,7 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
                   !hasViewedWord || isProcessing || !view.controls.canControl
                 }
               >
-                ✅ ACERTOU!
+                {t("games.cryptography_action_winBtn", "CORRECT! 🏆")}
               </button>
             </div>
           )}
@@ -323,24 +324,24 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
         /* ================= QUEM ESPERA ================= */
         <div className={styles.waitingPanel}>
           <span className={styles.waitingIcon}>⚠️</span>
-          <h2>FIQUE ATENTO</h2>
+          <h2>{t("games.cryptography_action_stayAlert", "STAY ALERT")}</h2>
           <p className={styles.waitingSub}>
-            Grupo{" "}
+            {t("games.cryptography_action_group", "Group")} {" "}
             <strong style={{ color: currentTeam.color }}>
               {currentTeam.name}
             </strong>{" "}
-            tenta interceptar a palavra
+            {t("games.cryptography_action_tryingIntercept", "is trying to intercept the word")}
           </p>
 
           <div className={styles.wordPeek}>
             {waitingWord ? (
               <>
-                <span className={styles.wordPeekLabel}>PALAVRA EM DISPUTA</span>
+                <span className={styles.wordPeekLabel}>{t("games.cryptography_action_contestedWord", "WORD UNDER REVIEW")}</span>
                 <span className={styles.wordPeekValue}>{waitingWord}</span>
               </>
             ) : (
               <span className={styles.wordPeekHidden}>
-                🔒 Só o operador da vez vê a palavra agora
+                🔒 {t("games.cryptography_action_onlyOperatorSees", "Only the current operator sees the word now")}
               </span>
             )}
           </div>
@@ -353,7 +354,7 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
                 !view.controls.canRequestWordChange && !view.controls.canReroll
               }
             >
-              🔄 SOLICITAR TROCA DE PALAVRA
+              🔄 {t("games.cryptography_action_requestWordChange", "REQUEST WORD CHANGE")}
             </button>
           )}
 

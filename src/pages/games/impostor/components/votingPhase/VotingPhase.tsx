@@ -3,6 +3,7 @@ import "./votingPhase.css";
 import { PlayerAvatar } from "../../../../../components/PlayerAvatar/PlayerAvatar";
 import impostorSd from "./../../../../../assets/sounds/impostor.mp3";
 import votingSd from "./../../../../../assets/sounds/skip.mp3";
+import { useI18n } from "../../../../../i18n";
 
 type VotingProps = {
   data: any; // Aceita GameRouteState["data"] ou o objeto do Socket
@@ -11,6 +12,7 @@ type VotingProps = {
 };
 
 export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
+  const { t } = useI18n();
   const [showDetails, setShowDetails] = useState(false);
   const [votes, setVotes] = useState<{ voter: string; voted: string }[]>([]);
   const [currentVoterIdx, setCurrentVoterIdx] = useState(0);
@@ -120,7 +122,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
 
     const voteCount: Record<string, number> = {};
     votes.forEach((v) => {
-      if (v.voted !== null)
+      if (v.voted && v.voted !== "NULO")
         voteCount[v.voted] = (voteCount[v.voted] || 0) + 1;
     });
 
@@ -141,7 +143,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
     return (
       <div className="waitscreen-container main-bg">
         <div className="glass-panel result-container wait-panel">
-          <h2 className="tech-title">VOTO REGISTRADO</h2>
+          <h2 className="tech-title">{t("games.impostor_voting_gotVote", "VOTE REGISTERED")}</h2>
 
           <div className="wait-avatar-box">
             <PlayerAvatar
@@ -149,12 +151,12 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
               color={data.myColor}
               size={100}
             />
-            <p className="wait-main-text">Sinal transmitido com sucesso.</p>
-            <p className="wait-sub-text">Aguardando outros tripulantes...</p>
+            <p className="wait-main-text">{t("games.impostor_voting_signalSent", "Signal transmitted successfully.")}</p>
+            <p className="wait-sub-text">{t("games.impostor_voting_waitingOthers", "Waiting for other players to vote...")}</p>
           </div>
 
           <div className="voting-progress-list">
-            <h3 className="progress-title">STATUS DOS RECEPTORES</h3>
+            <h3 className="progress-title">{t("games.impostor_statusModal_roomStatus", "ROOM STATUS")}</h3>
             <div className="progress-grid">
               {alivePlayers.map((p: any) => (
                 <div
@@ -196,11 +198,11 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
     });
 
     const playerRole = [
-      "Engenheiro de Dobra",
-      "Xenobiologista",
-      "Piloto de Fuga",
-      "Técnico de O2",
-      "Cientista de Dados",
+      t("games.impostor_eliminated_function1", "Warp Engineer"),
+      t("games.impostor_eliminated_function2", "Biological Researcher"),
+      t("games.impostor_eliminated_function3", "Star Pilot"),
+      t("games.impostor_eliminated_function4", "O2 Technician"),
+      t("games.impostor_eliminated_function5", "Data Scientist"),
     ][(eliminatedPlayer?.name.length || 0) % 5];
     const serialNumber = `SN-${eliminatedId?.slice(0, 4).toUpperCase() || "NULL"}`;
 
@@ -220,7 +222,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
     return (
       <div className="main-bg voting-screen">
         <div className="glass-panel result-container">
-          <h2 className="tech-title">RELATÓRIO DE VOTAÇÃO</h2>
+          <h2 className="tech-title">{t("games.impostor_voting_resultTitle", "VOTING REPORT")}</h2>
 
           {(!isOnline && eliminatedPlayer) ||
           (isOnline && eliminatedPlayer && eliminatedPlayer.voted) ? (
@@ -229,7 +231,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
                 className="id-card-header"
                 style={{ backgroundColor: eliminatedPlayer.color }}
               >
-                <span>REGISTRO DE SEGURANÇA</span>
+                <span>{t("games.impostor_eliminated_status", "SECURITY RECORD")}</span>
                 <span>{serialNumber}</span>
               </div>
               <div className="id-card-body">
@@ -242,37 +244,37 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
                 </div>
                 <div className="id-info">
                   <div className="info-group">
-                    <label>NOME</label>
+                    <label>{t("games.impostor_eliminated_name", "NAME")}</label>
                     <p className="info-value">
                       {eliminatedPlayer.name.toUpperCase()}
                     </p>
                   </div>
                   <div className="info-row">
                     <div className="info-group">
-                      <label>FUNÇÃO</label>
+                      <label>{t("games.impostor_eliminated_function", "ROLE")}</label>
                       {eliminatedPlayer.isImpostor ? (
                         <p
                           style={{ color: "var(--danger-neon)" }}
                           className="info-value"
                         >
-                          IMPOSTOR
+                          {t("games.impostor_eliminated_impostor", "IMPOSTOR")}
                         </p>
                       ) : (
                         <p className="info-value">{playerRole}</p>
                       )}
                     </div>
                     <div className="info-group">
-                      <label>STATUS</label>
+                      <label>{t("games.impostor_eliminated_status", "STATUS")}</label>
                       <p
                         className="info-value"
                         style={{ color: "var(--danger-neon)" }}
                       >
-                        TERMINATED
+                        {t("games.impostor_eliminated_terminated", "ELIMINATED")}
                       </p>
                     </div>
                   </div>
                   <div className="info-group">
-                    <label>DATA/HORA DO REGISTRO</label>
+                    <label>{t("games.impostor_eliminated_date", "RECORD DATE")}</label>
                     <p className="info-value">
                       {new Date().toLocaleDateString()} |{" "}
                       {new Date().toLocaleTimeString([], {
@@ -283,12 +285,12 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
                   </div>
                 </div>
               </div>
-              <div className="id-stamp">ELIMINADO</div>
+              <div className="id-stamp">{t("games.impostor_eliminated_eliminated", "ELIMINATED")}</div>
             </div>
           ) : (
             <div className="neutral-card">
-              <h3 className="no-elimination">EMPATE: NINGUÉM FOI ELIMINADO</h3>
-              <p>O Protocolo de Segurança permanece intacto.</p>
+              <h3 className="no-elimination">{t("games.impostor_eliminated_tie", "TIE DETECTED")}</h3>
+              <p>{t("games.impostor_eliminated_tieText", "No player was ejected. The voting system did not reach a majority.")}</p>
             </div>
           )}
 
@@ -317,7 +319,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
                   className="secondary-btn"
                   onClick={() => setShowDetails(!showDetails)}
                 >
-                  {showDetails ? "OCULTAR LOGS" : "VER LOGS DE SISTEMA"}
+                  {showDetails ? t("games.impostor_eliminated_closeLogsAccess", "CLOSE COMMAND LOGS") : t("games.impostor_eliminated_logsAccess", "ACCESS COMMAND LOGS")}
                 </button>
                 {showDetails && (
                   <div className="logs-area">
@@ -325,9 +327,9 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
                       <p key={idx} className="log-entry">
                         &gt;{" "}
                         {alivePlayers.find((p: any) => p.id === v.voter)?.name}{" "}
-                        VOTOU EM{" "}
-                        {v.voted === null
-                          ? "NULO"
+                        {t("games.impostor_eliminated_voted", "VOTED FOR")} {" "}
+                        {v.voted === null || v.voted === "NULO"
+                          ? t("games.impostor_eliminated_null", "BLANK")
                           : alivePlayers.find((p: any) => p.id === v.voted)
                               ?.name}
                       </p>
@@ -342,7 +344,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
               onClick={handleResult}
               disabled={isOnline && !data.isHost}
             >
-              {isOnline && !data.isHost ? "AGUARDANDO LÍDER..." : "PROSSEGUIR"}
+              {isOnline && !data.isHost ? t("games.impostor_eliminated_waitHost", "WAITING FOR THE HOST...") : t("games.impostor_eliminated_returnBtn", "CONTINUE")}
             </button>
           </div>
         </div>
@@ -371,7 +373,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
           </div>
           <div className="voter-info">
             <p className="label">
-              {isOnline ? "SUA IDENTIDADE" : "VOTANDO AGORA"}
+              {isOnline ? t("games.impostor_voting_yourIdentity", "YOUR IDENTITY") : t("games.impostor_voting_titleVotingNow", "VOTING NOW")}
             </p>
             <h2 className="current-voter-name">
               {isOnline ? data.myName : currentVoter?.name}
@@ -381,10 +383,10 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
 
         <p className="instruction">
           {!isOnline
-            ? "Selecione o suspeito para ejetar da nave"
+            ? t("games.impostor_voting_selectSuspectLong", "Select the suspect to eject from the ship")
             : currentVoter
-              ? "Selecione o suspeito para ejetar da nave"
-              : "Você foi eliminado, aguarde a próxima rodada."}
+              ? t("games.impostor_voting_selectSuspectLong", "Select the suspect to eject from the ship")
+              : t("games.impostor_voting_youEliminated", "YOU WERE ELIMINATED. WAIT FOR THE NEXT ROUND.")}
         </p>
         {!isOnline || (isOnline && currentVoter) ? (
           <>
@@ -399,13 +401,13 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
                   >
                     <span className="player-emoji">{p.emoji}</span>
                     <span className="player-name">{p.name}</span>
-                    <div className="vote-hover-overlay">VOTAR</div>
+                    <div className="vote-hover-overlay">{t("games.impostor_voting_selectBtn", "VOTE")}</div>
                   </button>
                 ))}
             </div>
 
             <button className="null-btn" onClick={() => handleVote(null)}>
-              ABSTER-SE / VOTO NULO
+              {t("games.impostor_voting_skipBtn", "ABSTAIN / BLANK VOTE")}
             </button>
           </>
         ) : null}
@@ -413,9 +415,9 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
           <p className="status-title">
             {isOnline
               ? isOnline && currentVoter
-                ? "CONFIRMAÇÃO DE SINAL"
+                ? t("games.impostor_voting_confirmVote", "VOTE CONFIRMATION")
                 : null
-              : "STATUS DA TRIPULAÇÃO"}
+              : t("games.impostor_voting_crewMateStatus", "PLAYER STATUS")}
           </p>
           <div className="status-dots">
             {!isOnline || (isOnline && currentVoter) ? (
@@ -431,7 +433,7 @@ export function VotingPhase({ data, onEliminate, isOnline }: VotingProps) {
                 className="voting-progress-list"
                 style={{ borderTop: "none" }}
               >
-                <h3 className="progress-title">STATUS DOS RECEPTORES</h3>
+                <h3 className="progress-title">{t("games.impostor_statusModal_roomStatus", "ROOM STATUS")}</h3>
                 <div className="progress-grid">
                   {alivePlayers.map((p: any) => (
                     <div

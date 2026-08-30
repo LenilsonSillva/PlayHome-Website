@@ -6,6 +6,7 @@ import type {
 } from "../../GameLogistic/types";
 import { PlayerAvatar } from "../../../../../components/PlayerAvatar/PlayerAvatar";
 import startedSd from "./../../../../../assets/sounds/alert.wav";
+import { useI18n } from "../../../../../i18n";
 
 type DiscussPhaseProps = {
   data: GameRouteState["data"] | any;
@@ -18,6 +19,7 @@ export function DiscussPhase({
   onNextPhase,
   isOnline,
 }: DiscussPhaseProps) {
+  const { t } = useI18n();
   const [seconds, setSeconds] = useState(0);
   const players = Array.isArray(data.players) ? data.players : [];
   const aliveImpostorsCount = players.filter(
@@ -28,31 +30,26 @@ export function DiscussPhase({
 
   const playSound = (audioRef: React.RefObject<HTMLAudioElement>) => {
     if (audioRef.current) {
-      audioRef.current.currentTime = 0; // Reinicia o áudio se ele já estiver tocando
-      audioRef.current.play().catch(() => {}); // Evita erro de interação do navegador
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {});
     }
     setTimeout(() => setFeedback("none"), 300);
   };
 
   const triggerFeedback = (type: "started") => {
     if (type === "started") {
-      playSound(impostorSound); // Usa a função auxiliar
-      if ("vibrate" in navigator) {
-        navigator.vibrate(200);
-      }
+      playSound(impostorSound);
+      if ("vibrate" in navigator) navigator.vibrate(200);
       setTimeout(() => setFeedback("none"), 10);
     }
   };
 
   useEffect(() => {
     const interval = setInterval(() => setSeconds((p) => p + 1), 1000);
-    if (seconds === 0) {
-      triggerFeedback("started");
-    }
+    if (seconds === 0) triggerFeedback("started");
     return () => clearInterval(interval);
   }, []);
 
-  // ORDENAÇÃO: Filtramos os vivos e ordenamos pelo score decrescente
   const sortedPlayers = [...players]
     .filter((p) => p.isAlive)
     .sort((a, b) => (b.globalScore ?? 0) - (a.globalScore ?? 0));
@@ -75,7 +72,9 @@ export function DiscussPhase({
               marginBottom: "16px",
             }}
           >
-            <h1 className={styles.title}>Discussão</h1>
+            <h1 className={styles.title}>
+              {t("games.impostor_phase_discussion", "DISCUSSION")}
+            </h1>
             <div
               style={{
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -86,31 +85,36 @@ export function DiscussPhase({
                 color: "var(--text-secondary)",
               }}
             >
-              Sala: <strong>{data.roomCode}</strong>
+              {t("site.roomCode", "ROOM")}: <strong>{data.roomCode}</strong>
             </div>
           </div>
         ) : (
-          <h1 className={styles.title}>Discussão</h1>
+          <h1 className={styles.title}>
+            {t("games.impostor_phase_discussion", "DISCUSSION")}
+          </h1>
         )}
 
         <div className={styles.timerContainer}>
-          <span className={styles.timerLabel}>TEMPO DECORRIDO</span>
+          <span className={styles.timerLabel}>
+            {t("games.impostor_discuss_time", "ELAPSED TIME")}
+          </span>
           <div className={styles.clock}>{formatTime(seconds)}</div>
         </div>
 
         <div className={styles.statusBox}>
           {data.whoStart && (
             <p className={styles.startInfo}>
-              📡 <strong>{data.whoStart.toUpperCase()}</strong> captou algo e
-              inicia a rodada.
+              📡 <strong>{data.whoStart.toUpperCase()}</strong>{" "}
+              {t("games.impostor_discuss_whoStart", "STARTS THE DISCUSSION")}
             </p>
           )}
 
           <p className={styles.impostorCount}>
-            ⚠️{" "}
+            ⚠️ {aliveImpostorsCount}{" "}
             {aliveImpostorsCount === 1
-              ? "1 IMPOSTOR VIVO"
-              : `${aliveImpostorsCount} IMPOSTORES VIVOS`}
+              ? t("games.impostor_discuss_impostor", "IMPOSTOR")
+              : t("games.impostor_discuss_impostors", "IMPOSTORS")} {" "}
+            {t("games.impostor_discuss_impostorsLeft", "ALIVE")}
           </p>
         </div>
 
@@ -121,7 +125,6 @@ export function DiscussPhase({
               className={styles.playerCard}
               style={{ "--player-color": p.color } as any}
             >
-              {/* Passamos hideScan para limpar o visual */}
               <PlayerAvatar
                 emoji={p.emoji}
                 color={p.color}
@@ -130,9 +133,8 @@ export function DiscussPhase({
               />
               <div className={styles.playerInfo}>
                 <span className={styles.playerName}>{p.name}</span>
-                {/* Mostra o placar atualizado das rodadas já finalizadas */}
                 <span className={styles.playerScore}>
-                  Pontos: {p.globalScore}
+                  {t("games.impostor_discuss_score", "SCORE")}: {p.globalScore}
                 </span>
               </div>
             </div>
@@ -145,11 +147,11 @@ export function DiscussPhase({
               className={`${styles.actionBtn} ${styles.votingBtn}`}
               onClick={() => onNextPhase("voting")}
             >
-              VOTAR
+              {t("games.impostor_discuss_startVote", "START VOTING")}
             </button>
           ) : (
             <div className={styles.waitHost}>
-              ⏳ Aguarde o líder iniciar a votação...
+              ⏳ {t("games.impostor_discuss_waitHost", "Wait for the host to start the voting...")}
             </div>
           )}
 
@@ -158,7 +160,7 @@ export function DiscussPhase({
               className={`${styles.actionBtn} ${styles.skipBtn}`}
               onClick={() => onNextPhase("elimination")}
             >
-              PULAR VOTAÇÃO
+              {t("games.impostor_discuss_eliminate", "SKIP VOTE AND ELIMINATE")}
             </button>
           )}
         </div>

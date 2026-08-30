@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSocket } from "../../../../contexts/socketContext";
+import { useI18n } from "../../../../i18n";
+import { translateCryptoError } from "../../../../i18n/translateCryptoError";
+import { CategoryGrid } from "../../../../components/CategoryGrid/CategoryGrid";
 import type {
   CryptoConfigInput,
   CryptoMode,
@@ -19,9 +22,15 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export function OnlineCryptoLobby() {
+type Props = {
+  mode: CryptoMode;
+  onModeChange: (mode: CryptoMode) => void;
+};
+
+export function OnlineCryptoLobby({ mode, onModeChange }: Props) {
   const socket = useSocket();
   const navigate = useNavigate();
+  const { language, t } = useI18n();
 
   // ---------------- fluxo ----------------
   const [name, setName] = useState("");
@@ -33,7 +42,6 @@ export function OnlineCryptoLobby() {
   const [error, setError] = useState<string | null>(null);
 
   // ---------------- config (host) ----------------
-  const [mode, setMode] = useState<CryptoMode>("infiltration");
   const [teamCount, setTeamCount] = useState(2);
   const [distributionType, setDistributionType] = useState<"random" | "manual">("random");
   const [roundTime, setRoundTime] = useState(60);
@@ -72,13 +80,17 @@ export function OnlineCryptoLobby() {
 
   // ---------------- categorias do banco do servidor ----------------
   useEffect(() => {
-    socket.emit("crypto:get-categories", { language: "pt-BR" }, (res: { categories?: string[] }) => {
+    socket.emit("crypto:get-categories", { language }, (res: { categories?: string[] }) => {
       if (res?.categories?.length) {
         setAllCategories(res.categories);
         setSelectedCategories(res.categories);
       }
     });
-  }, [socket]);
+  }, [language, socket]);
+
+  useEffect(() => {
+    setRoundTime(mode === "infiltration" ? 60 : 15);
+  }, [mode]);
 
   // ---------------- eventos da sala ----------------
   useEffect(() => {
@@ -101,28 +113,28 @@ export function OnlineCryptoLobby() {
     function onPlayerLeft({ name: leftName, reason }: { name: string; reason: string }) {
       const msg =
         reason === "kicked"
-          ? `${leftName} foi removido da sala`
-          : `${leftName} saiu da sala`;
+          ? `${leftName} ${t("alerts.impostor_leftGame", "was removed from the room")}`
+          : `${leftName} ${t("alerts.impostor_leftGame", "left the room")}`;
       alert(msg);
     }
 
     function onHostChanged({ newHostId }: { newHostId: string }) {
       if (newHostId === socket.id) {
-        alert("O host saiu. Você agora é o novo HOST da sala!");
+        alert(t("rooms.newHost", "The host left. You are now the new host of the room!"));
       }
     }
 
     function onForceLobby() {
       setRoom(null);
       setInRoom(false);
-      alert("A partida foi encerrada porque não há grupos válidos suficientes.");
+      alert(t("rooms.gameEndedNoTeams", "The match ended because there are not enough valid groups."));
     }
 
     function onDisconnect() {
       setInRoom((currently) => {
         if (currently) {
           setRoom(null);
-          setError("Conexão perdida com o servidor.");
+          setError(t("alerts.lostConnection", "Connection to the server was lost."));
         }
         return false;
       });
@@ -143,7 +155,7 @@ export function OnlineCryptoLobby() {
       socket.off("crypto:force-lobby", onForceLobby);
       socket.off("disconnect", onDisconnect);
     };
-  }, [socket, navigate]);
+  }, [socket, navigate, t]);
 
   // ---------------- helpers ----------------
   function emitAck(event: string, payload: unknown): Promise<{ ok?: boolean; error?: string } & Record<string, unknown>> {
@@ -156,7 +168,7 @@ export function OnlineCryptoLobby() {
 
   function fail(res: { error?: string } | null) {
     if (res?.error) {
-      setError(res.error);
+      setError(translateCryptoError(res.error, t));
       return true;
     }
     return false;
@@ -177,7 +189,7 @@ export function OnlineCryptoLobby() {
 
   // ---------------- ações ----------------
   const handleCreate = async () => {
-    if (!name.trim()) return setError("Digite seu nome");
+    if (!name.trim()) return setError(t("alerts.impostor_crewmateName", "Enter your name."));
     setBusy(true);
     setError(null);
     const res = await emitAck("crypto:create-room", {
@@ -197,7 +209,7 @@ export function OnlineCryptoLobby() {
 
   const handleJoin = async () => {
     if (!name.trim() || !roomCodeInput.trim()) {
-      return setError("Preencha nome e código da sala");
+      return setError(t("alerts.fillIn", "Fill in your name and room code."));
     }
     setBusy(true);
     setError(null);
@@ -240,7 +252,7 @@ export function OnlineCryptoLobby() {
   };
 
   const handleDeleteGroup = async (groupId: string) => {
-    if (!room || !window.confirm("Apagar este grupo? Os jogadores voltarão a ficar sem grupo.")) {
+    if (!room || !window.confirm(t("rooms.deleteGroup", "Delete this group? Its players will become unassigned."))) {
       return;
     }
     const res = await emitAck("crypto:delete-group", {
@@ -304,7 +316,7 @@ export function OnlineCryptoLobby() {
     const res = await emitAck("crypto:start-game", {
       roomCode: room.code,
       config: buildConfig(),
-      language: "pt-BR",
+      language,
     });
     setBusy(false);
     if (fail(res)) return;
@@ -316,29 +328,29 @@ export function OnlineCryptoLobby() {
     return (
       <div className={styles.container}>
         <div className={`glass-panel ${styles.joinPanel}`}>
-          <div className={styles.badge}>PROTOCOLO CRIPTOGRAFIA — REDE</div>
+          <div className={styles.badge}>{t("games.cryptography_online_networkBadge", "CRYPTOGRAPHY SYSTEM — NETWORK")}</div>
           <h1 className={styles.title}>
-            CRIPTOGRAFIA<span className={styles.cyan}> ONLINE</span>
+            {t("games.cryptography_title", "CRYPTOGRAPHY")}<span className={styles.cyan}> {t("games.impostor_lobby_online", "ONLINE")}</span>
           </h1>
 
           <label className={styles.field}>
-            <span>SEU NOME</span>
+            <span>{t("games.cryptography_online_nameLabel", "YOUR NAME")}</span>
             <input
               className={styles.input}
               value={name}
               maxLength={15}
-              placeholder="Nome do tripulante"
+              placeholder={t("games.cryptography_online_namePlaceholder", "Player name")}
               onChange={(e) => setName(e.target.value)}
             />
           </label>
 
           <label className={styles.field}>
-            <span>CÓDIGO DA SALA</span>
+            <span>{t("games.cryptography_online_roomCodeLabel", "ROOM CODE")}</span>
             <input
               className={styles.input}
               value={roomCodeInput}
               maxLength={5}
-              placeholder={lastRoomCode ?? "EX: CR7K2"}
+              placeholder={lastRoomCode ?? t("games.cryptography_online_roomCodePlaceholder", "E.G. CR7K2")}
               onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
             />
           </label>
@@ -347,23 +359,22 @@ export function OnlineCryptoLobby() {
 
           <div className={styles.joinActions}>
             <button className={styles.createBtn} onClick={handleCreate} disabled={busy}>
-              {busy ? "..." : "CRIAR SALA"}
+              {busy ? "..." : t("games.cryptography_online_createRoom", "CREATE ROOM")}
             </button>
             <button className={styles.joinBtn} onClick={handleJoin} disabled={busy}>
-              {busy ? "..." : "ENTRAR NA SALA"}
+              {busy ? "..." : t("games.cryptography_online_joinRoom", "JOIN ROOM")}
             </button>
           </div>
 
           <p className={styles.hint}>
-            Cada grupo pode ter todos online, só o operador com celular ou um
-            time misto (jogadores presenciais sem celular).
+            {t("games.cryptography_online_joinHint", "Each group can be fully online, have only an operator with a phone, or be mixed with in-person players without a phone.")}
           </p>
         </div>
       </div>
     );
   }
 
-  if (!room) return <div className={styles.container}>Carregando sala...</div>;
+  if (!room) return <div className={styles.container}>{t("home.loading", "Loading room...")}</div>;
 
   const waitingSelf = room.waitingPlayers.find(
     (player) => player.socketId === socket.id,
@@ -374,22 +385,21 @@ export function OnlineCryptoLobby() {
       <div className={styles.container}>
         <div className={`glass-panel ${styles.roomHeader}`}>
           <div>
-            <span className={styles.roomLabel}>SALA</span>
+            <span className={styles.roomLabel}>{t("rooms.room", "ROOM")}</span>
             <span className={styles.roomCode}>{room.code}</span>
           </div>
           <button className={styles.leaveBtn} onClick={handleLeave}>
-            SAIR
+            {t("alerts.quit", "LEAVE")}
           </button>
         </div>
 
         {error && <div className={styles.errorBox}>{error}</div>}
 
         <div className={`glass-panel ${styles.waitingJoinPanel}`}>
-          <span className={styles.badge}>PARTIDA EM ANDAMENTO</span>
-          <h1>ESCOLHA SEU GRUPO</h1>
+          <span className={styles.badge}>{t("games.cryptography_online_matchInProgress", "MATCH IN PROGRESS")}</span>
+          <h1>{t("games.cryptography_online_chooseGroup", "CHOOSE YOUR GROUP")}</h1>
           <p className={styles.hint}>
-            Veja os grupos e escolha onde você vai jogar. Você assiste à rodada
-            atual e entra no grupo escolhido quando começar a próxima rodada.
+            {t("games.cryptography_online_waitingHint", "Review the groups and choose where you will play. You can watch the current round and join your chosen group in the next round.")}
           </p>
 
           <div className={styles.waitingJoinGroups}>
@@ -415,7 +425,7 @@ export function OnlineCryptoLobby() {
                     />
                     <h2>{group.name}</h2>
                     <span className={styles.memberCount}>
-                      {members.length} integrantes
+                      {members.length} {t("games.cryptography_online_members", "members")}
                     </span>
                   </div>
 
@@ -433,7 +443,7 @@ export function OnlineCryptoLobby() {
                     onClick={() => handleChooseWaitingGroup(group.id)}
                     disabled={busy}
                   >
-                    {selected ? "ENTRANDO..." : "ENTRAR NESTE GRUPO"}
+                    {selected ? t("games.cryptography_online_joining", "JOINING...") : t("games.cryptography_online_joinThisGroup", "JOIN THIS GROUP")}
                   </button>
                 </article>
               );
@@ -467,13 +477,13 @@ export function OnlineCryptoLobby() {
       {/* CABEÇALHO DA SALA */}
       <div className={`glass-panel ${styles.roomHeader}`}>
         <div>
-          <span className={styles.roomLabel}>SALA</span>
+          <span className={styles.roomLabel}>{t("rooms.room", "ROOM")}</span>
           <span className={styles.roomCode}>{room.code}</span>
         </div>
         <div className={styles.roomHeaderRight}>
-          {isHost && <span className={styles.hostBadge}>👑 HOST</span>}
+          {isHost && <span className={styles.hostBadge}>👑 {t("rooms.host", "HOST")}</span>}
           <button className={styles.leaveBtn} onClick={handleLeave}>
-            SAIR
+            {t("alerts.quit", "LEAVE")}
           </button>
         </div>
       </div>
@@ -484,7 +494,7 @@ export function OnlineCryptoLobby() {
         {/* ============ GRUPOS ============ */}
         <div className={styles.mainColumn}>
           <div className={styles.sectionHeader}>
-            <h2>GRUPOS ({room.groups.length}/{room.config?.teamCount ?? 10})</h2>
+            <h2>{t("games.cryptography_lobby_group", "GROUPS")} ({room.groups.length}/{room.config?.teamCount ?? 10})</h2>
             <button
               className={styles.createGroupBtn}
               onClick={handleCreateGroup}
@@ -493,14 +503,13 @@ export function OnlineCryptoLobby() {
                 room.groups.length >= (room.config?.teamCount ?? 10)
               }
             >
-              ＋ {isHost ? "CRIAR GRUPO" : "CRIAR GRUPO (VIRA LÍDER)"}
+              ＋ {isHost ? t("games.cryptography_online_createGroup", "CREATE GROUP") : t("games.cryptography_online_createGroupBecomeLeader", "CREATE GROUP (BECOME LEADER)")}
             </button>
           </div>
 
           {room.groups.length === 0 && (
             <div className={`glass-panel ${styles.emptyGroups}`}>
-              Nenhum grupo ainda. Qualquer jogador online pode criar o primeiro
-              grupo e virar seu líder.
+              {t("games.cryptography_online_noGroups", "No groups yet. Any online player can create the first group and become its leader.")}
             </div>
           )}
 
@@ -516,9 +525,9 @@ export function OnlineCryptoLobby() {
                   <span className={styles.groupDot} style={{ background: group.color }} />
                   <h3>{group.name}</h3>
                   {!group.subHostId && (
-                    <span className={styles.noLeaderBadge}>SEM LÍDER</span>
+                    <span className={styles.noLeaderBadge}>{t("games.cryptography_online_noLeader", "NO LEADER")}</span>
                   )}
-                  <span className={styles.memberCount}>{members.length} integrantes</span>
+                  <span className={styles.memberCount}>{members.length} {t("games.cryptography_online_members", "members")}</span>
                 </div>
 
                 <div className={styles.membersList}>
@@ -535,15 +544,15 @@ export function OnlineCryptoLobby() {
                       <div key={m.id} className={styles.memberRow}>
                         <span className={styles.memberEmoji}>{m.emoji ?? "👤"}</span>
                         <span className={styles.memberName}>
-                          {m.name} {isMe && <em>(você)</em>}
+                          {m.name} {isMe && <em>({t("games.impostor_lobby_you", "you")})</em>}
                         </span>
-                        {isSub && <span className={styles.subBadge}>🎖️ LÍDER</span>}
+                        {isSub && <span className={styles.subBadge}>🎖️ {t("games.cryptography_online_leader", "LEADER")}</span>}
                         <span
                           className={`${styles.connBadge} ${
                             conn === "online" ? styles.connOnline : conn === "present" ? styles.connPresent : styles.connOffline
                           }`}
                         >
-                          {conn === "online" ? "ONLINE" : conn === "present" ? "PRESENCIAL" : "DESCONECTADO"}
+                          {conn === "online" ? t("games.cryptography_online_online", "ONLINE") : conn === "present" ? t("games.cryptography_online_present", "IN PERSON") : t("games.cryptography_online_disconnected", "DISCONNECTED")}
                         </span>
                         {isHost &&
                           !isSub &&
@@ -570,11 +579,11 @@ export function OnlineCryptoLobby() {
                 <div className={styles.groupActions}>
                   {myGroupId === group.id ? (
                     <button className={styles.leaveGroupBtn} onClick={handleLeaveGroup}>
-                      SAIR DO GRUPO
+                      {t("games.cryptography_online_leaveGroup", "LEAVE GROUP")}
                     </button>
                   ) : myGroupId == null ? (
                     <button className={styles.joinGroupBtn} onClick={() => handleJoinGroup(group.id)}>
-                      ENTRAR NO GRUPO
+                      {t("games.cryptography_online_joinGroup", "JOIN GROUP")}
                     </button>
                   ) : null}
 
@@ -588,15 +597,15 @@ export function OnlineCryptoLobby() {
                           e.target.value = "";
                         }}
                       >
-                        <option value="">＋ mover jogador para cá</option>
+                        <option value="">＋ {t("games.cryptography_online_movePlayer", "move player here")}</option>
                         {ungroupedOnline.map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.name} · ONLINE
+                            {p.name} · {t("games.cryptography_online_online", "ONLINE")}
                           </option>
                         ))}
                         {ungroupedPresent.map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.name} · PRESENCIAL
+                            {p.name} · {t("games.cryptography_online_present", "IN PERSON")}
                           </option>
                         ))}
                       </select>
@@ -608,7 +617,7 @@ export function OnlineCryptoLobby() {
                         className={styles.presentInput}
                         value={presentName}
                         maxLength={15}
-                        placeholder="Nome do presencial (sem celular)"
+                        placeholder={t("games.cryptography_online_presentPlaceholder", "In-person player name (no phone)")}
                         onChange={(e) => setPresentName(e.target.value)}
                       />
                       <button
@@ -616,7 +625,7 @@ export function OnlineCryptoLobby() {
                         onClick={() => handleAddPresent(group.id)}
                         disabled={!presentName.trim()}
                       >
-                        ＋ PRESENCIAL
+                        ＋ {t("games.cryptography_online_addPresent", "IN-PERSON")}
                       </button>
                     </div>
                   )}
@@ -626,7 +635,7 @@ export function OnlineCryptoLobby() {
                       className={styles.deleteGroupBtn}
                       onClick={() => handleDeleteGroup(group.id)}
                     >
-                      🗑️ APAGAR GRUPO
+                      🗑️ {t("games.cryptography_online_deleteGroup", "DELETE GROUP")}
                     </button>
                   )}
                 </div>
@@ -638,12 +647,12 @@ export function OnlineCryptoLobby() {
         {/* ============ JOGADORES + CONFIG ============ */}
         <div className={styles.sideColumn}>
           <div className={`glass-panel ${styles.playersPanel}`}>
-            <h2>JOGADORES ({room.players.length})</h2>
+            <h2>{t("games.cryptography_action_players", "PLAYERS")} ({room.players.length})</h2>
             {room.players.map((p) => (
               <div key={p.id} className={styles.memberRow}>
                 <span className={styles.memberEmoji}>{p.emoji ?? "👤"}</span>
                 <span className={styles.memberName}>{p.name}</span>
-                <span className={styles.connBadge + " " + styles.connOnline}>ONLINE</span>
+                <span className={styles.connBadge + " " + styles.connOnline}>{t("games.cryptography_online_online", "ONLINE")}</span>
                 {isHost && p.id !== myId && (
                   <button className={styles.miniBtnDanger} onClick={() => handleRemovePlayer(p.id)}>
                     ✕
@@ -653,13 +662,13 @@ export function OnlineCryptoLobby() {
             ))}
             {ungroupedPresent.length > 0 && (
               <>
-                <h3 className={styles.unassignedTitle}>PRESENCIAIS SEM GRUPO</h3>
+                <h3 className={styles.unassignedTitle}>{t("games.cryptography_online_unassignedPresent", "IN-PERSON PLAYERS WITHOUT A GROUP")}</h3>
                 {ungroupedPresent.map((p) => (
                   <div key={p.id} className={styles.memberRow}>
                     <span className={styles.memberEmoji}>{p.emoji ?? "🏠"}</span>
                     <span className={styles.memberName}>{p.name}</span>
                     <span className={styles.connBadge + " " + styles.connPresent}>
-                      PRESENCIAL
+                      {t("games.cryptography_online_present", "IN PERSON")}
                     </span>
                     {isHost && (
                       <button className={styles.miniBtnDanger} onClick={() => handleRemovePlayer(p.id)}>
@@ -674,28 +683,28 @@ export function OnlineCryptoLobby() {
 
           {isHost ? (
             <div className={`glass-panel ${styles.configPanel}`}>
-              <h2>CONFIGURAÇÃO DA MISSÃO</h2>
+              <h2>{t("games.cryptography_online_missionConfig", "MISSION CONFIGURATION")}</h2>
 
               <div className={styles.configSection}>
-                <label>MODO</label>
+                <label>{t("games.cryptography_online_mode", "MODE")}</label>
                 <div className={styles.segmented}>
                   <button
                     className={mode === "infiltration" ? styles.segActive : ""}
-                    onClick={() => setMode("infiltration")}
+                    onClick={() => onModeChange("infiltration")}
                   >
-                    ⚡ INFILTRAÇÃO
+                    ⚡ {t("games.cryptography_mode_infiltration", "INFILTRATION")}
                   </button>
                   <button
                     className={mode === "interception" ? styles.segActive : ""}
-                    onClick={() => setMode("interception")}
+                    onClick={() => onModeChange("interception")}
                   >
-                    ⚔️ INTERCEPTAÇÃO
+                    ⚔️ {t("games.cryptography_mode_interception", "INTERCEPTION")}
                   </button>
                 </div>
               </div>
 
               <div className={styles.configSection}>
-                <label>NÚMERO DE GRUPOS</label>
+                <label>{t("games.cryptography_lobby_groupCount", "NUMBER OF GROUPS")}</label>
                 <div className={styles.counter}>
                   <button onClick={() => setTeamCount((t) => Math.max(2, t - 1))}>−</button>
                   <span>{teamCount}</span>
@@ -704,19 +713,19 @@ export function OnlineCryptoLobby() {
               </div>
 
               <div className={styles.configSection}>
-                <label>DISTRIBUIÇÃO</label>
+                <label>{t("games.cryptography_lobby_distribution", "DISTRIBUTION")}</label>
                 <div className={styles.segmented}>
                   <button
                     className={distributionType === "random" ? styles.segActive : ""}
                     onClick={() => setDistributionType("random")}
                   >
-                    ALEATÓRIO
+                    {t("games.cryptography_lobby_random", "RANDOM")}
                   </button>
                   <button
                     className={distributionType === "manual" ? styles.segActive : ""}
                     onClick={() => setDistributionType("manual")}
                   >
-                    MANUAL
+                    {t("games.cryptography_lobby_manual", "MANUAL")}
                   </button>
                 </div>
                 {distributionType === "manual" && ungroupedOnline.length > 0 && (
@@ -746,7 +755,7 @@ export function OnlineCryptoLobby() {
               </div>
 
               <div className={styles.configSection}>
-                <label>CRONÔMETRO</label>
+                <label>{t("games.cryptography_lobby_timer", "TIMER")}</label>
                 <div className={styles.timeOptions}>
                   {(mode === "infiltration" ? [60, 90, 120] : [15, 30, 60]).map((t) => (
                     <button
@@ -762,7 +771,7 @@ export function OnlineCryptoLobby() {
 
               {mode === "interception" && (
                 <div className={styles.configSection}>
-                  <label>PALAVRAS POR RODADA</label>
+                  <label>{t("games.cryptography_lobby_wordLimit", "WORDS PER ROUND")}</label>
                   <div className={styles.timeOptions}>
                     {[5, 10, 20].map((n) => (
                       <button
@@ -779,7 +788,7 @@ export function OnlineCryptoLobby() {
 
               {mode === "infiltration" && (
                 <div className={styles.configSection}>
-                  <label>PULOS POR TURNO</label>
+                  <label>{t("games.cryptography_lobby_skipLimit", "SKIPS PER TURN")}</label>
                   <div className={styles.timeOptions}>
                     {[3, 5, 10, 999].map((n) => (
                       <button
@@ -795,22 +804,16 @@ export function OnlineCryptoLobby() {
               )}
 
               <div className={styles.configSection}>
-                <label>BANCO DE PALAVRAS</label>
-                <div className={styles.catGrid}>
-                  {allCategories.map((cat) => (
-                    <button
-                      key={cat}
-                      className={selectedCategories.includes(cat) ? styles.catActive : ""}
-                      onClick={() =>
-                        setSelectedCategories((prev) =>
-                          prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat],
-                        )
-                      }
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
+                <label>{t("games.cryptography_lobby_db", "WORD BANK")}</label>
+                <CategoryGrid
+                  categories={allCategories}
+                  selectedCategories={selectedCategories}
+                  onToggle={(category) =>
+                    setSelectedCategories((prev) =>
+                      prev.includes(category) ? prev.filter((item) => item !== category) : [...prev, category],
+                    )
+                  }
+                />
               </div>
 
               <div className={styles.configSection}>
@@ -820,7 +823,7 @@ export function OnlineCryptoLobby() {
                     checked={othersSeeWord}
                     onChange={(e) => setOthersSeeWord(e.target.checked)}
                   />
-                  Infiltração: outros grupos veem a palavra do grupo da vez
+                  {t("games.cryptography_online_othersSeeWord", "Infiltration: other groups see the current group’s word")}
                 </label>
                 <label className={styles.checkRow}>
                   <input
@@ -828,32 +831,31 @@ export function OnlineCryptoLobby() {
                     checked={operatorsSeeWordOnStandby}
                     onChange={(e) => setOperatorsSeeWordOnStandby(e.target.checked)}
                   />
-                  Interceptação: operadores veem a palavra com o tempo parado
+                  {t("games.cryptography_online_operatorsSeeWord", "Interception: operators see the word while the timer is stopped")}
                 </label>
               </div>
 
               <div className={styles.configActions}>
                 <button className={styles.saveConfigBtn} onClick={handleUpdateConfig}>
-                  SALVAR CONFIGURAÇÃO
+                  {t("games.cryptography_online_saveConfig", "SAVE CONFIGURATION")}
                 </button>
                 <button className={styles.startBtn} onClick={handleStart} disabled={busy || !canStart}>
-                  {busy ? "..." : "🚀 INICIAR MISSÃO"}
+                  {busy ? "..." : `🚀 ${t("games.cryptography_lobby_start", "START MISSION")}`}
                 </button>
               </div>
               {!canStart && (
                 <p className={styles.hint}>
                   {room.groups.length < 2
-                    ? "São necessários pelo menos 2 grupos para começar."
-                    : "Cada grupo precisa de pelo menos um jogador online."}
+                    ? t("games.cryptography_online_needGroups", "At least 2 groups are needed to start.")
+                    : t("games.cryptography_online_needOnline", "Each group needs at least one online player.")}
                 </p>
               )}
             </div>
           ) : (
             <div className={`glass-panel ${styles.playersPanel}`}>
-              <h2>AGUARDANDO O HOST</h2>
+              <h2>{t("games.cryptography_online_waitingHost", "WAITING FOR THE HOST")}</h2>
               <p className={styles.hint}>
-                O host está configurando a missão. Monte seu grupo e aguarde o
-                início!
+                {t("games.cryptography_online_waitingHostHint", "The host is configuring the mission. Build your group and wait for the start!")}
               </p>
             </div>
           )}

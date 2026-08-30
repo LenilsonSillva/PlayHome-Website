@@ -9,6 +9,7 @@ import alertSfx from "../../../../assets/sounds/alert.wav";
 import endSfx from "../../../../assets/sounds/end.wav";
 import silentWav from "../../../../assets/sounds/silent.wav";
 import { useIOSAudioUnlock } from "../../../../hooks/useIOSAudioUnlock";
+import { useI18n } from "../../../../i18n";
 
 type Props = {
   data: CryptoGameState;
@@ -19,13 +20,14 @@ type Props = {
 
 // Modo INFILTRAÇÃO offline — mesmo fluxo do PlayHome-RN:
 // cronômetro explícito -> acertou/pular -> tempo esgota e a vez
-// passa para o próximo esquadrão (até fechar a rodada).
+// passa para o próximo group (até fechar a rodada).
 export function InfiltrationAction({
   data,
   onAction,
   onTimeUp,
   onStartTimer,
 }: Props) {
+  const { t } = useI18n();
   const currentTeam = data.teams[data.currentTeamIndex];
   const operator = currentTeam.players.find(
     (p) => p.id === currentTeam.operatorId,
@@ -114,7 +116,7 @@ export function InfiltrationAction({
   return (
     <div className={styles.container}>
       <CryptoHud
-        label="JOGANDO AGORA"
+        label={t("games.cryptography_action_playingNow", "PLAYING NOW")}
         teamName={currentTeam.name}
         teamColor={currentTeam.color}
         operatorName={operator?.name ?? "---"}
@@ -125,7 +127,7 @@ export function InfiltrationAction({
             tone: "success",
           },
           {
-            text: "PULOS:",
+            text: t("games.cryptography_action_skips", "SKIPS LEFT"),
             value: data.skipsLeft === 999 ? "∞" : data.skipsLeft,
             tone: "warning",
           },
@@ -145,14 +147,14 @@ export function InfiltrationAction({
 
       <div className={styles.statsRow}>
         <div className={styles.statBox}>
-          <label>ACERTOS</label>
+          <label>{t("games.cryptography_action_hits", "HITS")}</label>
           <span>{currentTeam.roundScore}</span>
         </div>
         <div className={styles.statBox}>
-          <label>PULOS RESTANTES</label>
+          <label>{t("games.cryptography_action_skips", "SKIPS LEFT")}</label>
           <span>
             {data.skipsLeft === 999
-              ? "∞ (ilimitado)"
+              ? `∞ (${t("site.unlimited", "unlimited")})`
               : `${data.skipsLeft} / ${data.config.skipLimit}`}
           </span>
         </div>
@@ -167,7 +169,7 @@ export function InfiltrationAction({
             onStartTimer();
           }}
         >
-          ⏱️ INICIAR CRONÔMETRO ({data.config.roundTime}s)
+          ⏱️ {t("games.cryptography_action_tapToStart", "START TIMER")} ({data.config.roundTime}s)
         </button>
       ) : (
         <div className={styles.actions}>
@@ -179,7 +181,7 @@ export function InfiltrationAction({
             }}
             disabled={data.skipsLeft === 0}
           >
-            PULAR
+            {t("games.cryptography_action_skipBtn", "SKIP")}
           </button>
           <button
             className={styles.correctBtn}
@@ -189,7 +191,7 @@ export function InfiltrationAction({
             }}
             disabled={!hasViewedWord}
           >
-            ACERTOU! 🚀
+            {t("games.cryptography_action_correctBtn", "CORRECT! 🚀")}
           </button>
         </div>
       )}

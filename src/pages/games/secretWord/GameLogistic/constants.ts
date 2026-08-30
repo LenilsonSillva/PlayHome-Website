@@ -1,16 +1,17 @@
-// Constantes do Criptografia offline (nomes/cor em PT, visual do website)
+// Offline cryptography constants. Names stay neutral so the selected locale
+// can provide the surrounding group terminology in the interface.
 
 export const TEAM_NAMES = [
-  "Esquadrão Alfa",
-  "Esquadrão Bravo",
-  "Esquadrão Charlie",
-  "Esquadrão Delta",
-  "Esquadrão Eco",
-  "Esquadrão Foxtrot",
-  "Esquadrão Golfe",
-  "Esquadrão Hotel",
-  "Esquadrão Índia",
-  "Esquadrão Julieta",
+  "Alpha",
+  "Bravo",
+  "Charlie",
+  "Delta",
+  "Echo",
+  "Foxtrot",
+  "Golf",
+  "Hotel",
+  "India",
+  "Juliet",
 ];
 
 export const TEAM_COLORS = [

@@ -1,4 +1,5 @@
 import type { CryptoGameState } from "../GameLogistic/types";
+import { useI18n } from "../../../../i18n";
 import styles from "./teamReveal.module.css";
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 };
 
 // RECONHECIMENTO DE UNIDADES — mesmo fluxo do PlayHome-RN:
-// escolha do operador por esquadrão, sorteio geral, definição de quem
+// escolha do operador por group, sorteio geral, definição de quem
 // inicia a rodada (1ª rodada) e validação antes de começar.
 export function SecretTeamReveal({
   data,
@@ -21,11 +22,13 @@ export function SecretTeamReveal({
   onConfirm,
   onEdit,
 }: Props) {
+  const { t } = useI18n();
+
   const handleConfirm = () => {
     const missingOperators = data.teams.some((t) => !t.operatorId);
     if (missingOperators) {
       alert(
-        "Atenção: cada esquadrão precisa de um Operador definido antes de prosseguir!",
+        t("games.cryptography_alert_emptyTeam", "Every group needs an operator before continuing."),
       );
       return;
     }
@@ -35,15 +38,30 @@ export function SecretTeamReveal({
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.badge}>RECONHECIMENTO DE UNIDADES</div>
-        <h2 className={styles.title}>ESQUADRÕES FORMADOS</h2>
-        <p className={styles.roundTag}>RODADA {data.roundNumber}</p>
+        <div className={styles.badge}>{t("games.cryptography_reveal_badge", "UNIT RECOGNITION")}</div>
+        <h2 className={styles.title}>{t("games.cryptography_reveal_title", "FORMED GROUPS")}</h2>
+        <p className={styles.roundTag}>{t("games.cryptography_reveal_roundLabel", "ROUND")} {data.roundNumber}</p>
       </header>
 
-      {/* 🎲 SORTEIO GERAL DE OPERADORES */}
+      {/* 🎲 GENERAL OPERATOR DRAW */}
       <button className={styles.randomAllBtn} onClick={onRandomizeOperators}>
-        🎲 SORTEAR TODOS OS OPERADORES
+        🎲 {t("games.cryptography_reveal_randomBtn", "RANDOM OPERATORS")}
       </button>
+
+      {data.roundNumber > 1 && (
+        <div
+          className={styles.startingAutoNotice}
+          style={{
+            "--team-color": data.teams[data.currentTeamIndex]?.color,
+          } as React.CSSProperties}
+        >
+          <span className={styles.startingAutoLabel}>{t("games.cryptography_reveal_starts", "AUTOMATIC START")}</span>
+          <strong>
+            {data.teams[data.currentTeamIndex]?.name ?? t("games.cryptography_result_teamWin", "Winning team")} {t("games.cryptography_reveal_starts", "starts")}
+          </strong>
+          <small>{t("site.previousWinner", "Winner of the previous round")}</small>
+        </div>
+      )}
 
       <div className={styles.teamsGrid}>
         {data.teams.map((team, idx) => (
@@ -65,15 +83,15 @@ export function SecretTeamReveal({
                   onClick={() => onSetStartingTeam(idx)}
                 >
                   {data.currentTeamIndex === idx
-                    ? "⭐ COMEÇA A RODADA"
-                    : "DEFINIR COMO PRIMEIRO"}
+                    ? `⭐ ${t("games.cryptography_reveal_starts", "STARTS THE ROUND")}`
+                    : t("games.cryptography_reveal_setFirst", "SET AS FIRST")}
                 </button>
               )}
             </div>
 
             <div className={styles.membersList}>
               <p className={styles.roleLabel}>
-                SELECIONE O OPERADOR (QUEM DÁ AS DICAS):
+                {t("games.cryptography_reveal_selectOperator", "SELECT OPERATOR (WHO GIVES HINTS):")}
               </p>
               {team.players.map((player) => {
                 const isOperator = team.operatorId === player.id;
@@ -91,7 +109,7 @@ export function SecretTeamReveal({
                       {player.name}
                     </div>
                     {isOperator && (
-                      <span className={styles.operatorBadge}>OPERADOR</span>
+                      <span className={styles.operatorBadge}>{t("games.cryptography_reveal_operator", "OPERATOR")}</span>
                     )}
                   </button>
                 );
@@ -108,7 +126,7 @@ export function SecretTeamReveal({
                 if (randomPlayer) onSelectOperator(team.id, randomPlayer.id);
               }}
             >
-              🎲 SORTEAR JOGADOR
+              🎲 {t("games.cryptography_reveal_randomBtn", "RANDOM PLAYER")}
             </button>
           </div>
         ))}
@@ -116,15 +134,15 @@ export function SecretTeamReveal({
 
       <div className={styles.footer}>
         <p className={styles.instruction}>
-          Defina quem será o Operador de cada esquadrão antes de prosseguir.
+          {t("games.cryptography_reveal_instruction", "Define each group's operator before continuing.")}
         </p>
 
         <div className={styles.buttonGroup}>
           <button className={styles.editBtn} onClick={onEdit}>
-            ⚙️ EDITAR TIMES
+            ⚙️ {t("games.cryptography_reveal_editBtn", "EDIT GROUPS")}
           </button>
           <button className={styles.confirmBtn} onClick={handleConfirm}>
-            INICIAR AÇÃO 🚀
+            {t("games.cryptography_reveal_confirmBtn", "START ACTION 🚀")}
           </button>
         </div>
       </div>

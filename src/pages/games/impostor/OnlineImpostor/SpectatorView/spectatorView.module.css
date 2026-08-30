@@ -1,44 +1,38 @@
 .wrapper {
-  min-height: 100vh;
-  background-color: var(--gray-900);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
   position: relative;
+  min-height: 100vh;
+  padding: 1.2rem;
   overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(108, 125, 255, 0.12), transparent 34rem),
+    var(--page-bg);
 }
 
-/* Animação de varredura horizontal de terminal */
 .scanline {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%),
-    linear-gradient(
-      90deg,
-      rgba(255, 0, 0, 0.02),
-      rgba(0, 255, 0, 0.01),
-      rgba(0, 0, 255, 0.02)
-    );
-  background-size:
-    100% 3px,
-    3px 100%;
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  background: linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 100% 0.35rem;
+  opacity: 0.35;
   pointer-events: none;
-  z-index: 10;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .mainCard {
-  width: 100%;
-  max-width: 800px;
-  padding: 35px;
-  border: 1px solid rgba(0, 242, 255, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 1.5rem;
+  width: min(100%, 92rem);
+  margin: 0 auto;
+  padding: 1.6rem;
+  border: 1px solid rgba(108, 125, 255, 0.25);
 }
 
 .header {
@@ -48,206 +42,214 @@
 .liveIndicator {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--error);
-  padding: 5px 15px;
-  border-radius: 4px;
-  font-weight: 900;
-  font-size: 0.9rem;
-  letter-spacing: 3px;
-  border: 1px solid var(--error);
-  margin-bottom: 10px;
+  gap: 0.6rem;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(255, 93, 127, 0.35);
+  border-radius: 99rem;
+  background: rgba(255, 93, 127, 0.1);
+  color: var(--danger-neon);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
-  background: var(--error);
+  width: 0.8rem;
+  height: 0.8rem;
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--error);
+  background: var(--danger-neon);
+  box-shadow: 0 0 1rem var(--danger-glow);
   animation: pulse 1s infinite alternate;
 }
 
 .title {
-  font-size: clamp(1.8rem, 5vw, 3rem);
-  font-weight: 900;
-  margin: 0;
-  text-transform: uppercase;
+  margin: 1.3rem 0 0;
+  color: var(--gray-100);
+  font-size: clamp(2.4rem, 8vw, 4.4rem);
+  letter-spacing: -0.08em;
+  line-height: 1;
 }
 
 .title span {
-  color: transparent;
-  -webkit-text-stroke: 1px var(--gray-400);
+  color: var(--violet);
 }
 
 .subtitle {
+  margin: 0.8rem 0 0;
   color: var(--text-muted);
-  font-size: 1.2rem;
-  margin-top: 8px;
+  font-size: 1.3rem;
+}
+
+.statusBox {
+  padding: 1rem;
+  border: 1px solid rgba(85, 230, 224, 0.18);
+  border-radius: 1.2rem;
+  background: rgba(85, 230, 224, 0.06);
 }
 
 .phaseBadge {
-  background: rgba(0, 242, 255, 0.05);
-  padding: 10px;
-  border: 1px solid rgba(0, 242, 255, 0.1);
-  border-radius: 8px;
-  font-size: 1.1rem;
   color: var(--gray-300);
-  letter-spacing: 1px;
+  font-size: 1.2rem;
+  text-align: center;
 }
 
 .phaseBadge strong {
   color: var(--tech-cyan);
 }
 
-/* --- GRID DE JOGADORES --- */
 .label {
-  font-size: 0.9rem;
-  color: var(--tech-cyan);
-  letter-spacing: 4px;
-  margin-bottom: 15px;
+  margin: 0 0 0.9rem;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
 .playerGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
 }
 
 .playerCard {
-  background: rgba(30, 41, 59, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 12px;
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 15px;
-  position: relative;
+  gap: 0.8rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.avatarMini {
+  flex: 0 0 auto;
 }
 
 .playerInfo {
-  flex: 1;
   display: flex;
+  flex: 1;
   flex-direction: column;
+  min-width: 0;
 }
 
 .name {
-  font-size: 1.5rem;
-  font-weight: 700;
+  overflow: hidden;
   color: var(--gray-100);
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .statusText {
-  font-size: 0.8rem;
-  font-weight: 800;
+  margin-top: 0.2rem;
   color: var(--success);
-  letter-spacing: 1px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
 }
 
-/* Meta Data (Score e Status de Voto) */
+.dead .statusText {
+  color: var(--danger-neon);
+}
+
 .playerMeta {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 5px;
-  min-width: 80px;
+  gap: 0.35rem;
 }
 
 .score {
-  font-family: monospace;
-  font-size: 1.1rem;
   color: var(--caution-amber);
+  font-family: "Space Grotesk", monospace;
+  font-size: 1.1rem;
 }
 
 .voteIndicator,
 .readyFlag {
-  font-size: 0.7rem;
-  font-weight: 900;
-  background: var(--gray-800);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: var(--gray-500);
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .voted,
 .isReady {
-  background: var(--success);
-  color: #000;
+  background: rgba(80, 223, 170, 0.15);
+  color: var(--success);
 }
 
-/* Estado Morto */
 .dead {
-  filter: grayscale(1) brightness(0.6);
-}
-
-.dead .statusText {
-  color: var(--error);
+  filter: grayscale(0.8);
+  opacity: 0.65;
 }
 
 .deadOverlay {
   position: absolute;
-  right: 10px;
   top: 50%;
-  transform: translateY(-50%) rotate(-10deg);
-  border: 2px solid var(--error);
-  color: var(--error);
-  padding: 2px 6px;
-  font-weight: 900;
-  font-size: 1rem;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 4px;
+  right: 1rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--danger-neon);
+  border-radius: 0.5rem;
+  color: var(--danger-neon);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transform: translateY(-50%) rotate(-7deg);
 }
 
-/* --- FOOTER --- */
 .footer {
-  margin-top: 10px;
-  padding-top: 20px;
-  border-top: 1px solid var(--gray-800);
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
 }
 
 .loadingInfo {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 0.7rem;
   color: var(--caution-amber);
-  font-size: 1rem;
-  font-weight: 900;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
 }
 
 .spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid var(--caution-amber);
-  border-top-color: transparent;
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 0.25rem solid rgba(255, 200, 87, 0.25);
+  border-top-color: var(--caution-amber);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 900ms linear infinite;
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
+
 @keyframes pulse {
-  from {
-    opacity: 1;
-    transform: scale(1);
+  to { opacity: 0.4; transform: scale(0.85); }
+}
+
+@media (min-width: 620px) {
+  .wrapper {
+    padding: 2.4rem;
   }
-  to {
-    opacity: 0.4;
-    transform: scale(0.9);
+
+  .mainCard {
+    padding: 2.4rem;
+  }
+
+  .playerGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-/* Mobile Adjustments */
-@media (max-width: 650px) {
-  .playerGrid {
-    grid-template-columns: 1fr;
-  }
-  .name {
-    font-size: 1.3rem;
-  }
+.groupSection {
+  min-width: 0;
 }

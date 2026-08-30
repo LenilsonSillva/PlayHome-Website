@@ -17,8 +17,8 @@ export function PlayerAvatar({
   const width = size;
   const height = size * 1.33;
 
-  // Verde clássico de monitor antigo (Phosphor Green)
-  const retroGreen = "#00ff41";
+  // Acento compartilhado com o novo painel de missão.
+  const retroGreen = "#55e6e0";
 
   return (
     <div
@@ -26,8 +26,8 @@ export function PlayerAvatar({
         {
           width: `${width}px`,
           height: `${height}px`,
-          borderRadius: "4px",
-          backgroundColor: "#0a0f1a",
+          borderRadius: `${Math.max(8, size * 0.14)}px`,
+          backgroundColor: "#101d31",
           border: `2px solid ${color}`, // Mantém a cor do jogador na borda
           display: "flex",
           alignItems: "center",
@@ -36,8 +36,8 @@ export function PlayerAvatar({
           flexShrink: 0,
           position: "relative",
           overflow: "hidden",
-          marginTop: "15px",
-          marginBottom: "8px",
+          marginTop: "0px",
+          marginBottom: "0px",
         } as React.CSSProperties
       }
     >

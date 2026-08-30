@@ -1,11 +1,10 @@
 .container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px 20px 100px;
   display: flex;
   flex-direction: column;
-  gap: 1.6rem;
-  animation: fadeIn 0.6s ease-out;
+  gap: 1.5rem;
+  width: min(100%, 84rem);
+  margin: 0 auto;
+  padding-bottom: 3rem;
 }
 
 .header {
@@ -13,128 +12,116 @@
 }
 
 .badge {
-  font-size: 0.8rem;
+  display: inline-flex;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid rgba(85, 230, 224, 0.3);
+  border-radius: 99rem;
+  background: rgba(85, 230, 224, 0.08);
   color: var(--tech-cyan);
-  letter-spacing: 4px;
-  font-weight: 800;
-  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
 .title {
-  font-size: clamp(2.5rem, 8vw, 3.5rem);
-  font-weight: 900;
-  text-transform: uppercase;
-  margin: 0;
+  margin: 1.2rem 0 0;
+  color: var(--gray-100);
+  font-size: clamp(2.7rem, 9vw, 4.8rem);
+  letter-spacing: -0.08em;
+  line-height: 0.98;
 }
 
 .title span {
-  color: transparent;
-  -webkit-text-stroke: 1px var(--gray-400);
+  color: var(--tech-cyan);
 }
 
 .roundLabel {
-  margin: 8px 0 0;
-  font-size: 0.85rem;
-  letter-spacing: 3px;
+  margin: 0.7rem 0 0;
   color: var(--text-muted);
-  font-weight: 800;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
 }
 
-/* BANNER DE VITÓRIA DA RODADA */
 .victoryBanner {
+  padding: 1.6rem;
+  border: 1px solid rgba(85, 230, 224, 0.28);
+  background: linear-gradient(135deg, rgba(85, 230, 224, 0.1), rgba(174, 140, 255, 0.08));
   text-align: center;
-  padding: 22px;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 242, 255, 0.25);
-  box-shadow: 0 0 40px rgba(0, 242, 255, 0.08);
 }
 
 .victoryTitle {
   margin: 0;
-  font-size: 0.8rem;
-  letter-spacing: 4px;
   color: var(--text-muted);
-  font-weight: 800;
-  text-transform: uppercase;
+  font-size: 1.1rem;
+  letter-spacing: 0.13em;
 }
 
 .victoryNames {
-  margin-top: 8px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 6px;
+  gap: 0.6rem;
+  margin-top: 0.7rem;
 }
 
 .victoryName {
-  font-size: clamp(1.4rem, 5vw, 2rem);
-  font-weight: 900;
+  font-size: clamp(2.1rem, 8vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.06em;
   text-transform: uppercase;
-  text-shadow: 0 0 24px currentColor;
 }
 
 .victoryHits {
-  margin: 10px 0 0;
-  font-size: 1.1rem;
-  font-weight: 900;
+  margin: 0.7rem 0 0;
   color: var(--success);
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
-/* RANKING GERAL */
 .podium {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  margin-top: 10px;
+  display: grid;
+  gap: 1rem;
 }
 
 .actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+.nextBtn,
+.lobbyBtn {
+  min-height: 5.5rem;
+  border-radius: 1.2rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease;
 }
 
 .nextBtn {
+  border: 0;
   background: var(--button-tech);
-  color: white;
-  padding: 20px;
-  border: none;
-  border-radius: 15px;
-  font-size: 1.3rem;
-  font-weight: 900;
-  cursor: pointer;
-  text-transform: uppercase;
-}
-
-.nextBtn:hover {
-  box-shadow: 0 5px 25px rgba(0, 242, 255, 0.3);
+  color: var(--gray-900);
+  box-shadow: 0 1rem 2.6rem rgba(85, 230, 224, 0.15);
 }
 
 .lobbyBtn {
-  background: transparent;
-  border: 2px solid var(--gray-600);
-  color: var(--text-muted);
-  padding: 15px;
-  border-radius: 15px;
-  font-size: 1.1rem;
-  font-weight: 800;
-  cursor: pointer;
-  text-transform: uppercase;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--gray-300);
 }
 
+.nextBtn:hover,
 .lobbyBtn:hover {
-  border-color: var(--danger-neon);
-  color: var(--danger-neon);
+  filter: brightness(1.08);
+  transform: translateY(-0.15rem);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (min-width: 620px) {
+  .actions {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.7fr);
   }
 }

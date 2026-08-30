@@ -18,7 +18,7 @@ export function createTeams(
   distributionType: "random" | "manual",
   manualAssignments?: Record<string, number>, // { "idDoJogador": 0 (index do time) }
 ): CryptoTeam[] {
-  // 1. Inicializa os esquadrões vazios
+  // 1. Inicializa os grupos vazios
   const teams: CryptoTeam[] = Array.from({ length: numberOfTeams }).map(
     (_, i) => ({
       id: `team-${i}`,

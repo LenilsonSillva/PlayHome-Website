@@ -1,0 +1,55 @@
+{
+  "home": {
+    "card_suggestions": "SUGERENCIAS",
+    "card_subTitleImpostor": "DEDUCCIÓN SOCIAL",
+    "card_playerIdea": "¿Tienes alguna idea para un nuevo juego o mejoras? ¡Compártela con el desarrollador!",
+    "card_subTitleCrypto": "LÓGICA Y ESTRATEGIA",
+    "card_subTitleSuggestion": "OPINIÓN",
+    "card_minSuggestion": "DIRECTO",
+    "card_min": "MÍN.",
+    "card_typeMystery": "MISTERIO",
+    "card_typeParty": "FIESTA",
+    "card_typeTeams": "EQUIPOS",
+    "card_typeCode": "CÓDIGO",
+    "card_typeCommu": "COMUNIDAD",
+    "card_typeFuture": "MUY PRONTO",
+    "card_playBtn": "JUGAR AHORA",
+    "card_sendIdeaBtn": "ENVIAR IDEA",
+    "modal_newIdea": "NUEVA IDEA",
+    "modal_sugDesc": "Tu sugerencia se enviará directamente al desarrollador.",
+    "modal_playerDesc": "Describe tu sugerencia o mejoras...",
+    "modal_send": "ENVIAR"
+  },
+  "alerts": {
+    "lostConnection": "Sin conexión al servidor. Revisa tu internet o espera un poco.",
+    "purchase_error": "No se pudo realizar la compra.",
+    "premium_success": "Compra realizada con éxito.",
+    "restore_success": "Compra restaurada.",
+    "restore_not_found": "No se encontraron compras en esta cuenta.",
+    "restore_error": "Error al conectar con la tienda."
+  },
+  "premiumModal": {
+    "title": "QUITAR ANUNCIOS",
+    "subtitle": "Quita los anuncios y apoya el desarrollo continuo de PlayHome.",
+    "cta": "QUITAR AHORA",
+    "restore": "Restaurar Compra Anterior",
+    "footerInfo": "Compra segura por Google Play Store.",
+    "monthly": "Suscripción Mensual",
+    "monthly_sub": "Experiencia Gamer Full\nUn Mes Sin Anuncios",
+    "lifetime": "De por vida",
+    "lifetime_sub": "Sin Anuncios para Siempre\nJuega Totalmente Libre",
+    "week": "Pase Semanal",
+    "week_sub": "Fiesta de Fin de Semana\n7 Días Sin Anuncios"
+  },
+  "games": {
+    "impostor_lobby_VideoGame": "Videojuegos",
+    "impostor_lobby_explainCreateRoom": "GENERA UN CÓDIGO E INVITA A LOS JUGADORES A JUGAR CADA UNO EN SU CELULAR.",
+    "impostor_discuss_subtitle": "Debatan y analicen las pistas de cada jugador. El infiltrado está entre ustedes.",
+    "impostor_desc": "¡Mantente alerta! Todos reciben una palabra secreta excepto el impostor. Descubre al infiltrado antes de que sea tarde. El juego termina cuando los impostores son eliminados o superan a los jugadores.",
+    "cripto_desc": "¡Comunicación estratégica! Tu grupo debe descifrar la palabra mediante pistas precisas del operador. Gana el grupo con más aciertos.",
+    "cryptography_card_holdToStart": "MANTÉN PRESIONADO PARA INICIAR",
+    "cryptography_card_holdToSee": "MANTÉN PRESIONADO PARA VER",
+    "cryptography_action_holdToView": "MANTÉN PRESIONADO PARA VER",
+    "cryptography_action_turnOf": "TURNO DE"
+  }
+}

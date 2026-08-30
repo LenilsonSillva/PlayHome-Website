@@ -1,5 +1,7 @@
 import { createTeams } from "./createTeams";
 import { getUniqueWord } from "./wordSelector";
+import { compareTeams } from "../components/ranking";
+import { getWordDatabase } from "../../../../data/words";
 import type { WordData } from "../../../../data/words";
 import type {
   CryptoConfig,
@@ -78,6 +80,7 @@ function commonReducer(
       );
 
       const initialTeamIndex = Math.floor(Math.random() * teams.length);
+      const wordDatabase = action.wordDatabase ?? getWordDatabase(action.config.language ?? "pt");
 
       return {
         config: action.config,
@@ -92,6 +95,7 @@ function commonReducer(
         roundEndTime: undefined,
         skipsLeft: action.config.skipLimit,
         roundHistory: [],
+        wordDatabase,
       };
     }
 
@@ -104,7 +108,14 @@ function commonReducer(
     }
 
     case "SET_STARTING_TEAM": {
-      if (!state) return state;
+      if (
+        !state ||
+        state.roundNumber !== 1 ||
+        action.teamIndex < 0 ||
+        action.teamIndex >= state.teams.length
+      ) {
+        return state;
+      }
       return {
         ...state,
         currentTeamIndex: action.teamIndex,
@@ -133,6 +144,7 @@ function commonReducer(
       const firstWord = getUniqueWord(
         state.config.categories,
         state.usedWords,
+        state.wordDatabase,
       );
 
       return {
@@ -178,6 +190,7 @@ function commonReducer(
       const nextWord = getUniqueWord(
         state.config.categories,
         state.usedWords,
+        state.wordDatabase,
       );
       if (!nextWord || !nextWord.word) {
         return { ...state, phase: "round-result" };
@@ -282,44 +295,17 @@ function commonReducer(
     case "NEXT_ROUND": {
       if (!state) return state;
 
-      let nextStartingTeam = state.startingTeamIndex;
-
-      if (state.config.mode === "infiltration") {
-        // Infiltração: o próximo grupo na fila inicia a nova rodada
-        nextStartingTeam = (state.startingTeamIndex + 1) % state.teams.length;
-      } else {
-        // Interceptação: o vencedor absoluto da rodada inicia.
-        // Desempate oficial: Acertos -> Eficiência -> Tempo
-        const sortedTeams = [...state.teams].sort((a, b) => {
-          if (a.roundScore !== b.roundScore) return b.roundScore - a.roundScore;
-
-          const attemptsA = a.roundScore + (a.roundErrors || 0);
-          const effA =
-            attemptsA > 0 ? Math.round((a.roundScore / attemptsA) * 100) : 0;
-
-          const attemptsB = b.roundScore + (b.roundErrors || 0);
-          const effB =
-            attemptsB > 0 ? Math.round((b.roundScore / attemptsB) * 100) : 0;
-
-          if (effA !== effB) return effB - effA;
-
-          const rawTimeA =
-            a.roundScore > 0 ? (a.roundTimeSpent || 0) / a.roundScore : 0;
-          const timeA = Number((rawTimeA / 1000).toFixed(1));
-
-          const rawTimeB =
-            b.roundScore > 0 ? (b.roundTimeSpent || 0) / b.roundScore : 0;
-          const timeB = Number((rawTimeB / 1000).toFixed(1));
-
-          if (timeA !== timeB) return timeA - timeB; // Menor tempo = melhor rank
-
-          return 0; // Empate absoluto
-        });
-
-        nextStartingTeam = state.teams.findIndex(
-          (t) => t.id === sortedTeams[0].id,
-        );
-      }
+      // A equipe vencedora da rodada anterior começa automaticamente
+      // nos dois modos. O desempate é o mesmo ranking usado no resultado:
+      // acertos -> eficiência -> tempo médio.
+      const rankedTeams = [...state.teams].sort((a, b) =>
+        compareTeams(a, b, "round"),
+      );
+      const winnerIndex = state.teams.findIndex(
+        (team) => team.id === rankedTeams[0]?.id,
+      );
+      const nextStartingTeam =
+        winnerIndex >= 0 ? winnerIndex : state.startingTeamIndex;
 
       return {
         ...state,
@@ -413,6 +399,7 @@ function infiltrationReducer(
       const result = getUniqueWord(
         state.config.categories,
         state.usedWords,
+        state.wordDatabase,
       );
 
       if (!result.word) {
@@ -462,6 +449,7 @@ function infiltrationReducer(
       const result = getUniqueWord(
         state.config.categories,
         state.usedWords,
+        state.wordDatabase,
       );
 
       if (!result.word) {
@@ -557,6 +545,7 @@ function interceptionReducer(
       const result = getUniqueWord(
         state.config.categories,
         state.usedWords,
+        state.wordDatabase,
       );
 
       if (!result.word) {

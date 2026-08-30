@@ -1,7 +1,9 @@
 import { PlayerAvatar } from "../../../../../components/PlayerAvatar/PlayerAvatar";
+import { useI18n } from "../../../../../i18n";
 import styles from "./spectatorView.module.css";
 
 export function SpectatorView({ gameData }: { gameData: any }) {
+  const { t } = useI18n();
   const rawPlayers = gameData.players ?? gameData.allPlayers ?? [];
 
   const players = (rawPlayers || []).map((p: any) => ({
@@ -15,18 +17,18 @@ export function SpectatorView({ gameData }: { gameData: any }) {
     score: p.globalScore ?? p.score ?? 0,
   }));
 
-  const phasePortuguese = () => {
+  const phaseLabel = () => {
     switch (gameData.phase) {
       case "reveal":
-        return "REVELAÇÃO";
+        return t("games.impostor_phase_reveal", "REVEAL");
       case "discussion":
-        return "DISCUTINDO";
+        return t("games.impostor_phase_discussion", "DISCUSSION");
       case "voting":
-        return "VOTAÇÃO";
+        return t("games.impostor_phase_voting", "VOTING");
       case "result":
-        return "RESULTADO";
+        return t("games.impostor_phase_result", "RESULT");
       default:
-        return null;
+        return t("games.impostor_phase_spectator", "SPECTATOR");
     }
   };
 
@@ -39,24 +41,31 @@ export function SpectatorView({ gameData }: { gameData: any }) {
           <header className={styles.header}>
             <div className={styles.liveIndicator}>
               <span className={styles.dot} />
-              LIVE FEED
+              {t("games.impostor_spectator_liveFeed", "LIVE FEED")}
             </div>
             <h1 className={styles.title}>
-              OBSERVADOR <span>TÁTICO</span>
+              {t("games.impostor_spectator_observer", "OBSERVER")} {" "}
+              <span>{t("games.impostor_spectator_tatical", "TACTICAL")}</span>
             </h1>
             <p className={styles.subtitle}>
-              Monitoramento de tripulação em tempo real
+              {t(
+                "games.impostor_spectator_monitorLabel",
+                "Real-time player monitoring",
+              )}
             </p>
           </header>
 
           <div className={styles.statusBox}>
             <div className={styles.phaseBadge}>
-              ESTADO DO SISTEMA: <strong>{phasePortuguese()}</strong>
+              {t("games.impostor_spectator_systemStatus", "SYSTEM STATUS:")} {" "}
+              <strong>{phaseLabel()}</strong>
             </div>
           </div>
 
-          <section className={styles.squadSection}>
-            <h3 className={styles.label}>ESTADO DOS TRIPULANTES</h3>
+          <section className={styles.groupSection}>
+            <h3 className={styles.label}>
+              {t("games.impostor_spectator_crewStatus", "PLAYER STATUS")}
+            </h3>
 
             <div className={styles.playerGrid}>
               {players.map((p: any) => (
@@ -76,29 +85,41 @@ export function SpectatorView({ gameData }: { gameData: any }) {
                   <div className={styles.playerInfo}>
                     <span className={styles.name}>{p.name}</span>
                     <span className={styles.statusText}>
-                      {p.isAlive ? "SINAL ATIVO" : "SINAL PERDIDO"}
+                      {p.isAlive
+                        ? t("games.impostor_spectator_activeSignal", "ACTIVE SIGNAL")
+                        : t("games.impostor_spectator_lostSignal", "SIGNAL LOST")}
                     </span>
                   </div>
 
                   <div className={styles.playerMeta}>
-                    <span className={styles.score}>{p.score} PTS</span>
+                    <span className={styles.score}>
+                      {p.score} {t("site.points", "PTS")}
+                    </span>
                     {gameData.phase === "voting" && p.isAlive && (
                       <span
                         className={`${styles.voteIndicator} ${p.voted ? styles.voted : ""}`}
                       >
-                        {p.voted ? "VOTOU" : "PENDENTE"}
+                        {p.voted
+                          ? t("games.impostor_statusModal_voted", "VOTED")
+                          : t("games.impostor_statusModal_waiting", "WAITING")}
                       </span>
                     )}
                     {gameData.phase === "reveal" && (
                       <span
                         className={`${styles.readyFlag} ${p.ready ? styles.isReady : ""}`}
                       >
-                        {p.ready ? "PRONTO" : "LENDO"}
+                        {p.ready
+                          ? t("games.impostor_statusModal_ready", "READY")
+                          : t("games.impostor_spectator_reading", "READING")}
                       </span>
                     )}
                   </div>
 
-                  {!p.isAlive && <div className={styles.deadOverlay}>KIA</div>}
+                  {!p.isAlive && (
+                    <div className={styles.deadOverlay}>
+                      {t("games.impostor_spectator_eliminated", "ELIMINATED")}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -107,7 +128,10 @@ export function SpectatorView({ gameData }: { gameData: any }) {
           <footer className={styles.footer}>
             <div className={styles.loadingInfo}>
               <div className={styles.spinner} />
-              AGUARDANDO FINALIZAÇÃO DA RODADA...
+              {t(
+                "games.impostor_spectator_waitingEnd",
+                "WAITING FOR THE ROUND TO END...",
+              )}
             </div>
           </footer>
         </div>

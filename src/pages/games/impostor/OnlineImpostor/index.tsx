@@ -7,9 +7,11 @@ import { VotingPhase } from "../components/votingPhase/VotingPhase";
 import { ResultPhase } from "../components/resultPhase";
 import { SpectatorView } from "./SpectatorView/SpectatorView";
 import { NewHostModal } from "./NewHostAlert/NewHostModal";
+import { useI18n } from "../../../../i18n";
 
 export function OnlineImpostorGame() {
   const socket = useSocket();
+  const { t } = useI18n();
   const location = useLocation();
   const [gameData, setGameData] = useState<any>(
     location.state?.data || location.state || null,
@@ -42,12 +44,12 @@ export function OnlineImpostorGame() {
     }
 
     function onPlayerLeft({ name, reason }: { name: string; reason: string }) {
-      alert(`${name} saiu do jogo`);
-      console.log(`${name} saiu do jogo. Motivo: ${reason}`);
+      alert(`${name} ${t("alerts.impostor_leftGame", "left the game.")}`);
+      console.log(`${name} left the game. Reason: ${reason}`);
     }
 
     function onForceLobby({ reason }: { reason: string }) {
-      alert("Jogadores insuficientes. Voltando ao lobby.");
+      alert(t("alerts.impostor_closingRoom", "Not enough players. Returning to the lobby."));
       window.location.href = "/games/impostor/lobby";
       console.log(`Jogadores Insuficientes:${reason}`);
     }
@@ -98,7 +100,7 @@ export function OnlineImpostorGame() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [gameData]);
 
-  if (!gameData) return <div>Carregando a nova rodada...</div>;
+  if (!gameData) return <div>{t("home.loading", "Loading the next round...")}</div>;
 
   // Card de aviso: novo host
   if (showNewHostAlert) {
@@ -195,5 +197,5 @@ export function OnlineImpostorGame() {
     );
   }
 
-  return <div>Fase inválida</div>;
+  return <div>{t("games.impostor_invalidPhase", "Invalid game phase")}</div>;
 }

@@ -31,7 +31,7 @@ export function useCountdown(view: CryptoView): number | null {
 }
 
 // ------------------------------------------------------------
-// Placar compacto de todos os esquadrões (telas de espera)
+// Placar compacto de todos os groups (telas de espera)
 // ------------------------------------------------------------
 export function Scoreboard({ teams }: { teams: CryptoTeamView[] }) {
   const sorted = [...teams].sort((a, b) => b.score - a.score);
@@ -49,7 +49,7 @@ export function Scoreboard({ teams }: { teams: CryptoTeamView[] }) {
 }
 
 // ------------------------------------------------------------
-// Integrantes do esquadrão com status de conexão
+// Integrantes do group com status de conexão
 // ------------------------------------------------------------
 export function TeamMembers({ team }: { team: CryptoTeamView }) {
   return (

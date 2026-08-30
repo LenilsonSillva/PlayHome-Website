@@ -1,79 +1,44 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePlayers } from "../../../../contexts/contextHook";
 import { getImpostorCount, initializeGame } from "../GameLogistic/gameLogistic";
 import { useNavigate } from "react-router-dom";
-import { categories } from "../../../../data/words";
+import { getCategories, getWordDatabase } from "../../../../data/words";
+import { useI18n } from "../../../../i18n";
+import { CategoryGrid } from "../../../../components/CategoryGrid/CategoryGrid";
 import styles from "./offlineLobbyStyle.module.css";
 import type { GameRouteState } from "../GameLogistic/types";
 
 export function OfflineImpostorLobby() {
   const navigate = useNavigate();
   const { players, addPlayer, removePlayer } = usePlayers();
+  const { language, t } = useI18n();
+  const categories = useMemo(() => getCategories(getWordDatabase(language)), [language]);
   const [name, setName] = useState("");
   const maxImpostors = getImpostorCount(players.length);
   const [selectImpostorNumbers, setSelectImpostorNumbers] = useState(1);
-  const [twoGroups, setTwoGroups] = useState<boolean>(false);
-  const initialCategories = [
-    "Objetos",
-    "Animais",
-    "Ciência",
-    "Natureza",
-    "Comida",
-    "Emoções",
-    "Substantivos variados",
-    "Lugares",
-    "Países e Cidades",
-    "Tecnologia",
-  ];
-  const [categorie, setCategorie] = useState<string[]>(initialCategories);
-  const [impostorHint, setImpostorHint] = useState<boolean>(false);
-  const [whoStart, setWhoStart] = useState<boolean>(true);
-  const [impostorCanStart, setImpostorCanStart] = useState<boolean>(true);
+  const [twoGroups, setTwoGroups] = useState(false);
+  const [categorie, setCategorie] = useState<string[]>(categories);
+  const [impostorHint, setImpostorHint] = useState(false);
+  const [impostorTrap, setImpostorTrap] = useState(false);
+  const [impostorCat, setImpostorCat] = useState(false);
+  const [impostorsUnited, setImpostorsUnited] = useState(false);
+  const [whoStart, setWhoStart] = useState(true);
+  const [impostorCanStart, setImpostorCanStart] = useState(true);
   const [showCategories, setShowCategories] = useState(false);
 
-  // Função para adicionar um jogador à lista
+  useEffect(() => {
+    setSelectImpostorNumbers((current) => Math.min(current, maxImpostors));
+  }, [maxImpostors]);
+
+  useEffect(() => {
+    setCategorie(categories);
+  }, [categories]);
 
   function handleAddNamePlayer() {
     if (!name.trim()) return;
     addPlayer(name.trim());
     setName("");
   }
-
-  // Função para lidar com a mudança do checkbox de dois grupos
-
-  function handleTwoGroupsChange(event: React.ChangeEvent<HTMLInputElement>) {
-    setTwoGroups(event.target.checked);
-  }
-
-  function handleWhoStart(event: React.ChangeEvent<HTMLInputElement>) {
-    setWhoStart(event.target.checked);
-  }
-
-  function handleImpostorCanStart(event: React.ChangeEvent<HTMLInputElement>) {
-    setImpostorCanStart(event.target.checked);
-  }
-
-  function handleCategorie(cat: string) {
-    categorie.includes(cat)
-      ? setCategorie((prev) => prev.filter((item) => item !== cat))
-      : setCategorie((prev) => [...prev, cat]);
-  }
-
-  // Função para lidar com a mudança do checkbox de dica do impostor
-
-  function handleImpostorHintChange(
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) {
-    setImpostorHint(event.target.checked);
-  }
-
-  // Atualiza o número máximo de impostores quando a lista de jogadores muda
-
-  useEffect(() => {
-    setSelectImpostorNumbers(Math.min(selectImpostorNumbers, maxImpostors));
-  }, [players.length, maxImpostors]);
-
-  // Função para iniciar o jogo
 
   function startGame() {
     const allData = initializeGame(
@@ -84,168 +49,142 @@ export function OfflineImpostorLobby() {
       categorie,
       whoStart,
       impostorCanStart,
+      impostorTrap,
+      impostorCat,
+      impostorsUnited,
+      [],
+      [],
+      getWordDatabase(language),
     );
 
-    if (allData !== undefined) {
-      navigate("/games/impostor/offline", {
-        state: {
-          data: {
-            players: allData.allPlayers,
-            howManyImpostors: allData.howManyImpostors,
-            impostorCanStart: allData.impostorCanStart,
-            impostorHint: allData.impostorHasHint,
-            selectedCategories: allData.selectedCategories,
-            twoWordsMode: allData.twoWordsMode,
-            whoStart: allData.whoStart,
-            phase: "reveal",
-          },
-        } satisfies GameRouteState,
-      });
-    }
+    navigate("/games/impostor/offline", {
+      state: {
+        data: {
+          players: allData.allPlayers,
+          howManyImpostors: allData.howManyImpostors,
+          impostorCanStart: allData.impostorCanStart,
+          impostorHint: allData.impostorHasHint,
+          impostorTrap: allData.impostorTrap,
+          impostorCat: allData.impostorCat,
+          impostorsUnited: allData.impostorsUnited,
+          selectedCategories: allData.selectedCategories,
+          twoWordsMode: allData.twoWordsMode,
+          whoStart: allData.whoStart,
+          phase: "reveal",
+          language,
+        },
+      } satisfies GameRouteState,
+    });
   }
+
+  const settingItems = [
+    { label: t("games.impostor_lobby_twoWords", "Two word mode"), state: twoGroups, set: setTwoGroups, detail: t("games.impostor_lobby_twoWordsSub", "Split the players into two word groups.") },
+    { label: t("games.impostor_lobby_whoStart", "Random player starts"), state: whoStart, set: setWhoStart, detail: t("games.impostor_lobby_whoStartSub", "The system chooses who starts.") },
+    { label: t("games.impostor_lobby_impostorStarts", "Impostor can start"), state: impostorCanStart, set: setImpostorCanStart, detail: t("games.impostor_lobby_impostorStartsSub", "Allow the impostor to start.") },
+    { label: t("games.impostor_lobby_impostorHint", "Impostor gets a hint"), state: impostorHint, set: setImpostorHint, detail: t("games.impostor_lobby_impostorHintSub", "Show a hint to the impostor.") },
+    { label: t("games.impostor_lobby_impostorCat", "Show only category"), state: impostorCat, set: setImpostorCat, detail: t("games.impostor_lobby_impostorCatSub", "Give the impostor the category only.") },
+    { label: t("games.impostor_lobby_impostorTrap", "Deceive impostor"), state: impostorTrap, set: setImpostorTrap, detail: t("games.impostor_lobby_impostorTrapSub", "There is a 50% chance of a false hint.") },
+    { label: t("games.impostor_lobby_impostorUnion", "Impostors know each other"), state: impostorsUnited, set: setImpostorsUnited, detail: t("games.impostor_lobby_unionSub", "Impostors recognize one another at the start.") },
+  ];
 
   return (
     <div className={styles.lobbyWrapper}>
-      <div className={styles.headerArea}>
-        <h1 className={styles.title}>OPÇÕES DE PROTOCOLO</h1>
-        <p className={styles.subtitle}>Configure os parâmetros da missão</p>
+      <div className={styles.lobbyHeader}>
+        <div>
+          <p className={styles.kicker}>{t("games.impostor_lobby_settingsTitle", "MISSION SETUP")}</p>
+          <h2>{t("games.impostor_title", "IMPOSTOR")}</h2>
+          <p className={styles.subtitle}>{t("games.impostor_desc", "Find the hidden impostor before it is too late.")}</p>
+        </div>
+        <span className={styles.modeChip}>⌂ {t("site.localMode", "LOCAL GAME")}</span>
       </div>
 
-      {/* SEÇÃO DE JOGADORES */}
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>EQUIPE DE EXPLORAÇÃO</h2>
-        <div className={styles.inputGroup}>
-          <input
-            type="text"
-            placeholder="Identificação do Tripulante"
-            className={styles.textInput}
-            value={name}
-            maxLength={15}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <button onClick={handleAddNamePlayer} className={styles.addButton}>
-            ADICIONAR
-          </button>
-        </div>
-
-        <div className={styles.playersList}>
-          {players.map((player) => (
-            <div key={player.id} className={styles.playerTag}>
-              <span className={styles.dotIndicator} />
-              <span className={styles.pName}>{player.name}</span>
-              <button
-                className={styles.removeBtn}
-                onClick={() => removePlayer(player.id)}
-                aria-label="Remover jogador"
-              >
-                ×
-              </button>
+      <div className={styles.lobbyGrid}>
+        <section className={`${styles.section} ${styles.playersSection}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionIndex}>01 / {t("games.impostor_lobby_rosterLabel", "ROSTER")}</p>
+              <h3>{t("games.impostor_lobby_matesID", "PLAYER IDENTIFICATION")} <span>({players.length}/20)</span></h3>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* SEÇÃO DE IMPOSTORES */}
-      <div className={styles.section}>
-        <div className={styles.counterRow}>
-          <h2 className={styles.sectionTitle}>QUANTIDADE DE IMPOSTORES</h2>
-          <div className={styles.counterControls}>
-            <button
-              className={styles.countBtn}
-              onClick={() =>
-                setSelectImpostorNumbers((p) => Math.max(p - 1, 1))
-              }
-            >
-              -
-            </button>
-            <span className={styles.countDisplay}>{selectImpostorNumbers}</span>
-            <button
-              className={styles.countBtn}
-              onClick={() =>
-                setSelectImpostorNumbers((p) => Math.min(p + 1, maxImpostors))
-              }
-            >
-              +
-            </button>
+            <span className={styles.sectionIcon}>+</span>
           </div>
-        </div>
-      </div>
-
-      {/* CONFIGURAÇÕES GERAIS EM GRADE */}
-      <div className={styles.gridSettings}>
-        {[
-          {
-            label: "Duas palavras",
-            state: twoGroups,
-            fn: handleTwoGroupsChange,
-          },
-          {
-            label: "Jogador aleatório inicia",
-            state: whoStart,
-            fn: handleWhoStart,
-          },
-          {
-            label: "Impostor pode iniciar",
-            state: impostorCanStart,
-            fn: handleImpostorCanStart,
-          },
-          {
-            label: "Impostor tem dica",
-            state: impostorHint,
-            fn: handleImpostorHintChange,
-          },
-        ].map((item, i) => (
-          <label key={i} className={styles.checkboxLabel}>
-            <span className={styles.checkText}>{item.label}</span>
-            <div className={styles.switchWrapper}>
-              <input
-                type="checkbox"
-                className={styles.checkboxInput}
-                checked={item.state}
-                onChange={item.fn}
-              />
-              <span className={styles.switchSlider}></span>
-            </div>
-          </label>
-        ))}
-      </div>
-
-      {/* CATEGORIAS */}
-      <div className={styles.categorySection}>
-        <button
-          type="button"
-          className={`${styles.categoryToggle} ${showCategories ? styles.active : ""}`}
-          onClick={() => setShowCategories(!showCategories)}
-        >
-          {showCategories ? "OCULTAR CATEGORIAS" : "SELECIONAR CATEGORIAS"}
-        </button>
-
-        {showCategories && (
-          <div className={styles.categoryContainer}>
-            <div className={styles.categoryGrid}>
-              {categories.map((cat, index) => (
-                <label key={index} className={styles.categoryItem}>
-                  <input
-                    type="checkbox"
-                    className={styles.checkboxInput}
-                    checked={categorie.includes(cat)}
-                    onChange={() => handleCategorie(cat)}
-                  />
-                  <span className={styles.categoryBox}>{cat}</span>
-                </label>
-              ))}
-            </div>
+          <div className={styles.inputGroup}>
+            <input
+              type="text"
+              placeholder={t("games.impostor_lobby_playerName", "Player name")}
+              className={styles.textInput}
+              value={name}
+              maxLength={15}
+              onChange={(event) => setName(event.target.value)}
+              onKeyDown={(event) => { if (event.key === "Enter") handleAddNamePlayer(); }}
+            />
+            <button type="button" onClick={handleAddNamePlayer} className={styles.addButton}>{t("games.cryptography_lobby_add", "ADD")}</button>
           </div>
-        )}
+          <div className={styles.playersList}>
+            {players.length === 0 && <p className={styles.emptyState}>{t("games.impostor_lobby_playerName", "Add players to begin.")}</p>}
+            {players.map((player, index) => (
+              <div key={player.id} className={styles.playerTag}>
+                <span className={styles.playerNumber}>{String(index + 1).padStart(2, "0")}</span>
+                <span className={styles.dotIndicator} />
+                <span className={styles.pName}>{player.name}</span>
+                <button type="button" className={styles.removeBtn} onClick={() => removePlayer(player.id)} aria-label={t("games.impostor_lobby_removeBtn", "Remove player")}>×</button>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className={`${styles.section} ${styles.impostorSection}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionIndex}>02 / {t("games.impostor_lobby_threatLabel", "THREAT LEVEL")}</p>
+              <h3>{t("games.impostor_lobby_numberOfImpostors", "NUMBER OF IMPOSTORS")}</h3>
+            </div>
+            <span className={styles.sectionIcon}>!</span>
+          </div>
+          <div className={styles.counter}>
+            <button type="button" className={styles.countBtn} onClick={() => setSelectImpostorNumbers((value) => Math.max(value - 1, 1))}>−</button>
+            <strong>{selectImpostorNumbers}</strong>
+            <button type="button" className={styles.countBtn} onClick={() => setSelectImpostorNumbers((value) => Math.min(value + 1, maxImpostors))} disabled={selectImpostorNumbers >= maxImpostors}>＋</button>
+          </div>
+          <p className={styles.helper}>{t("games.impostor_lobby_impostorsLimit", "Current limit: ")}{maxImpostors}</p>
+        </section>
+
+        <section className={`${styles.section} ${styles.rulesSection}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionIndex}>03 / {t("games.impostor_lobby_rulesetLabel", "RULESET")}</p>
+              <h3>{t("games.impostor_lobby_gameOpt", "GAME OPTIONS")}</h3>
+            </div>
+            <span className={styles.sectionIcon}>◷</span>
+          </div>
+          <div className={styles.settingsList}>
+            {settingItems.map((item) => (
+              <label key={item.label} className={styles.settingRow}>
+                <span><strong>{item.label}</strong><small>{item.detail}</small></span>
+                <input type="checkbox" checked={item.state} onChange={(event) => item.set(event.target.checked)} />
+                <i aria-hidden="true" />
+              </label>
+            ))}
+          </div>
+        </section>
+
+        <section className={`${styles.section} ${styles.databaseSection}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionIndex}>04 / {t("games.impostor_lobby_wordBankLabel", "WORD BANK")}</p>
+              <h3>{t("games.impostor_lobby_DBSelect", "SELECT CATEGORIES")} <span>{categorie.length}/{categories.length}</span></h3>
+            </div>
+            <button type="button" className={styles.databaseToggle} onClick={() => setShowCategories((open) => !open)}>{showCategories ? "-" : "＋"}</button>
+          </div>
+          <p className={styles.helper}>{t("site.officialBank", "Official PlayHome bank")}</p>
+          {showCategories && <CategoryGrid categories={categories} selectedCategories={categorie} onToggle={(category) => setCategorie((previous) => previous.includes(category) ? previous.filter((item) => item !== category) : [...previous, category])} />}
+        </section>
       </div>
 
-      <button
-        onClick={startGame}
-        className={styles.startButton}
-        disabled={players.length < 3}
-      >
-        INICIAR MISSÃO
+      <button type="button" onClick={startGame} className={styles.startButton} disabled={players.length < 3}>
+        <span>{t("games.impostor_lobby_startMission", "START MISSION")}</span>
+        <span aria-hidden="true">↗</span>
       </button>
+      {players.length < 3 && <p className={styles.minimumNote}>{t("games.impostor_lobby_startMinimum", "Minimum 3 players")}</p>}
     </div>
   );
 }

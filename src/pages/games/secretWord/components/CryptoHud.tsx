@@ -1,7 +1,8 @@
 import styles from "./cryptoHud.module.css";
+import { useI18n } from "../../../../i18n";
 
 // Cabeçalho HUD compartilhado das telas de ação do Criptografia
-// (offline e online): nome do esquadrão da vez, stats e cronômetro.
+// (offline e online): nome do group da vez, stats e cronômetro.
 
 export type HudStat = {
   text: string;
@@ -28,6 +29,7 @@ export function CryptoHud({
   countdown,
   totalTime,
 }: CryptoHudProps) {
+  const { t } = useI18n();
   const running = countdown !== null;
   const critical = running && countdown <= 5;
 
@@ -45,7 +47,7 @@ export function CryptoHud({
         </div>
         {operatorName ? (
           <p className={styles.hudOperator}>
-            OPERADOR: <strong>{operatorName}</strong>
+            {t("games.cryptography_action_operator", "OPERATOR:")} <strong>{operatorName}</strong>
           </p>
         ) : null}
         {stats.length > 0 && (

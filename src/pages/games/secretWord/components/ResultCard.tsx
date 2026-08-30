@@ -1,8 +1,9 @@
 import { useState, type ReactNode } from "react";
 import { getTeamStats, getTeamMvp, type RankableTeam } from "./ranking";
 import styles from "./resultCard.module.css";
+import { useI18n } from "../../../../i18n";
 
-// Card de relatório do esquadrão — compartilhado entre o resultado offline
+// Card de relatório do grupo — compartilhado entre o resultado offline
 // e o online. Porta o TeamReportCard do PlayHome-RN (stats da rodada + MVP).
 
 type ResultCardProps = {
@@ -18,6 +19,7 @@ export function ResultCard({
   isWinner,
   members,
 }: ResultCardProps) {
+  const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
 
   const round = getTeamStats(team, "round");
@@ -47,20 +49,20 @@ export function ResultCard({
           )}
         </div>
         <div className={styles.totalBox} style={{ borderColor: team.color }}>
-          <span className={styles.totalLabel}>TOTAL</span>
+          <span className={styles.totalLabel}>{t("games.cryptography_result_total", "TOTAL")}</span>
           <span className={styles.totalValue}>{team.score}</span>
         </div>
       </div>
 
       <div className={styles.statsGrid}>
         <div className={styles.statItem}>
-          <span className={styles.statLabel}>ACERTOS</span>
+          <span className={styles.statLabel}>{t("games.cryptography_result_hits", "HITS")}</span>
           <span className={styles.statValue} style={{ color: "var(--success)" }}>
             {round.hits}
           </span>
         </div>
         <div className={styles.statItem}>
-          <span className={styles.statLabel}>ERROS</span>
+          <span className={styles.statLabel}>{t("games.cryptography_result_errorSkip", "ERRORS/SKIPS")}</span>
           <span
             className={styles.statValue}
             style={{ color: "var(--danger-neon)" }}
@@ -69,7 +71,7 @@ export function ResultCard({
           </span>
         </div>
         <div className={styles.statItem}>
-          <span className={styles.statLabel}>EFICIÊNCIA</span>
+          <span className={styles.statLabel}>{t("games.cryptography_result_effc", "EFFICIENCY")}</span>
           <span
             className={styles.statValue}
             style={{ color: "var(--tech-cyan)" }}
@@ -78,7 +80,7 @@ export function ResultCard({
           </span>
         </div>
         <div className={styles.statItem}>
-          <span className={styles.statLabel}>TEMPO MÉDIO</span>
+          <span className={styles.statLabel}>{t("games.cryptography_result_avarageTime", "AVERAGE TIME")}</span>
           <span className={styles.statValue} style={{ color: "var(--gray-200)" }}>
             {round.avgTime}s
           </span>
@@ -87,8 +89,8 @@ export function ResultCard({
 
       {mvp && (
         <p className={styles.mvpLine}>
-          ⭐ MELHOR OPERADOR DA RODADA: {mvp.player.name} ({mvp.words}{" "}
-          {mvp.words === 1 ? "acerto" : "acertos"})
+          ⭐ {t("games.cryptography_result_bestOp", "BEST OPERATOR")}: {mvp.player.name} ({mvp.words}{" "}
+          {t("games.cryptography_result_hits", "hits")})
         </p>
       )}
 
@@ -97,8 +99,8 @@ export function ResultCard({
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {isOpen
-          ? "OCULTAR ACERTOS"
-          : `VER ${currentRoundWords.length} ACERTOS DA RODADA`}
+          ? t("games.cryptography_result_hideHits", "HIDE HITS")
+          : `${t("games.cryptography_result_viewHits", "VIEW HITS")} ${currentRoundWords.length}`}
       </button>
 
       {isOpen && (
@@ -110,7 +112,7 @@ export function ResultCard({
               </span>
             ))
           ) : (
-            <span className={styles.noWords}>Nenhum sinal interceptado.</span>
+            <span className={styles.noWords}>{t("games.cryptography_result_noSignals", "No signals intercepted.")}</span>
           )}
         </div>
       )}

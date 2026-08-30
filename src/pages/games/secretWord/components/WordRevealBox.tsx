@@ -1,5 +1,6 @@
 import { memo, useRef, useCallback } from "react";
 import styles from "./revealBox.module.css";
+import { useI18n } from "../../../../i18n";
 
 type WordRevealBoxProps = {
   word: string | null;
@@ -19,6 +20,7 @@ export const WordRevealBox = memo(
     onPointerDown,
     onPointerUp,
   }: WordRevealBoxProps) => {
+    const { t } = useI18n();
     // Ref para evitar disparos duplos de eventos no iOS
     const lastTouchTime = useRef(0);
 
@@ -54,11 +56,11 @@ export const WordRevealBox = memo(
         {!isRevealing ? (
           <div className={styles.hiddenContent}>
             <div className={styles.pressIcon}>{hasStarted ? "👆" : "📡"}</div>
-            <p>{hasStarted ? "SEGURE PARA VER" : "TOQUE PARA INICIAR"}</p>
+            <p>{hasStarted ? t("games.cryptography_card_holdToSee", "HOLD TO SEE") : t("games.cryptography_action_tapToStart", "TAP TO START")}</p>
           </div>
         ) : (
           <div className={styles.revealedContent}>
-            <span className={styles.label}>TRANSMISSÃO ATIVA:</span>
+            <span className={styles.label}>{t("games.cryptography_action_activeTransmission", "ACTIVE TRANSMISSION:")}</span>
             <h1 className={styles.word}>{word}</h1>
           </div>
         )}

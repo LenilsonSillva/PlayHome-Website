@@ -8,11 +8,21 @@ import { OnlineInfiltrationAction } from "./components/OnlineInfiltrationAction"
 import { OnlineInterceptionAction } from "./components/OnlineInterceptionAction";
 import { OnlineRoundResult } from "./components/OnlineRoundResult";
 import styles from "./onlineCrypto.module.css";
+import { useI18n } from "../../../../i18n";
+import { translateCryptoError } from "../../../../i18n/translateCryptoError";
+
+const PHASE_LABEL_KEYS: Record<CryptoView["phase"], string> = {
+  "team-reveal": "games.cryptography_phase_team_reveal",
+  "infiltration-action": "games.cryptography_phase_infiltration_action",
+  "interception-action": "games.cryptography_phase_interception_action",
+  "round-result": "games.cryptography_phase_round_result",
+};
 
 export function OnlineCryptoGame() {
   const socket = useSocket();
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const rawState = (location.state as { data?: CryptoView } | null) ?? null;
   const [view, setView] = useState<CryptoView | null>(rawState?.data ?? null);
@@ -32,11 +42,11 @@ export function OnlineCryptoGame() {
         event,
         payload ?? {},
         (res: { error?: string } | undefined) => {
-          if (res?.error) alert(res.error);
+          if (res?.error) alert(translateCryptoError(res.error, t));
         },
       );
     },
-    [socket],
+    [socket, t],
   );
 
   // ---------------- eventos da partida ----------------
@@ -48,19 +58,19 @@ export function OnlineCryptoGame() {
     function onPlayerLeft({ name, reason }: { name: string; reason: string }) {
       alert(
         reason === "kicked"
-          ? `${name} foi removido da sala`
-          : `${name} saiu do jogo`,
+          ? `${name} ${t("rooms.removedFromRoom", "was removed from the room")}`
+          : `${name} ${t("rooms.leftTheGame", "left the game")}`,
       );
     }
 
     function onHostChanged({ newHostId }: { newHostId: string }) {
       if (newHostId === socket.id) {
-        alert("O host saiu. Você agora é o novo HOST!");
+        alert(t("rooms.newHost", "The host left. You are now the HOST!"));
       }
     }
 
     function onForceLobby() {
-      alert("A partida foi encerrada porque não há grupos válidos suficientes.");
+      alert(t("rooms.gameEndedNoTeams", "The match ended because there are not enough valid groups."));
       navigate("/games/secretWord/lobby");
     }
 
@@ -75,7 +85,7 @@ export function OnlineCryptoGame() {
       socket.off("crypto:host-changed", onHostChanged);
       socket.off("crypto:force-lobby", onForceLobby);
     };
-  }, [socket, navigate]);
+  }, [socket, navigate, t]);
 
   // ---------------- aviso ao sair/atualizar ----------------
   useEffect(() => {
@@ -92,7 +102,7 @@ export function OnlineCryptoGame() {
 
   // ---------------- sair da partida ----------------
   const handleExit = () => {
-    if (view && window.confirm("Sair da partida?")) {
+    if (view && window.confirm(t("alerts.cryptography_leaveGame", "Leave the match?"))) {
       socket.emit("crypto:leave-room", { roomCode: view.roomCode });
       navigate("/games/secretWord/lobby");
     }
@@ -101,7 +111,7 @@ export function OnlineCryptoGame() {
   if (!view) {
     return (
       <div className={styles.container}>
-        <p className={styles.waitingNote}>Carregando partida...</p>
+        <p className={styles.waitingNote}>{t("home.loading", "Loading...")}</p>
       </div>
     );
   }
@@ -123,32 +133,32 @@ export function OnlineCryptoGame() {
       style={showMyTeamHeader ? { borderBottomColor: myTeam.color } : undefined}
     >
       <button className={styles.exitBtn} onClick={handleExit}>
-        ← SAIR
+        ← {t("alerts.quit", "EXIT")}
       </button>
       <span className={styles.gameRoomCode}>
-        SALA {view.roomCode} · RODADA {view.roundNumber}
+        {t("games.cryptography_result_round", "ROUND")} {view.roundNumber} · {t(PHASE_LABEL_KEYS[view.phase], view.phase)} · {t("rooms.room", "ROOM")} {view.roomCode}
       </span>
       {showMyTeamHeader ? (
         <span
           className={styles.gameViewerTeam}
           style={{ color: myTeam.color }}
-          title="Seu grupo"
+          title={t("rooms.yourTeam", "Your team")}
         >
           <strong>{myTeam.name}</strong>
           <small>
-            {view.isHost ? "👑 HOST · " : "👀 "}SEU GRUPO · OPERADOR:{" "}
-            {myTeamOperator?.name ?? "---"} · {myTeam.score} PTS
+            {view.isHost ? `👑 ${t("rooms.host", "HOST")} · ` : "👀 "}{t("rooms.yourTeam", "YOUR TEAM")} · {t("games.cryptography_action_operator", "OPERATOR:")}{" "}
+            {myTeamOperator?.name ?? "---"} · {myTeam.score} {t("site.points", "PTS")}
           </small>
         </span>
       ) : (
         <span className={styles.gameRole}>
           {isOperator
-            ? "📡 OPERADOR"
+            ? `📡 ${t("games.cryptography_action_operator", "OPERATOR")}`
             : view.isHost
-              ? "👑 HOST"
+              ? `👑 ${t("rooms.host", "HOST")}`
               : view.isSpectator
-                ? "👀 ESPECTADOR"
-                : "👤 JOGADOR"}
+                ? `👀 ${t("rooms.spectator", "SPECTATOR")}`
+                : `👤 ${t("rooms.player", "PLAYER")}`}
         </span>
       )}
     </div>

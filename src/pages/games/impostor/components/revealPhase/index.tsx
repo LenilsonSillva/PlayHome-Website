@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./revelPhase.module.css";
 import type { ImpostorGameState } from "../../GameLogistic/types";
 import { PlayerAvatar } from "../../../../../components/PlayerAvatar/PlayerAvatar";
+import { useI18n } from "../../../../../i18n";
 
 type RevealPhaseProps = {
   data: any;
@@ -20,6 +21,7 @@ export function RevealPhase({
   onReroll,
   onToggleReadyOnline,
 }: RevealPhaseProps) {
+  const { t } = useI18n();
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const allReady = data.allPlayers?.every((p: any) => p.ready);
@@ -28,7 +30,7 @@ export function RevealPhase({
 
   const player = isOnline
     ? {
-        name: data.myName || "VOCÊ",
+        name: data.myName || t("games.impostor_lobby_you", "YOU"),
         emoji: data.myEmoji,
         color: data.myColor,
         isImpostor: data.isImpostor,
@@ -37,9 +39,18 @@ export function RevealPhase({
       }
     : data.players[index];
 
+  const revealPlayers = data.allPlayers ?? data.players ?? [];
+  const allies =
+    data.impostorsUnited && player?.isImpostor
+      ? revealPlayers.filter(
+          (candidate: any) =>
+            candidate.isImpostor && candidate.name !== player.name,
+        )
+      : [];
+
   function handleNext() {
     if (isOnline) {
-      onNextPhase("discussion"); // envia o "ready" pro servidor
+      onNextPhase("discussion");
       return;
     }
 
@@ -48,7 +59,14 @@ export function RevealPhase({
   }
 
   const handleRerollAction = () => {
-    if (window.confirm("Trocar palavra e sortear novos impostores?")) {
+    if (
+      window.confirm(
+        t(
+          "games.impostor_reveal_changeWord_confirm",
+          "Change the word and draw new impostors?",
+        ),
+      )
+    ) {
       onReroll?.();
       setIndex(0);
       setRevealed(false);
@@ -61,15 +79,11 @@ export function RevealPhase({
   };
 
   useEffect(() => {
-    if (isOnline) {
-      setRevealed(false);
-    }
+    if (isOnline) setRevealed(false);
   }, [isOnline, data.word]);
 
   useEffect(() => {
-    if (!isOnline && !player) {
-      onNextPhase("discussion");
-    }
+    if (!isOnline && !player) onNextPhase("discussion");
   }, [onNextPhase, player, isOnline]);
 
   if (!player) return null;
@@ -77,12 +91,14 @@ export function RevealPhase({
   return (
     <div className={styles.container}>
       <button className={styles.exitBtn} onClick={onExit}>
-        <strong className={styles.exitAndRerolEmoji}>⬅️</strong> SAIR
+        <strong className={styles.exitAndRerolEmoji}>⬅️</strong>{" "}
+        {t("alerts.quit", "QUIT")}
       </button>
 
       {canReroll && (
         <button className={styles.rerollBtn} onClick={handleRerollAction}>
-          TROCAR <strong className={styles.exitAndRerolEmoji}> 🔄</strong>
+          {t("games.impostor_reveal_changeWord", "CHANGE WORD")} {" "}
+          <strong className={styles.exitAndRerolEmoji}>🔄</strong>
         </button>
       )}
 
@@ -90,7 +106,9 @@ export function RevealPhase({
         {!revealed ? (
           <>
             <p className={styles.instruction}>
-              {isOnline ? "CONFIRME SUA IDENTIDADE" : "PASSE O CELULAR PARA"}
+              {isOnline
+                ? t("games.impostor_reveal_confirmIdentity", "CONFIRM YOUR IDENTITY")
+                : t("games.impostor_reveal_passDevice", "PASS THE DEVICE TO")}
             </p>
 
             <PlayerAvatar
@@ -104,11 +122,9 @@ export function RevealPhase({
 
             <button
               className={`${styles.actionBtn} ${styles.revealBtn}`}
-              onClick={() => {
-                setRevealed(true);
-              }}
+              onClick={() => setRevealed(true)}
             >
-              REVELAR
+              {t("games.impostor_reveal_revealNowBtn", "REVEAL NOW")}
             </button>
           </>
         ) : (
@@ -116,23 +132,37 @@ export function RevealPhase({
             <div className={styles.infoWrapper}>
               {player.isImpostor ? (
                 <>
-                  <p className={styles.instruction}>VOCÊ É O</p>
+                  <p className={styles.instruction}>
+                    {t("games.impostor_reveal_youAre", "YOU ARE THE")}
+                  </p>
                   <div className={styles.wordDisplayImpostor}>
                     <h1
                       className={`${styles.secretWord} ${styles.impostorGlow}`}
                     >
-                      IMPOSTOR
+                      {t("games.impostor_reveal_impostorRole", "IMPOSTOR")}
                     </h1>
                   </div>
                   {player.hint && (
                     <div className={styles.hintBox}>
-                      <p>DICA: {player.hint}</p>
+                      <p>
+                        {t("games.impostor_reveal_hintLabel", "HINT")}: {player.hint}
+                      </p>
+                    </div>
+                  )}
+                  {allies.length > 0 && (
+                    <div className={styles.alliesBox}>
+                      <strong>
+                        {t("games.impostor_reveal_ally", "YOUR ALLIES")}
+                      </strong>
+                      <span>{allies.map((ally: any) => ally.name).join(", ")}</span>
                     </div>
                   )}
                 </>
               ) : (
                 <>
-                  <p className={styles.instruction}>SUA PALAVRA É</p>
+                  <p className={styles.instruction}>
+                    {t("games.impostor_reveal_yourWordIs", "YOUR WORD IS:")}
+                  </p>
                   <div className={styles.wordDisplay}>
                     <h1 className={`${styles.secretWord} ${styles.techGlow}`}>
                       {player.word}
@@ -145,22 +175,19 @@ export function RevealPhase({
             {(data.whoStart === player.name ||
               (isOnline && data.whoStart === "VOCÊ")) && (
               <div className={styles.starterAlert}>
-                ⚠️ VOCÊ INICIA A PARTIDA!
+                ⚠️ {t("games.impostor_reveal_youStart", "YOU START THE MATCH!")}
               </div>
             )}
 
-            {/* ===================== */}
-            {/* BOTÃO PRINCIPAL */}
-            {/* ===================== */}
             <button
               className={`${styles.actionBtn} ${styles.nextBtn}`}
               onClick={isOnline ? handleReadyButtonOnline : handleNext}
             >
               {isOnline
                 ? data.ready
-                  ? "OCULTAR"
-                  : "ESTOU PRONTO ✅"
-                : "OCULTAR E PASSAR"}
+                  ? t("games.impostor_reveal_hideBtn", "HIDE")
+                  : t("games.impostor_reveal_isReady", "I AM READY")
+                : t("games.impostor_reveal_hideAndPass", "HIDE AND PASS")}
             </button>
           </>
         )}
@@ -168,12 +195,18 @@ export function RevealPhase({
 
       {isOnline && (
         <div className={styles.readyList}>
-          <h3>STATUS DE PRONTOS</h3>
+          <h3>{t("games.impostor_statusModal_roomStatus", "READY STATUS")}</h3>
           {data.allPlayers?.map((p: any) => (
             <div key={p.socketId} className={styles.readyRow}>
-              <span>{p.name === player.name ? "VOCÊ" : p.name}</span>
+              <span>
+                {p.name === player.name
+                  ? t("games.impostor_lobby_you", "YOU")
+                  : p.name}
+              </span>
               <span className={p.ready ? styles.ready : styles.notReady}>
-                {p.ready ? "PRONTO" : "NÃO PRONTO"}
+                {p.ready
+                  ? t("games.impostor_statusModal_ready", "READY")
+                  : t("games.impostor_statusModal_waiting", "WAITING")}
               </span>
             </div>
           ))}
@@ -182,10 +215,10 @@ export function RevealPhase({
 
       {isOnline && data.isHost && allReady && (
         <button
-          className={`${styles.startBtn}`}
+          className={styles.startBtn}
           onClick={() => onNextPhase("discussion")}
         >
-          INICIAR DISCUSSÃO
+          {t("games.impostor_reveal_startDiscussion", "START DISCUSSION")}
         </button>
       )}
     </div>

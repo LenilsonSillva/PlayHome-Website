@@ -157,13 +157,12 @@ function selectWhoStart(
 ): string | undefined {
   if (!whoStartButton) return undefined;
 
-  const candidate = pickRandom(playersData);
+  const eligiblePlayers = impostorCanStart
+    ? playersData
+    : playersData.filter((player) => !player.isImpostor);
+  const candidate = pickRandom(eligiblePlayers.length > 0 ? eligiblePlayers : playersData);
 
-  if (candidate.isImpostor && !impostorCanStart) {
-    return selectWhoStart(playersData, whoStartButton, impostorCanStart);
-  }
-
-  return candidate.name;
+  return candidate?.name;
 }
 
 function pickRandom<T>(array: T[]): T {
@@ -176,6 +175,8 @@ function distributeWords(
   selectedCategories: string[],
   wordBank: WordData[],
   impostorHasHint: boolean,
+  impostorTrap: boolean,
+  impostorCat: boolean,
   usedWords: string[] = [],
 ): { updatedPlayers: ImpostorPlayer[]; chosenWord: string[] } {
   // 1. Filtra por categorias selecionadas
@@ -211,10 +212,23 @@ function distributeWords(
 
   const updatedPlayers = players.map((player) => {
     if (player.isImpostor) {
+      const receivesHint = impostorHasHint || impostorTrap || impostorCat;
+      let hint = receivesHint
+        ? impostorCat
+          ? word.category
+          : word.hint
+        : undefined;
+
+      if (receivesHint && impostorTrap && Math.random() < 0.5) {
+        const fakeWords = wordBank.filter((item) => item.word !== word.word);
+        const fakeWord = fakeWords.length > 0 ? pickRandom(fakeWords) : word;
+        hint = impostorCat ? fakeWord.category : fakeWord.hint;
+      }
+
       return {
         ...player,
         word: null,
-        hint: impostorHasHint ? word.hint : undefined,
+        hint,
       };
     } else {
       const finalWord =
@@ -234,8 +248,12 @@ export function initializeGame(
   selectedCategories: string[],
   whoStartButton: boolean,
   impostorCanStart: boolean,
+  impostorTrap: boolean,
+  impostorCat: boolean,
+  impostorsUnited: boolean,
   impostorHistory: string[][] = [],
-  usedWords: string[] = [], // <--- NOVO PARÂMETRO
+  usedWords: string[] = [],
+  wordBank: WordData[] = WORDS,
 ): GameData & { chosenWord: string[] } {
   const impostorTrueOrFalse = createImpostorPlayers(
     allPlayers,
@@ -247,9 +265,11 @@ export function initializeGame(
     impostorTrueOrFalse,
     twoWordsMode,
     selectedCategories,
-    WORDS,
+    wordBank,
     impostorHasHint,
-    usedWords, // <--- PASSA PARA O DISTRIBUTE
+    impostorTrap,
+    impostorCat,
+    usedWords,
   );
 
   const setWhoStart = selectWhoStart(
@@ -263,9 +283,12 @@ export function initializeGame(
     howManyImpostors,
     twoWordsMode,
     impostorHasHint,
+    impostorTrap,
+    impostorCat,
+    impostorsUnited,
     selectedCategories,
     whoStart: setWhoStart,
     impostorCanStart,
-    chosenWord, // <--- RETORNA A PALAVRA SORTEADA
+    chosenWord,
   };
 }

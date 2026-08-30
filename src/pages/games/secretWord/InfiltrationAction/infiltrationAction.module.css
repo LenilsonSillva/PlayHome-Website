@@ -1,139 +1,87 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 10px;
-  max-width: 600px;
+  gap: 1.4rem;
+  width: min(100%, 72rem);
   margin: 0 auto;
+  padding-bottom: 3rem;
 }
 
-/* PLACAR */
 .statsRow {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
 }
 
 .statBox {
-  background: var(--gray-800);
-  padding: 15px;
-  border-radius: 12px;
+  display: grid;
+  gap: 0.4rem;
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: 1.3rem;
+  background: rgba(255, 255, 255, 0.035);
   text-align: center;
-  border: 1px solid var(--gray-700);
 }
 
 .statBox label {
-  font-size: 0.75rem;
   color: var(--text-muted);
-  display: block;
-  letter-spacing: 2px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
 }
 
 .statBox span {
-  font-size: 1.5rem;
-  font-weight: 900;
   color: var(--gray-100);
+  font-size: 1.7rem;
+  font-weight: 700;
 }
 
-/* BOTÕES */
+.startBtn,
+.skipBtn,
+.correctBtn {
+  min-height: 5.6rem;
+  border-radius: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease;
+}
+
+.startBtn {
+  border: 0;
+  background: var(--button-tech);
+  color: var(--gray-900);
+  box-shadow: 0 1rem 2.5rem rgba(85, 230, 224, 0.16);
+}
+
 .actions {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 15px;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 0.8rem;
 }
 
 .skipBtn {
-  background: var(--gray-700);
-  color: var(--gray-300);
-  border: none;
-  padding: 20px;
-  border-radius: 12px;
-  font-weight: 800;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.skipBtn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+  border: 1px solid rgba(255, 200, 87, 0.34);
+  background: rgba(255, 200, 87, 0.1);
+  color: var(--caution-amber);
 }
 
 .correctBtn {
+  border: 0;
   background: var(--button-tech);
-  color: white;
-  border: none;
-  padding: 20px;
-  border-radius: 12px;
-  font-weight: 900;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: 0 5px 15px rgba(0, 242, 255, 0.2);
-  transition: all 0.15s;
+  color: var(--gray-900);
 }
 
+.startBtn:hover,
+.skipBtn:hover:not(:disabled),
+.correctBtn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-0.15rem);
+}
+
+.skipBtn:disabled,
 .correctBtn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  box-shadow: none;
-}
-
-/* Botão de iniciar o cronômetro (antes do 1º toque) */
-.startBtn {
-  background: var(--button-tech);
-  color: white;
-  border: none;
-  padding: 22px;
-  border-radius: 16px;
-  font-weight: 900;
-  font-size: 1.2rem;
-  letter-spacing: 1px;
-  cursor: pointer;
-  box-shadow: 0 5px 20px rgba(0, 242, 255, 0.25);
-  animation: pulseButton 1.6s infinite;
-}
-
-@keyframes pulseButton {
-  0%,
-  100% {
-    box-shadow: 0 5px 20px rgba(0, 242, 255, 0.25);
-  }
-  50% {
-    box-shadow: 0 5px 32px rgba(0, 242, 255, 0.45);
-  }
-}
-
-/* Indicador da fila de esquadrões */
-.queueIndicator {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.queueDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  opacity: 0.3;
-  transition: all 0.2s;
-}
-
-.queueDotActive {
-  opacity: 1;
-  transform: scale(1.5);
-}
-
-@keyframes blink {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0.5;
-  }
-}
-
-@media (max-width: 480px) {
-  .actions {
-    grid-template-columns: 1fr;
-  }
 }

@@ -8,6 +8,7 @@ import {
 import { ResultCard } from "../../components/ResultCard";
 import { RoundAudit } from "../../components/RoundAudit";
 import styles from "../onlineCrypto.module.css";
+import { useI18n } from "../../../../../i18n";
 
 type Props = {
   view: CryptoView;
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export function OnlineRoundResult({ view, emit }: Props) {
+  const { t } = useI18n();
   const isHost = view.controls.canNextRound;
 
   // 🏆 Vencedor(es) da rodada + ranking geral (mesma regra do offline)
@@ -26,19 +28,17 @@ export function OnlineRoundResult({ view, emit }: Props) {
   return (
     <div className={styles.container}>
       <header className={styles.phaseHeader}>
-        <span className={styles.badge}>DADOS DESCRIPTOGRAFADOS</span>
-        <h1>
-          RANKING DE <span className={styles.cyan}>MISSÃO</span>
-        </h1>
-        <p className={styles.roundLabel}>RODADA {view.roundNumber}</p>
+        <span className={styles.badge}>{t("games.cryptography_result_badge", "DECRYPTED DATA")}</span>
+        <h1>{t("games.cryptography_result_title", "MISSION RANKING")}</h1>
+        <p className={styles.roundLabel}>{t("games.cryptography_result_round", "ROUND")} {view.roundNumber}</p>
       </header>
 
       {/* BANNER DE VITÓRIA DA RODADA */}
       <div className={`glass-panel ${styles.victoryBanner}`}>
         <h2 className={styles.victoryTitle}>
           {roundWinners.length > 1
-            ? "EMPATE TÉCNICO DA RODADA"
-            : "VENCEDOR DA RODADA"}
+            ? t("games.cryptography_result_tie", "ROUND TIE")
+            : t("games.cryptography_result_teamWin", "ROUND WINNER")}
         </h2>
         <div className={styles.victoryNames}>
           {roundWinners.map((w, idx) => (
@@ -53,7 +53,7 @@ export function OnlineRoundResult({ view, emit }: Props) {
           ))}
         </div>
         <p className={styles.victoryHits}>
-          +{winnerHits} {winnerHits === 1 ? "ACERTO" : "ACERTOS"}
+          +{winnerHits} {t("games.cryptography_result_hits", "HITS")}
         </p>
       </div>
 
@@ -89,12 +89,12 @@ export function OnlineRoundResult({ view, emit }: Props) {
             className={styles.primaryBtn}
             onClick={() => emit("crypto:next-round", { roomCode: view.roomCode })}
           >
-            🚀 PRÓXIMA MISSÃO (PONTOS SOMAM)
+            🚀 {t("games.cryptography_result_nextRound", "NEXT ROUND (POINTS CARRY OVER)")}
           </button>
         </>
       ) : (
         <p className={styles.waitingNote}>
-          ⏳ Aguardando o host iniciar a próxima rodada...
+          ⏳ {t("games.cryptography_result_waitingHost", "Waiting for the host to start the next round...")}
         </p>
       )}
     </div>

@@ -9,6 +9,7 @@ import {
 import { ResultCard } from "../components/ResultCard";
 import { RoundAudit } from "../components/RoundAudit";
 import styles from "./resultPhase.module.css";
+import { useI18n } from "../../../../i18n";
 
 type Props = {
   data: CryptoGameState;
@@ -18,6 +19,7 @@ type Props = {
 
 export function ResultPhase({ data, onNextRound, onReassign }: Props) {
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   // 🏆 Vencedor(es) da rodada (desempate: acertos -> eficiência -> tempo)
   const roundWinners = getRoundWinners(data.teams);
@@ -39,19 +41,19 @@ export function ResultPhase({ data, onNextRound, onReassign }: Props) {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <div className={styles.badge}>DADOS DESCRIPTOGRAFADOS</div>
+        <div className={styles.badge}>{t("games.cryptography_result_badge", "DECRYPTED DATA")}</div>
         <h1 className={styles.title}>
-          RANKING DE <span>MISSÃO</span>
+          {t("games.cryptography_result_title", "MISSION RANKING")}
         </h1>
-        <p className={styles.roundLabel}>RODADA {data.roundNumber}</p>
+        <p className={styles.roundLabel}>{t("games.cryptography_result_round", "ROUND")} {data.roundNumber}</p>
       </header>
 
       {/* BANNER DE VITÓRIA DA RODADA */}
       <div className={`glass-panel ${styles.victoryBanner}`}>
         <h2 className={styles.victoryTitle}>
           {roundWinners.length > 1
-            ? "EMPATE TÉCNICO DA RODADA"
-            : "VENCEDOR DA RODADA"}
+            ? t("games.cryptography_result_tie", "ROUND TIE")
+            : t("games.cryptography_result_teamWin", "FEATURED TEAM")}
         </h2>
         <div className={styles.victoryNames}>
           {roundWinners.map((w, idx) => (
@@ -66,7 +68,7 @@ export function ResultPhase({ data, onNextRound, onReassign }: Props) {
           ))}
         </div>
         <p className={styles.victoryHits}>
-          +{winnerHits} {winnerHits === 1 ? "ACERTO" : "ACERTOS"}
+          +{winnerHits} {winnerHits === 1 ? t("games.cryptography_result_hits", "HIT") : t("games.cryptography_result_hits", "HITS")}
         </p>
       </div>
 
@@ -92,17 +94,17 @@ export function ResultPhase({ data, onNextRound, onReassign }: Props) {
 
       <div className={styles.actions}>
         <button className={styles.nextBtn} onClick={onNextRound}>
-          PRÓXIMA MISSÃO 🚀
+          {t("games.cryptography_result_newRound", "NEW ROUND 🚀")}
         </button>
         <button
           className={styles.lobbyBtn}
           onClick={() => {
-            if (window.confirm("Sair para o lobby? O jogo será encerrado.")) {
+            if (window.confirm(t("alerts.cryptography_leaveToLobby", "Leave for the lobby? The match will end."))) {
               navigate("/games/secretWord/lobby");
             }
           }}
         >
-          LOBBY ⚙️
+          {t("games.cryptography_result_lobby", "BACK TO LOBBY ⚙️")}
         </button>
       </div>
     </div>

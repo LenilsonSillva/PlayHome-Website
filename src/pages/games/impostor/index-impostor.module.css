@@ -1,17 +1,21 @@
-/* Mobile */
 .main {
   position: relative;
-  width: 100%;
-  min-height: 100%; /* Use min-height 100% em vez de 100vh fixo */
-  overflow-y: auto; /* Permite scroll se o teclado ocupar muito espaço */
-  display: flex;
-  flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+  isolation: isolate;
 }
 
 .contentWrapper {
   position: relative;
-  z-index: 10;
-  width: 100%;
-  padding-top: 20px; /* Garante que não cole no topo */
-  padding-bottom: 20px;
+  z-index: 1;
+  width: min(100% - 2.4rem, 112rem);
+  margin: 0 auto;
+  padding: 1rem 0 4rem;
+}
+
+@media (min-width: 700px) {
+  .contentWrapper {
+    width: min(100% - 6rem, 112rem);
+    padding-bottom: 7rem;
+  }
 }

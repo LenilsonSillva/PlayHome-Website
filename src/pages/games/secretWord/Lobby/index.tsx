@@ -1,32 +1,35 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { SecretWordLobby } from "./secreteWordLobby";
 import { OnlineCryptoLobby } from "./OnlineCryptoLobby";
+import { SecretWordHeader } from "../../../../components/SecretWordHeader/SecretWordHeader";
+import type { CryptoMode } from "../GameLogistic/types";
 import styles from "./cryptoLobbyIndex.module.css";
 
+type ConnectionMode = "local" | "online";
+
 export default function CriptographyLobby() {
-  const [gameMode, setGameMode] = useState<"local" | "online">("local");
+  const [searchParams] = useSearchParams();
+  const [gameMode, setGameMode] = useState<ConnectionMode>(() =>
+    searchParams.get("mode") === "online" ? "online" : "local",
+  );
+  const [cryptoMode, setCryptoMode] = useState<CryptoMode>("infiltration");
 
   return (
-    <div className={styles["game-content"]}>
-      {/* SELETOR LOCAL / ONLINE (padrão do Impostor) */}
-      <div className={styles.toggleWrapper}>
-        <div className={styles.segmentedControl}>
-          <button
-            className={`${styles.segBtn} ${gameMode === "local" ? styles.activeSeg : ""}`}
-            onClick={() => setGameMode("local")}
-          >
-            🏠 Jogo Local
-          </button>
-          <button
-            className={`${styles.segBtn} ${gameMode === "online" ? styles.activeSeg : ""}`}
-            onClick={() => setGameMode("online")}
-          >
-            🌏 Jogo Online
-          </button>
-        </div>
+    <div className={styles.gameContent}>
+      <SecretWordHeader
+        mode={setCryptoMode}
+        currentMode={cryptoMode}
+        connectionMode={gameMode}
+        onConnectionMode={setGameMode}
+      />
+      <div className={styles.lobbyStage}>
+        {gameMode === "local" ? (
+          <SecretWordLobby mode={cryptoMode} />
+        ) : (
+          <OnlineCryptoLobby mode={cryptoMode} onModeChange={setCryptoMode} />
+        )}
       </div>
-
-      {gameMode === "local" ? <SecretWordLobby /> : <OnlineCryptoLobby />}
     </div>
   );
 }

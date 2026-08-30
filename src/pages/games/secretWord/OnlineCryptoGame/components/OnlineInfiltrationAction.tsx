@@ -10,6 +10,7 @@ import endSfx from "../../../../../assets/sounds/end.wav";
 import silentWav from "../../../../../assets/sounds/silent.wav";
 import { useIOSAudioUnlock } from "../../../../../hooks/useIOSAudioUnlock";
 import styles from "../onlineCrypto.module.css";
+import { useI18n } from "../../../../../i18n";
 
 type Props = {
   view: CryptoView;
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export function OnlineInfiltrationAction({ view, emit }: Props) {
+  const { t } = useI18n();
   const currentTeam = view.teams[view.currentTeamIndex];
   const running = view.roundEndTime != null;
   const isController = view.controls.canControl;
@@ -123,7 +125,7 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
   return (
     <div className={styles.container}>
       <CryptoHud
-        label="JOGANDO AGORA"
+        label={t("games.cryptography_action_playingNow", "PLAYING NOW")}
         teamName={currentTeam.name}
         teamColor={currentTeam.color}
         operatorName={operator?.name ?? "---"}
@@ -132,7 +134,7 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
           ...(isController || isMemberOfCurrentTeam
             ? [
                 {
-                  text: "PULOS:",
+                  text: t("games.cryptography_action_skips", "SKIPS LEFT"),
                   value: view.skipsLeft === 999 ? "∞" : view.skipsLeft,
                   tone: "warning" as const,
                 },
@@ -161,7 +163,7 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
               onClick={handleStartTimer}
               disabled={!hasViewedWord}
             >
-              ⏱️ INICIAR CRONÔMETRO ({view.config.roundTime}s)
+              ⏱️ {t("games.cryptography_action_tapToStart", "START TIMER")} ({view.config.roundTime}s)
             </button>
           ) : (
             <div className={styles.actionRow}>
@@ -170,14 +172,14 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
                 disabled={view.skipsLeft === 0}
                 onClick={() => handleWordAction(false)}
               >
-                ⏭ PULAR
+                ⏭ {t("games.cryptography_action_skipBtn", "SKIP")}
               </button>
               <button
                 className={styles.successBtn}
                 disabled={!hasViewedWord}
                 onClick={() => handleWordAction(true)}
               >
-                ✅ ACERTOU!
+                {t("games.cryptography_action_correctBtn", "CORRECT! 🚀")}
               </button>
             </div>
           )}
@@ -189,7 +191,7 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
                 emit("crypto:finish-turn", { roomCode: view.roomCode })
               }
             >
-              ENCERRAR TURNO DO GRUPO
+              {t("games.cryptography_action_finishGroupTurn", "END GROUP TURN")}
             </button>
           )}
         </div>
@@ -197,10 +199,9 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
         /* ================= MEMBRO DO GRUPO DA VEZ ================= */
         <div className={styles.waitingPanel}>
           <span className={styles.waitingIcon}>🔍</span>
-          <h2>SEU ESQUADRÃO ESTÁ JOGANDO!</h2>
+          <h2>{t("games.cryptography_action_yourGroupPlaying", "YOUR GROUP IS PLAYING!")}</h2>
           <p>
-            O operador está dando as dicas — tente adivinhar a palavra com seu
-            time. A palavra fica oculta para vocês.
+            {t("games.cryptography_action_groupPlayingHint", "The operator is giving clues — try to guess the word with your group. The word is hidden from you.")}
           </p>
           <TeamMembers team={currentTeam} />
         </div>
@@ -208,23 +209,23 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
         /* ================= OUTROS GRUPOS / ESPECTADORES ================= */
         <div className={styles.waitingPanel}>
           <span className={styles.waitingIcon}>⏳</span>
-          <h2>AGUARDE SUA VEZ</h2>
+          <h2>{t("games.cryptography_action_waitYourTurn", "WAIT FOR YOUR TURN")}</h2>
           <p className={styles.waitingSub}>
-            Grupo{" "}
+            {t("games.cryptography_action_groupIsPlaying", "Group")} {" "}
             <strong style={{ color: currentTeam.color }}>
               {currentTeam.name}
             </strong>{" "}
-            está jogando
+            {t("games.cryptography_action_isPlaying", "is playing")}
           </p>
 
           <div className={styles.wordPeek}>
             {waitingWord ? (
               <>
-                <span className={styles.wordPeekLabel}>PALAVRA ATUAL</span>
+                <span className={styles.wordPeekLabel}>{t("games.cryptography_action_currentWord", "CURRENT WORD")}</span>
                 <span className={styles.wordPeekValue}>{waitingWord}</span>
               </>
             ) : (
-              <span className={styles.wordPeekHidden}>🔒 Palavra oculta</span>
+                <span className={styles.wordPeekHidden}>🔒 {t("games.cryptography_action_hiddenWord", "Hidden word")}</span>
             )}
           </div>
 

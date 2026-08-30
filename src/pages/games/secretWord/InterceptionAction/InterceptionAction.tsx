@@ -9,6 +9,7 @@ import alertSfx from "../../../../assets/sounds/alert.wav";
 import endSfx from "../../../../assets/sounds/end.wav";
 import silentWav from "../../../../assets/sounds/silent.wav";
 import { useIOSAudioUnlock } from "../../../../hooks/useIOSAudioUnlock";
+import { useI18n } from "../../../../i18n";
 
 type Props = {
   data: CryptoGameState;
@@ -28,6 +29,7 @@ export function InterceptionAction({
   onStartTimer,
   onReroll,
 }: Props) {
+  const { t } = useI18n();
   const currentTeam = data.teams[data.currentTeamIndex];
   const operator = currentTeam.players.find(
     (p) => p.id === currentTeam.operatorId,
@@ -145,7 +147,7 @@ export function InterceptionAction({
   return (
     <div className={styles.container}>
       <div className={styles.progressIndicator}>
-        PALAVRA {data.currentMatchIndex + 1} DE {data.config.wordLimit}
+        {t("games.cryptography_action_wordOf", "WORD")} {data.currentMatchIndex + 1} {t("games.cryptography_action_of", "OF")} {data.config.wordLimit}
         <div className={styles.progressBg}>
           <div
             className={styles.progressFill}
@@ -155,7 +157,7 @@ export function InterceptionAction({
       </div>
 
       <CryptoHud
-        label="VEZ DE"
+        label={t("games.cryptography_action_turnOf", "TURN OF")}
         teamName={currentTeam.name}
         teamColor={currentTeam.color}
         operatorName={operator?.name ?? "---"}
@@ -181,7 +183,7 @@ export function InterceptionAction({
               onClick={startTurnTimer}
               disabled={!hasViewedWord}
             >
-              DICA DADA! INICIAR RESPOSTA ⏱️
+              {t("games.cryptography_action_hintGivenBtn", "HINT GIVEN! START TIMER")} ⏱️
             </button>
             <button
               className={styles.rerollBtn}
@@ -190,20 +192,20 @@ export function InterceptionAction({
                 onReroll();
               }}
             >
-              🔄 TROCAR PALAVRA
+              {t("games.cryptography_action_rerollBtn", "🔄 CHANGE WORD")}
             </button>
           </div>
         ) : (
           <div className={styles.gameActions}>
             <button className={styles.failBtn} onClick={handlePass}>
-              ERROU / PASSAR ⏭️
+              {t("games.cryptography_action_missPassBtn", "MISSED / PASS ⏭️")}
             </button>
             <button
               className={styles.winBtn}
               onClick={handleWin}
               disabled={!hasViewedWord || isProcessing}
             >
-              ACERTOU! 🏆
+              {t("games.cryptography_action_winBtn", "CORRECT! 🏆")}
             </button>
           </div>
         )}

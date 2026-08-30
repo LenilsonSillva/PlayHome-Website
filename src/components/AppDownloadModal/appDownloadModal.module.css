@@ -1,0 +1,169 @@
+.backdrop {
+  position: fixed;
+  z-index: 300;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  background: rgba(4, 8, 18, 0.76);
+  backdrop-filter: blur(0.8rem);
+  -webkit-backdrop-filter: blur(0.8rem);
+  animation: appear 180ms ease-out;
+}
+
+.modal {
+  position: relative;
+  width: min(100%, 34rem);
+  padding: 2rem 1.35rem 1.4rem;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--tech-cyan) 42%, var(--line));
+  border-radius: 2rem;
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--danger-neon) 22%, transparent), transparent 13rem),
+    radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--tech-cyan) 18%, transparent), transparent 16rem),
+    var(--surface-strong);
+  box-shadow: 0 2rem 6rem rgba(0, 0, 0, 0.35), 0 0 3rem var(--danger-glow);
+  color: var(--text-default);
+  text-align: center;
+  animation: rise 220ms ease-out;
+}
+
+.modal::before {
+  position: absolute;
+  top: 0;
+  right: 1.4rem;
+  left: 1.4rem;
+  height: 0.25rem;
+  background: linear-gradient(90deg, var(--danger-neon), var(--violet), var(--tech-cyan));
+  content: "";
+}
+
+.closeButton {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface-highlight);
+  color: var(--text-muted);
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.closeButton:hover,
+.closeButton:focus-visible {
+  border-color: var(--tech-cyan);
+  color: var(--text-default);
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  padding-right: 1rem;
+}
+
+.icon {
+  width: 4.7rem;
+  height: 4.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 1.25rem;
+  box-shadow: 0 0 1.7rem var(--danger-glow);
+}
+
+.badge {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--tech-cyan) 42%, var(--line));
+  border-radius: 99rem;
+  color: var(--tech-cyan);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.modal h2 {
+  max-width: 23rem;
+  margin: 0 auto;
+  color: var(--text-default);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, 2.9rem);
+  letter-spacing: -0.07em;
+  line-height: 0.98;
+}
+
+.description {
+  max-width: 28rem;
+  margin: 1rem auto 1.4rem;
+  color: var(--text-secondary);
+  font-size: 1.15rem;
+  line-height: 1.55;
+}
+
+.downloadButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  min-height: 4.5rem;
+  padding: 0.9rem 1rem;
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, var(--danger-neon), var(--violet));
+  box-shadow: 0 1rem 2.4rem var(--danger-glow);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+.downloadButton:hover,
+.downloadButton:focus-visible {
+  filter: brightness(1.1);
+  transform: translateY(-0.15rem);
+}
+
+.playIcon {
+  display: grid;
+  width: 1.65rem;
+  height: 1.65rem;
+  place-items: center;
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 0.75rem;
+}
+
+.note {
+  display: block;
+  margin-top: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+@keyframes appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(0.8rem) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+[dir="rtl"] .closeButton {
+  right: auto;
+  left: 0.8rem;
+}
+
+[dir="rtl"] .brandRow {
+  padding-right: 0;
+  padding-left: 1rem;
+}

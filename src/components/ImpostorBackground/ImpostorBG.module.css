@@ -1,96 +1,93 @@
 .orbit {
   position: fixed;
+  z-index: -1;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  min-height: 100vh;
-  z-index: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 77, 120, 0.08), transparent 32rem),
+    transparent;
   pointer-events: none;
-  /* Garante que o container de fundo não tente recalcular layout */
-  contain: strict;
+}
+
+.orbit::before,
+.orbit::after {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
+  content: "";
+}
+
+.orbit::before {
+  top: 15%;
+  left: 50%;
+  width: 50rem;
+  height: 50rem;
+  transform: translateX(-50%);
+}
+
+.orbit::after {
+  top: 28%;
+  left: 50%;
+  width: 80rem;
+  height: 80rem;
+  transform: translateX(-50%);
 }
 
 .comet {
   position: absolute;
+  top: -20rem;
   left: var(--left);
-  top: -250px;
-  width: 2px;
-  height: 200px;
-  background: linear-gradient(
-    to top,
-    #fff 0%,
-    rgba(0, 242, 255, 0.8) 20%,
-    transparent 100%
-  );
+  width: 0.2rem;
+  height: 14rem;
+  border-radius: 99rem;
+  background: linear-gradient(to top, #fff, rgba(255, 77, 120, 0.7), transparent);
   opacity: 0;
   transform: rotate(var(--angle)) scale(var(--scale));
-
-  /* --- OTIMIZAÇÃO PARA MOBILE --- */
+  animation: cometFall var(--duration) linear var(--delay) infinite;
   will-change: transform, opacity;
-
-  animation-name: cometFall;
-  animation-duration: var(--duration);
-  animation-delay: var(--delay);
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
 }
 
 .comet::after {
-  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  background: #fff;
+  width: 0.6rem;
+  height: 0.6rem;
   border-radius: 50%;
-  box-shadow:
-    0 0 15px 2px #0ff,
-    0 0 5px #fff;
+  background: #fff;
+  box-shadow: 0 0 1.4rem 0.2rem var(--danger-neon);
+  content: "";
+  transform: translateX(-50%);
 }
 
 @keyframes cometFall {
-  0% {
-    transform: rotate(var(--angle)) scale(var(--scale)) translateY(0);
-    opacity: 0;
-  }
-  5% {
-    opacity: var(--opacity);
-  }
-  95% {
-    opacity: var(--opacity);
-  }
-  100% {
-    /* Usar translate3d força o uso da GPU no celular */
-    transform: rotate(var(--angle)) scale(var(--scale)) translate3d(0, 130vh, 0);
-    opacity: 0;
-  }
+  0% { transform: rotate(var(--angle)) scale(var(--scale)) translateY(0); opacity: 0; }
+  8% { opacity: var(--opacity); }
+  92% { opacity: var(--opacity); }
+  100% { transform: rotate(var(--angle)) scale(var(--scale)) translate3d(0, 130vh, 0); opacity: 0; }
 }
 
-/* --- FOGUETE ATUALIZADO --- */
 .spaceship {
-  width: 60px; /* Reduzi um pouco para ficar mais elegante no mobile */
   position: absolute;
-  offset-rotate: auto 90deg;
   z-index: 5;
-
-  /* --- OTIMIZAÇÃO CRÍTICA --- */
-  /* O offset-path é pesado. will-change prepara o navegador */
-  will-change: offset-distance, transform;
-
-  /* Adicionei backface-visibility para evitar flicker (piscadas) no Android/iOS */
+  width: 5rem;
+  offset-rotate: auto 90deg;
+  animation: fly 24s linear infinite;
   backface-visibility: hidden;
-
-  animation: fly 20s linear infinite; /* 20s deixa o movimento mais fluido e menos 'nervoso' */
+  will-change: offset-distance, transform;
 }
 
 @keyframes fly {
-  from {
-    offset-distance: 0%;
-  }
-  to {
-    offset-distance: 100%;
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comet,
+  .spaceship {
+    animation: none;
   }
 }

@@ -1,44 +1,32 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePlayers } from "../../../../contexts/contextHook";
-import { categories } from "../../../../data/words";
+import { getCategories, getWordDatabase } from "../../../../data/words";
+import { useI18n } from "../../../../i18n";
+import { CategoryGrid } from "../../../../components/CategoryGrid/CategoryGrid";
 import type { CryptoConfig, CryptoMode } from "../GameLogistic/types";
 import { loadGlobalUsedWords } from "../GameLogistic/wordStorage";
 import styles from "./secreteLobby.module.css";
-import { SecretWordHeader } from "../../../../components/SecretWordHeader/SecretWordHeader";
 
-export function SecretWordLobby() {
+type Props = {
+  mode: CryptoMode;
+};
+
+export function SecretWordLobby({ mode }: Props) {
   const navigate = useNavigate();
   const { players, addPlayer, removePlayer } = usePlayers();
+  const { language, t } = useI18n();
+  const categories = useMemo(() => getCategories(getWordDatabase(language)), [language]);
 
-  // Configurações (paridade com o LobbyOffline do PlayHome-RN)
-  const [mode, setMode] = useState<CryptoMode>("infiltration");
   const [teamCount, setTeamCount] = useState(2);
-  const [assignmentMode, setAssignmentMode] = useState<"random" | "manual">(
-    "random",
-  );
+  const [assignmentMode, setAssignmentMode] = useState<"random" | "manual">("random");
   const [name, setName] = useState("");
   const [selectedTime, setSelectedTime] = useState(60);
-  const [skipLimit, setSkipLimit] = useState(3); // Infiltração (3, 5, ∞)
-  const [matchLimit, setMatchLimit] = useState(5); // Interceptação (5, 10, 20)
+  const [skipLimit, setSkipLimit] = useState(3);
+  const [matchLimit, setMatchLimit] = useState(5);
   const [showCategories, setShowCategories] = useState(false);
-  const [selectedCats, setSelectedCats] = useState<string[]>([
-    "Objetos",
-    "Animais",
-    "Ciência",
-    "Natureza",
-    "Comida",
-    "Emoções",
-    "Substantivos variados",
-    "Lugares",
-    "Países e Cidades",
-    "Tecnologia",
-  ]);
-
-  // Mapeamento manual: id do player -> index do time
-  const [manualAssignments, setManualAssignments] = useState<
-    Record<string, number>
-  >({});
+  const [selectedCats, setSelectedCats] = useState<string[]>(categories);
+  const [manualAssignments, setManualAssignments] = useState<Record<string, number>>({});
 
   const infiltrationTimes = [60, 90, 120];
   const interceptionTimes = [15, 30, 60];
@@ -47,52 +35,44 @@ export function SecretWordLobby() {
     setSelectedTime(mode === "infiltration" ? 60 : 15);
   }, [mode]);
 
-  // Sincroniza o mapa manual quando players entram ou a qtd de times muda
+  useEffect(() => {
+    setSelectedCats(categories);
+  }, [categories]);
+
   useEffect(() => {
     const newAssignments = { ...manualAssignments };
-    players.forEach((p) => {
-      if (
-        newAssignments[p.id] === undefined ||
-        newAssignments[p.id] >= teamCount
-      ) {
-        newAssignments[p.id] = 0;
+    players.forEach((player) => {
+      if (newAssignments[player.id] === undefined || newAssignments[player.id] >= teamCount) {
+        newAssignments[player.id] = 0;
       }
     });
     setManualAssignments(newAssignments);
+    // The assignment map intentionally follows the roster as players join/leave.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [players, teamCount]);
 
-  const handleAddPlayer = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleAddPlayer = (event?: React.FormEvent) => {
+    event?.preventDefault();
     if (!name.trim() || players.length >= 20) return;
     addPlayer(name.trim());
     setName("");
-    if (document.activeElement instanceof HTMLElement)
-      document.activeElement.blur();
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   };
 
-  // Regra do RN: máximo de times = total de jogadores / 2
   const maxPossibleTeams = Math.max(2, Math.floor(players.length / 2));
   const canStart = players.length >= 4 && players.length >= teamCount * 2;
 
   const handleStart = () => {
-    // Pelo menos 1 categoria selecionada
     if (selectedCats.length === 0) {
-      alert(
-        "Selecione pelo menos 1 categoria no Banco de Dados para gerar palavras.",
-      );
+      alert(t("alerts.fillIn", "Select at least one category from the word bank."));
       return;
     }
 
-    // Validação específica para distribuição manual
     if (assignmentMode === "manual") {
-      const teamCounts = new Array(teamCount).fill(0);
-      players.forEach((p) => teamCounts[manualAssignments[p.id] || 0]++);
-      const hasInvalidTeam = teamCounts.some((count) => count < 2);
-      if (hasInvalidTeam) {
-        alert(
-          "Protocolo Inválido: cada esquadrão deve ter pelo menos 2 integrantes. Reduza a quantidade de grupos ou redistribua os jogadores.",
-        );
+      const teamCounts = new Array(teamCount).fill(0) as number[];
+      players.forEach((player) => teamCounts[manualAssignments[player.id] ?? 0]++);
+      if (teamCounts.some((count) => count < 2)) {
+        alert(t("games.cryptography_alert_minPlayers", "Each group needs at least two players."));
         return;
       }
     }
@@ -105,250 +85,145 @@ export function SecretWordLobby() {
       wordLimit: matchLimit,
       skipLimit,
       categories: selectedCats,
+      language,
     };
 
-    const globalUsedWords = loadGlobalUsedWords();
-
     navigate("/games/secretWord/game", {
-      state: { config, manualAssignments, globalUsedWords },
+      state: { config, manualAssignments, globalUsedWords: loadGlobalUsedWords() },
     });
   };
 
   return (
-    <div className={styles.lobbyWrapperHeaderAndContent}>
-      <SecretWordHeader mode={setMode} currentMode={mode} />
-
-      {/* 1. EXPLICAÇÃO (Mantida) */}
-      <div className={styles.lobbyWrapperContent}>
-        <div className={`${styles.section} ${styles.modeInfoBox}`}>
-          <div className={styles.infoIcon}>📡</div>
-          <div className={styles.infoContent}>
-            <h3 className={styles.infoTitle}>
-              {mode === "infiltration"
-                ? "PROTOCOLO INFILTRAÇÃO"
-                : "PROTOCOLO INTERCEPTAÇÃO"}
-            </h3>
-            <p className={styles.infoText}>
-              {mode === "infiltration"
-                ? "Um operador recebe uma palavra e os seus colegas de equipe tentam adivinha-la. Um esquadrão por vez, acerte o máximo de palavras antes do tempo acabar."
-                : "Os operadores dos esquadrões recebem a mesma palavra, cada um dá uma dica por vez, ganha quem acertar primeiro."}
-            </p>
-          </div>
-        </div>
-
-        {/* 2. FORMAÇÃO DE ESQUADRÕES (Apenas Opção) */}
-        <div className={styles.section}>
-          <label className={styles.sectionLabel}>
-            DISTRIBUIÇÃO DOS JOGADORES
-          </label>
-          <div className={styles.segmentedControl}>
-            <button
-              className={`${styles.segBtn} ${assignmentMode === "random" ? styles.segActive : ""}`}
-              onClick={() => setAssignmentMode("random")}
-            >
-              ALEATÓRIO
-            </button>
-            <button
-              className={`${styles.segBtn} ${assignmentMode === "manual" ? styles.segActive : ""}`}
-              onClick={() => setAssignmentMode("manual")}
-            >
-              MANUAL
-            </button>
-          </div>
-        </div>
-
-        {/* 3. QUANTIDADE DE ESQUADRÕES (máx = jogadores/2 — regra do RN) */}
-        <div className={styles.section}>
-          <label className={styles.sectionLabel}>NÚMERO DE GRUPOS</label>
-          <div className={styles.counter}>
-            <button
-              className={styles.countBtn}
-              onClick={() => setTeamCount(Math.max(2, teamCount - 1))}
-            >
-              -
-            </button>
-            <span className={styles.countDisplay}>{teamCount}</span>
-            <button
-              className={styles.countBtn}
-              onClick={() => {
-                if (teamCount < maxPossibleTeams) {
-                  setTeamCount(teamCount + 1);
-                } else {
-                  alert(
-                    "Limite atingido: são necessários pelo menos 2 jogadores por grupo.",
-                  );
-                }
-              }}
-              disabled={teamCount >= maxPossibleTeams}
-              style={{ opacity: teamCount >= maxPossibleTeams ? 0.3 : 1 }}
-            >
-              +
-            </button>
-          </div>
-          <p className={styles.countHint}>
-            Mínimo de 2 tripulantes por grupo · máximo {maxPossibleTeams}{" "}
-            {maxPossibleTeams === 1 ? "grupo" : "grupos"} com os jogadores
-            atuais
+    <div className={styles.lobbyWrapper}>
+      <div className={styles.lobbyHeader}>
+        <div>
+          <p className={styles.kicker}>{t("games.cryptography_phase_team_reveal", "MISSION SETUP")}</p>
+          <h2>{t("games.cryptography_title", "CRYPTOGRAPHY")}</h2>
+          <p className={styles.subcopy}>
+            {mode === "infiltration"
+              ? t("games.cryptography_infiltration_desc", "One operator receives a word and the team tries to guess it.")
+              : t("games.cryptography_interception_desc", "Operators receive the same word and race to guess it first.")}
           </p>
         </div>
+        <span className={styles.modeChip}>{mode === "infiltration" ? "⚡" : "⚔️"} {mode === "infiltration" ? t("games.cryptography_mode_infiltration", "INFILTRATION") : t("games.cryptography_mode_interception", "INTERCEPTION")}</span>
+      </div>
 
-        {/* 4. ADICIONAR JOGADORES + LISTA COM SELECT (Se manual) */}
-        <div className={styles.section}>
-          <label className={styles.sectionLabel}>
-            TRIPULANTES ({players.length}/20)
-          </label>
+      <div className={styles.lobbyGrid}>
+        <section className={`${styles.section} ${styles.playersSection}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionIndex}>01 / {t("games.cryptography_lobby_roster", "PLAYERS")}</p>
+              <h3>{t("games.cryptography_lobby_crewmates", "PLAYERS")} <span>({players.length}/20)</span></h3>
+            </div>
+            <span className={styles.sectionIcon}>+</span>
+          </div>
           <form className={styles.inputGroup} onSubmit={handleAddPlayer}>
             <input
               type="text"
-              placeholder="Nome do Tripulante"
+              placeholder={t("games.cryptography_lobby_playerName", "Player name")}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(event) => setName(event.target.value)}
               className={styles.textInput}
               maxLength={156}
             />
-            <button
-              type="submit"
-              className={styles.addButton}
-              disabled={players.length >= 20}
-            >
-              ADICIONAR
+            <button type="submit" className={styles.addButton} disabled={players.length >= 20}>
+              {t("games.cryptography_lobby_add", "ADD")}
             </button>
           </form>
 
           <div className={styles.playersList}>
-            {players.map((p) => (
-              <div key={p.id} className={styles.playerTag}>
+            {players.length === 0 && <p className={styles.emptyState}>{t("games.cryptography_lobby_crewmates", "Add players to begin.")}</p>}
+            {players.map((player, index) => (
+              <div key={player.id} className={styles.playerTag}>
                 <div className={styles.playerTagContent}>
+                  <span className={styles.playerNumber}>{String(index + 1).padStart(2, "0")}</span>
                   <span className={styles.dotIndicator} />
-                  <span className={styles.pName}>{p.name}</span>
+                  <span className={styles.pName}>{player.name}</span>
                 </div>
-
                 <div className={styles.playerTagActions}>
                   {assignmentMode === "manual" && (
                     <select
                       className={styles.inlineSelect}
-                      value={manualAssignments[p.id]}
-                      onChange={(e) =>
-                        setManualAssignments({
-                          ...manualAssignments,
-                          [p.id]: parseInt(e.target.value),
-                        })
-                      }
+                      value={manualAssignments[player.id] ?? 0}
+                      onChange={(event) => setManualAssignments({ ...manualAssignments, [player.id]: Number(event.target.value) })}
+                      aria-label={`${t("games.cryptography_lobby_group", "Group")} ${player.name}`}
                     >
-                      {Array.from({ length: teamCount }).map((_, i) => (
-                        <option key={i} value={i}>
-                          Grupo {i + 1}
-                        </option>
+                      {Array.from({ length: teamCount }).map((_, groupIndex) => (
+                        <option key={groupIndex} value={groupIndex}>{t("games.cryptography_lobby_group", "Group")} {groupIndex + 1}</option>
                       ))}
                     </select>
                   )}
-                  <button
-                    onClick={() => removePlayer(p.id)}
-                    className={styles.removeBtn}
-                  >
-                    ×
-                  </button>
+                  <button type="button" onClick={() => removePlayer(player.id)} className={styles.removeBtn} aria-label={t("games.impostor_lobby_removeBtn", "Remove player")}>×</button>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* 5. CONFIGURAÇÕES TÉCNICAS */}
-        <div className={styles.configGrid}>
-          <div className={styles.section}>
-            <label className={styles.sectionLabel}>CRONÔMETRO</label>
-            <div className={styles.timeOptions}>
-              {(mode === "infiltration"
-                ? infiltrationTimes
-                : interceptionTimes
-              ).map((t) => (
-                <button
-                  key={t}
-                  className={`${styles.timeBtn} ${selectedTime === t ? styles.timeActive : ""}`}
-                  onClick={() => setSelectedTime(t)}
-                >
-                  {t}s
-                </button>
-              ))}
+        <section className={`${styles.section} ${styles.teamSection}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionIndex}>02 / {t("games.cryptography_lobby_formation", "FORMATION")}</p>
+              <h3>{t("games.cryptography_lobby_groupCount", "GROUPS")}</h3>
+            </div>
+            <div className={styles.counter}>
+              <button type="button" className={styles.countBtn} onClick={() => setTeamCount(Math.max(2, teamCount - 1))}>−</button>
+              <span>{teamCount}</span>
+              <button type="button" className={styles.countBtn} onClick={() => setTeamCount(Math.min(maxPossibleTeams, teamCount + 1))} disabled={teamCount >= maxPossibleTeams}>＋</button>
             </div>
           </div>
+          <div className={styles.segmentedControl}>
+            <button type="button" className={assignmentMode === "random" ? styles.segActive : ""} onClick={() => setAssignmentMode("random")}>{t("games.cryptography_lobby_random", "RANDOM")}</button>
+            <button type="button" className={assignmentMode === "manual" ? styles.segActive : ""} onClick={() => setAssignmentMode("manual")}>{t("games.cryptography_lobby_manual", "MANUAL")}</button>
+          </div>
+          <p className={styles.helper}>{t("games.cryptography_alert_minPlayers", "At least two players are needed per group.")}</p>
+        </section>
 
-          {mode === "interception" ? (
-            <div className={styles.section}>
-              <label className={styles.sectionLabel}>
-                QUANTIDADE DE PALAVRAS
-              </label>
+        <section className={`${styles.section} ${styles.rulesSection}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionIndex}>03 / {t("games.cryptography_lobby_rules", "RULES")}</p>
+              <h3>{t("games.cryptography_lobby_timer", "MAX TIME")} &amp; {mode === "infiltration" ? t("games.cryptography_lobby_skipLimit", "SKIPS") : t("games.cryptography_lobby_wordLimit", "WORDS")}</h3>
+            </div>
+            <span className={styles.sectionIcon}>◷</span>
+          </div>
+          <div className={styles.ruleRows}>
+            <div className={styles.ruleRow}>
+              <span>{t("games.cryptography_lobby_timer", "MAX TIME")}</span>
               <div className={styles.timeOptions}>
-                {[5, 10, 20].map((n) => (
-                  <button
-                    key={n}
-                    className={`${styles.timeBtn} ${matchLimit === n ? styles.timeActive : ""}`}
-                    onClick={() => setMatchLimit(n)}
-                  >
-                    {n}
-                  </button>
+                {(mode === "infiltration" ? infiltrationTimes : interceptionTimes).map((time) => (
+                  <button type="button" key={time} className={selectedTime === time ? styles.timeActive : ""} onClick={() => setSelectedTime(time)}>{time}s</button>
                 ))}
               </div>
             </div>
-          ) : (
-            <div className={styles.section}>
-              <label className={styles.sectionLabel}>QUANTIDADE DE PULOS</label>
+            <div className={styles.ruleRow}>
+              <span>{mode === "infiltration" ? t("games.cryptography_lobby_skipLimit", "SKIPS") : t("games.cryptography_lobby_wordLimit", "WORDS")}</span>
               <div className={styles.timeOptions}>
-                {[3, 5, 999].map((n) => (
-                  <button
-                    key={n}
-                    className={`${styles.timeBtn} ${skipLimit === n ? styles.timeActive : ""}`}
-                    onClick={() => setSkipLimit(n)}
-                  >
-                    {n <= 5 ? n : "∞"}
-                  </button>
+                {(mode === "infiltration" ? [3, 5, 999] : [5, 10, 20]).map((value) => (
+                  <button type="button" key={value} className={(mode === "infiltration" ? skipLimit : matchLimit) === value ? styles.timeActive : ""} onClick={() => mode === "infiltration" ? setSkipLimit(value) : setMatchLimit(value)}>{value === 999 ? "∞" : value}</button>
                 ))}
               </div>
             </div>
-          )}
-
-          <div className={styles.section}>
-            <label className={styles.sectionLabel}>BANCO DE DADOS</label>
-            <button
-              className={`${styles.catToggle} ${showCategories ? styles.catOpen : ""}`}
-              onClick={() => setShowCategories(!showCategories)}
-            >
-              {showCategories ? "FECHAR" : "CATEGORIAS"}
-            </button>
           </div>
-        </div>
+        </section>
 
-        {showCategories && (
-          <div className={styles.catGrid}>
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                className={`${styles.catItem} ${selectedCats.includes(cat) ? styles.catActive : ""}`}
-                onClick={() =>
-                  setSelectedCats((prev) =>
-                    prev.includes(cat)
-                      ? prev.filter((c) => c !== cat)
-                      : [...prev, cat],
-                  )
-                }
-              >
-                {cat}
-              </button>
-            ))}
+        <section className={`${styles.section} ${styles.databaseSection}`}>
+          <div className={styles.sectionHeading}>
+            <div>
+              <p className={styles.sectionIndex}>04 / {t("games.cryptography_lobby_wordBank", "WORD BANK")}</p>
+              <h3>{t("games.cryptography_lobby_db", "DATABASE")} <span>{selectedCats.length}/{categories.length}</span></h3>
+            </div>
+            <button type="button" className={styles.databaseToggle} onClick={() => setShowCategories((open) => !open)}>{showCategories ? "-" : "＋"}</button>
           </div>
-        )}
-
-        <button
-          className={styles.startBtn}
-          disabled={!canStart}
-          onClick={handleStart}
-        >
-          {canStart
-            ? "INICIALIZAR MISSÃO"
-            : "MÍNIMO DE 4 TRIPULANTES (2 POR GRUPO)"}
-        </button>
+          <p className={styles.helper}>{t("site.officialBank", "Official PlayHome word bank")}</p>
+          {showCategories && <CategoryGrid categories={categories} selectedCategories={selectedCats} onToggle={(category) => setSelectedCats((previous) => previous.includes(category) ? previous.filter((item) => item !== category) : [...previous, category])} />}
+        </section>
       </div>
+
+      <button type="button" className={styles.startBtn} disabled={!canStart} onClick={handleStart}>
+        <span>{canStart ? t("games.cryptography_lobby_start", "START MISSION") : t("games.cryptography_alert_minPlayers", "MINIMUM 4 PLAYERS")}</span>
+        <span aria-hidden="true">↗</span>
+      </button>
     </div>
   );
 }

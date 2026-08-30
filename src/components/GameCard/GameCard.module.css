@@ -1,161 +1,221 @@
 .card {
+  --card-accent: var(--accent, var(--tech-cyan));
   position: relative;
+  min-height: 39rem;
   display: flex;
   flex-direction: column;
-  padding: 2.5rem; /* Mais espaçoso */
-  gap: 2rem;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.05);
   overflow: hidden;
-  height: 100%;
-  justify-content: space-between;
+  padding: 1.6rem;
+  border: 1px solid color-mix(in srgb, var(--card-accent) 28%, var(--line));
+  border-radius: 2.2rem;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--surface-strong) 94%, transparent), color-mix(in srgb, var(--surface) 86%, transparent));
+  box-shadow: var(--shadow-card);
+  isolation: isolate;
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
-/* Efeito de elevação e brilho na borda ao passar o mouse */
-.card:hover {
-  transform: translateY(-10px) scale(1.02);
-  border-color: var(--accent);
-  box-shadow:
-    0 20px 40px -15px rgba(0, 0, 0, 0.7),
-    0 0 20px -5px var(--accent);
-}
-
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  z-index: 2;
-}
-
-.iconBox {
-  font-size: 4rem;
-  line-height: 1;
-  filter: drop-shadow(0 0 15px var(--accent));
-  transition: transform 0.3s ease;
-}
-
-.card:hover .iconBox {
-  transform: scale(1.1) rotate(-5deg);
-}
-
-.playerBadge {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--gray-300);
-  background: rgba(0, 0, 0, 0.4);
-  padding: 0.5rem 0.8rem;
-  border-radius: 6px;
-  border: 1px solid var(--gray-600);
-  letter-spacing: 1px;
-  backdrop-filter: blur(5px);
-}
-
-.content {
-  z-index: 2;
-  flex: 1;
-}
-
-.title {
-  font-size: 2rem;
-  font-weight: 900;
-  color: #fff;
-  margin: 0 0 0.8rem 0;
-  text-transform: uppercase;
-  letter-spacing: -1px;
-}
-
-.desc {
-  font-size: 1rem;
-  color: var(--gray-400);
-  line-height: 1.6;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.link {
-  text-decoration: none;
-  width: 100%;
-  z-index: 2;
-  margin-top: auto;
-}
-
-.playBtn {
-  width: 100%;
-  background: var(--btn-grad);
-  border: none;
-  padding: 1.2rem;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 900;
-  border-radius: 12px;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.playBtn:hover {
-  filter: brightness(1.2);
-  box-shadow: 0 0 20px var(--accent);
-  transform: translateY(-2px);
-}
-
-.playBtn:active {
-  transform: translateY(1px);
-}
-
-/* Brilho interno que "pulsa" no fundo do card ao passar o mouse */
-.glow {
+.card::before {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 120%;
-  height: 120%;
-  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: 1;
+  z-index: -1;
+  top: -10rem;
+  right: -7rem;
+  width: 27rem;
+  height: 27rem;
+  border-radius: 50%;
+  background: var(--card-accent);
+  content: "";
+  filter: blur(6rem);
+  opacity: 0.18;
+}
+
+.card:hover {
+  transform: translateY(-0.55rem);
+  border-color: color-mix(in srgb, var(--card-accent) 70%, var(--line));
+  box-shadow: 0 2.6rem 6rem rgba(2, 6, 18, 0.28), 0 0 3.4rem color-mix(in srgb, var(--card-accent) 20%, transparent);
+}
+
+.cardGrid {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background-image: linear-gradient(color-mix(in srgb, var(--card-accent) 7%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--card-accent) 7%, transparent) 1px, transparent 1px);
+  background-size: 2.6rem 2.6rem;
+  mask-image: linear-gradient(to bottom, black, transparent 70%);
+  opacity: 0.55;
   pointer-events: none;
 }
 
-.card:hover .glow {
-  opacity: 0.1; /* Brilho sutil para não cansar a vista */
-}
-
-/* Efeito decorativo de linhas tech no fundo */
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
-  mask-image: radial-gradient(ellipse at center, black, transparent 80%);
-  opacity: 0.2;
+.cardTopline,
+.visualRow,
+.content,
+.link {
+  position: relative;
   z-index: 1;
 }
 
-@media (max-width: 768px) {
+.cardTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.93rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.protocol {
+  color: color-mix(in srgb, var(--card-accent) 74%, var(--text-default));
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.status i {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 1rem var(--success);
+}
+
+.visualRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 3rem 0 2.2rem;
+}
+
+.iconBox {
+  display: grid;
+  width: 9rem;
+  height: 9rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--card-accent) 58%, transparent);
+  border-radius: 2.6rem;
+  background: color-mix(in srgb, var(--card-accent) 15%, var(--surface-inset));
+  font-size: 5.5rem;
+  box-shadow: 0 1.4rem 3.4rem color-mix(in srgb, var(--card-accent) 22%, transparent), inset 0 0 2.5rem color-mix(in srgb, var(--card-accent) 10%, transparent);
+  filter: drop-shadow(0 0 1.4rem color-mix(in srgb, var(--card-accent) 30%, transparent));
+}
+
+.playerBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  text-align: right;
+}
+
+.playerBadge strong {
+  color: var(--text-default);
+  font-size: 2.3rem;
+  line-height: 1;
+}
+
+.playerBadge span {
+  margin-top: 0.4rem;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.content {
+  flex: 1;
+}
+
+.eyebrow {
+  margin: 0 0 0.8rem;
+  color: color-mix(in srgb, var(--card-accent) 80%, var(--text-default));
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: var(--text-default);
+  font-size: clamp(2.7rem, 9vw, 4.3rem);
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.desc {
+  max-width: 44rem;
+  margin: 1.3rem 0 0;
+  color: var(--text-muted);
+  font-size: 1.45rem;
+  line-height: 1.55;
+}
+
+.link {
+  display: block;
+  width: 100%;
+  margin-top: 2.2rem;
+  text-decoration: none;
+}
+
+.playBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 5.4rem;
+  padding: 1.2rem 1.4rem 1.2rem 1.7rem;
+  border: 0;
+  border-radius: 1.35rem;
+  background: var(--btn-grad);
+  color: white;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 1.2rem 2.5rem color-mix(in srgb, var(--card-accent) 22%, transparent);
+  transition: filter 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.playBtn:hover {
+  filter: brightness(1.1) saturate(1.08);
+  box-shadow: 0 1.6rem 3rem color-mix(in srgb, var(--card-accent) 32%, transparent);
+}
+
+.playBtn:active {
+  transform: translateY(0.15rem);
+}
+
+.arrow {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+@media (min-width: 700px) {
   .card {
+    min-height: 43rem;
     padding: 2rem;
   }
 
-  .title {
-    font-size: 1.6rem;
-  }
-
-  .iconBox {
-    font-size: 3rem;
+  .visualRow {
+    margin-top: 4rem;
   }
 }

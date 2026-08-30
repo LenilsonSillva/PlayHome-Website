@@ -43,6 +43,8 @@ export interface CryptoConfig {
   wordLimit: number; // Interception (5, 10, 20)
   skipLimit: number; // Infiltration (3, 5, 999)
   categories: string[];
+  /** Locale frozen when the offline match starts, matching the online backend contract. */
+  language?: string;
 }
 
 export interface CryptoRoundHistoryItem {
@@ -65,6 +67,8 @@ export interface CryptoGameState {
   roundEndTime?: number; // Timestamp de fim do turno (timer seguro)
   lastActionTime?: number; // Hora em que a palavra apareceu na tela
   roundHistory: CryptoRoundHistoryItem[];
+  /** Frozen word bank for the whole match, just like the RN app. */
+  wordDatabase: import("../../../../data/words").WordData[];
 }
 
 // Para o State do React Router

@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { categories } from "../../../../data/words";
+import { getCategories, getWordDatabase } from "../../../../data/words";
+import { useI18n } from "../../../../i18n";
+import { CategoryGrid } from "../../../../components/CategoryGrid/CategoryGrid";
 import styles from "./OnlineLobby.module.css";
 import { useSocket } from "../../../../contexts/socketContext";
 
 export function OnlineImpostorLobby() {
   const socket = useSocket();
   const navigate = useNavigate();
+  const { language, t } = useI18n();
+  const categories = useMemo(() => getCategories(getWordDatabase(language)), [language]);
 
   const [name, setName] = useState("");
   const [roomCode, setRoomCode] = useState("");
@@ -22,20 +26,12 @@ export function OnlineImpostorLobby() {
   const [whoStart, setWhoStart] = useState(true);
   const [impostorCanStart, setImpostorCanStart] = useState(true);
   const [impostorHint, setImpostorHint] = useState(false);
+  const [impostorTrap, setImpostorTrap] = useState(false);
+  const [impostorCat, setImpostorCat] = useState(false);
+  const [impostorsUnited, setImpostorsUnited] = useState(false);
 
   const [showCategories, setShowCategories] = useState(false);
-  const [categorie, setCategorie] = useState<string[]>([
-    "Objetos",
-    "Animais",
-    "Ciência",
-    "Natureza",
-    "Comida",
-    "Emoções",
-    "Substantivos variados",
-    "Lugares",
-    "Países e Cidades",
-    "Tecnologia",
-  ]);
+  const [categorie, setCategorie] = useState<string[]>(categories);
 
   const PLAYER_ICONS = [
     "🤫",
@@ -127,6 +123,10 @@ export function OnlineImpostorLobby() {
   }, [players.length, maxImpostors]);
 
   useEffect(() => {
+    setCategorie(categories);
+  }, [categories]);
+
+  useEffect(() => {
     // carregar último código de sala conhecido (se houver)
     try {
       const stored = localStorage.getItem("lastRoomCode");
@@ -158,7 +158,7 @@ export function OnlineImpostorLobby() {
   }
 
   function handleCreate() {
-    if (!name.trim()) return alert("Digite seu nome");
+    if (!name.trim()) return alert(t("alerts.impostor_crewmateName", "Enter your player name."));
 
     const id = generateId();
     const emoji = getRandomFromArray(PLAYER_ICONS);
@@ -177,7 +177,7 @@ export function OnlineImpostorLobby() {
   }
 
   function handleJoin() {
-    if (!name.trim() || !roomCode.trim()) return alert("Preencha tudo");
+    if (!name.trim() || !roomCode.trim()) return alert(t("alerts.fillIn", "Fill in all fields."));
 
     const id = generateId();
     const emoji = getRandomFromArray(PLAYER_ICONS);
@@ -206,45 +206,48 @@ export function OnlineImpostorLobby() {
         whoStart,
         impostorCanStart,
         impostorHasHint: impostorHint,
+        impostorTrap,
+        impostorCat,
+        impostorsUnited,
         selectedCategories: categorie,
+        language,
       },
+      language,
     });
   }
 
   if (!inRoom) {
     return (
       <div className={styles.lobbyWrapper}>
-        <h1 className={styles.title}>CONEXÃO ONLINE</h1>
+        <div className={`glass-panel ${styles.joinPanel}`}>
+          <div className={styles.badge}>{t("games.impostor_lobby_onlineBadge", "IMPOSTOR SYSTEM — NETWORK")}</div>
+          <h1 className={styles.title}>
+            {t("games.impostor_title", "IMPOSTOR")}<span className={styles.cyan}> {t("games.impostor_lobby_online", "ONLINE")}</span>
+          </h1>
 
-        <div className={styles.section}>
-          <input
-            className={styles.textInput}
-            placeholder="Seu Nome"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={15}
-          />
+          <label className={styles.field}>
+            <span>{t("games.impostor_lobby_nameLabel", "YOUR NAME")}</span>
+            <input
+              className={styles.textInput}
+              placeholder={t("games.impostor_lobby_playerName", "Player name")}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={15}
+            />
+          </label>
 
-          <button
-            className={styles.startButton}
-            style={{ marginTop: "20px" }}
-            onClick={handleCreate}
-          >
-            CRIAR ESTAÇÃO
-          </button>
-
-          <div
-            style={{
-              textAlign: "center",
-              margin: "20px",
-              color: "var(--text-muted)",
-            }}
-          >
-            OU
-          </div>
+          <label className={styles.field}>
+            <span>{t("games.impostor_lobby_roomCodeLabel", "ROOM CODE")}</span>
+            <input
+              className={styles.textInput}
+              placeholder={lastRoomCode ?? t("site.roomCode", "ROOM CODE")}
+              value={roomCode}
+              onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+            />
+          </label>
 
           {lastRoomCode && (
-            <div style={{ textAlign: "center", marginBottom: 12 }}>
+            <div className={styles.lastRoom}>
               <button
                 className={styles.addButton}
                 onClick={() => {
@@ -253,28 +256,24 @@ export function OnlineImpostorLobby() {
                     navigator.clipboard?.writeText(lastRoomCode);
                   } catch (e) {}
                 }}
-                style={{
-                  padding: "6px 10px",
-                  marginBottom: 8,
-                  fontSize: "1.4rem",
-                }}
               >
-                Última sala: {lastRoomCode}
+                {t("site.roomCode", "Last room")}: {lastRoomCode}
               </button>
             </div>
           )}
 
-          <div className={styles.inputGroup}>
-            <input
-              className={styles.textInput}
-              placeholder="CÓDIGO"
-              value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-            />
+          <div className={styles.joinActions}>
+            <button className={styles.startButton} onClick={handleCreate}>
+              {t("games.impostor_lobby_createRoom", "CREATE ROOM")}
+            </button>
             <button className={styles.addButton} onClick={handleJoin}>
-              ENTRAR
+              {t("games.impostor_lobby_joinRoom", "JOIN ROOM")}
             </button>
           </div>
+
+          <p className={styles.hint}>
+            {t("games.impostor_lobby_joinHint", "Create a room or enter a code to join your friends.")}
+          </p>
         </div>
       </div>
     );
@@ -283,34 +282,35 @@ export function OnlineImpostorLobby() {
   return (
     <div className={styles.lobbyWrapper}>
       <div className={styles.headerArea}>
-        <h1 className={styles.title}>SALA: {roomCode}</h1>
+        <h1 className={styles.title}>{t("games.impostor_lobby_roomCode", "ROOM")}: {roomCode}</h1>
         <p className={styles.subtitle}>
-          {isHost ? "Você é o comandante" : "Aguardando o comandante..."}
+          {isHost ? t("games.impostor_lobby_you", "You are the host") : t("games.impostor_lobby_waitingInit", "Waiting for the host...")}
         </p>
       </div>
 
-      {/* JOGADORES */}
-      <div className={styles.section}>
-        <h2 className={styles.sectionTitle}>EQUIPE DE EXPLORAÇÃO</h2>
+      <div className={styles.roomGrid}>
+        {/* JOGADORES */}
+        <div className={`${styles.section} ${styles.playersRoomSection}`}>
+          <h2 className={styles.sectionTitle}>{t("games.impostor_lobby_matesID", "PLAYER IDENTIFICATION")}</h2>
         <div className={styles.playersList}>
           {players.map((p) => (
             <div key={p.socketId} className={styles.playerTag}>
               <span className={styles.dotIndicator} />
               <span className={styles.pName}>
-                {p.name} {p.socketId === socket.id ? "(Você)" : ""}
+                {p.name} {p.socketId === socket.id ? t("games.impostor_lobby_you_", "(YOU)") : ""}
               </span>
             </div>
           ))}
         </div>
-      </div>
+        </div>
 
-      {/* SOMENTE HOST VÊ AS CONFIGS */}
-      {isHost && (
-        <>
+        {/* SOMENTE HOST VÊ AS CONFIGS */}
+        {isHost && (
+          <div className={styles.hostColumn}>
           {/* IMPOSTORES */}
           <div className={styles.section}>
             <div className={styles.counterRow}>
-              <h2 className={styles.sectionTitle}>QUANTIDADE DE IMPOSTORES</h2>
+              <h2 className={styles.sectionTitle}>{t("games.impostor_lobby_numberOfImpostors", "NUMBER OF IMPOSTORS")}</h2>
               <div className={styles.counterControls}>
                 <button
                   className={styles.countBtn}
@@ -341,24 +341,39 @@ export function OnlineImpostorLobby() {
           <div className={styles.gridSettings}>
             {[
               {
-                label: "Duas palavras",
+                label: t("games.impostor_lobby_twoWords", "Two word mode"),
                 state: twoGroups,
                 fn: (e: any) => setTwoGroups(e.target.checked),
               },
               {
-                label: "Jogador aleatório inicia",
+                label: t("games.impostor_lobby_whoStart", "Random player starts"),
                 state: whoStart,
                 fn: (e: any) => setWhoStart(e.target.checked),
               },
               {
-                label: "Impostor pode iniciar",
+                label: t("games.impostor_lobby_impostorStarts", "Impostor can start"),
                 state: impostorCanStart,
                 fn: (e: any) => setImpostorCanStart(e.target.checked),
               },
               {
-                label: "Impostor tem dica",
+                label: t("games.impostor_lobby_impostorHint", "Impostor gets a hint"),
                 state: impostorHint,
                 fn: (e: any) => setImpostorHint(e.target.checked),
+              },
+              {
+                label: t("games.impostor_lobby_impostorCat", "Show only category"),
+                state: impostorCat,
+                fn: (e: any) => setImpostorCat(e.target.checked),
+              },
+              {
+                label: t("games.impostor_lobby_impostorTrap", "Deceive impostor"),
+                state: impostorTrap,
+                fn: (e: any) => setImpostorTrap(e.target.checked),
+              },
+              {
+                label: t("games.impostor_lobby_impostorUnion", "Impostors know each other"),
+                state: impostorsUnited,
+                fn: (e: any) => setImpostorsUnited(e.target.checked),
               },
             ].map((item, i) => (
               <label key={i} className={styles.checkboxLabel}>
@@ -383,25 +398,15 @@ export function OnlineImpostorLobby() {
               className={`${styles.categoryToggle} ${showCategories ? styles.active : ""}`}
               onClick={() => setShowCategories(!showCategories)}
             >
-              {showCategories ? "OCULTAR CATEGORIAS" : "SELECIONAR CATEGORIAS"}
+              {showCategories ? "-" : t("games.impostor_lobby_DBSelect", "SELECT CATEGORIES")}
             </button>
 
             {showCategories && (
-              <div className={styles.categoryContainer}>
-                <div className={styles.categoryGrid}>
-                  {categories.map((cat, index) => (
-                    <label key={index} className={styles.categoryItem}>
-                      <input
-                        type="checkbox"
-                        className={styles.checkboxInput}
-                        checked={categorie.includes(cat)}
-                        onChange={() => handleCategorie(cat)}
-                      />
-                      <span className={styles.categoryBox}>{cat}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+              <CategoryGrid
+                categories={categories}
+                selectedCategories={categorie}
+                onToggle={handleCategorie}
+              />
             )}
           </div>
 
@@ -411,10 +416,11 @@ export function OnlineImpostorLobby() {
             disabled={players.length < 3}
             onClick={startGame}
           >
-            INICIAR MISSÃO
+            {t("games.impostor_lobby_startMission", "START MISSION")}
           </button>
-        </>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

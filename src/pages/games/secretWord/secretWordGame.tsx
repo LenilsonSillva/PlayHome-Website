@@ -9,18 +9,20 @@ import { InfiltrationAction } from "./InfiltrationAction/InfiltrationAction";
 import { InterceptionAction } from "./InterceptionAction/InterceptionAction";
 import { ResultPhase } from "./ResultPhase/ResultPhase";
 import resultSd from "./../../../assets/sounds/win.mp3";
+import { useI18n } from "../../../i18n";
 
 // Fase da partida (porta do fluxo do OfflineCryptographyGameScreen do RN)
-const PHASE_LABELS: Record<string, string> = {
-  "team-reveal": "RECONHECIMENTO",
-  "infiltration-action": "INFILTRAÇÃO",
-  "interception-action": "INTERCEPTAÇÃO",
-  "round-result": "RESULTADO",
+const PHASE_LABEL_KEYS: Record<string, string> = {
+  "team-reveal": "games.cryptography_phase_team_reveal",
+  "infiltration-action": "games.cryptography_phase_infiltration_action",
+  "interception-action": "games.cryptography_phase_interception_action",
+  "round-result": "games.cryptography_phase_round_result",
 };
 
 export function SecretWordGame() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const resultSound = useRef(new Audio(resultSd));
 
   const {
@@ -96,7 +98,7 @@ export function SecretWordGame() {
   }, []);
 
   const handleExit = useCallback(() => {
-    if (window.confirm("Sair da partida? O jogo será encerrado.")) {
+    if (window.confirm(t("alerts.cryptography_leaveGameMessage", "Leave the match? The game will end."))) {
       quitGame();
       navigate("/games/secretWord/lobby");
     }
@@ -158,7 +160,7 @@ export function SecretWordGame() {
         );
 
       default:
-        return <div>Carregando sistemas...</div>;
+        return <div>{t("home.loading", "Loading...")}</div>;
     }
   };
 
@@ -169,16 +171,16 @@ export function SecretWordGame() {
         {gameState && (
           <div className={styles.gameTopBar}>
             <button className={styles.exitBtn} onClick={handleExit}>
-              ← SAIR
+              ← {t("alerts.quit", "EXIT")}
             </button>
             <span className={styles.gameInfo}>
-              RODADA {gameState.roundNumber} ·{" "}
-              {PHASE_LABELS[gameState.phase] ?? gameState.phase}
+              {t("games.cryptography_result_round", "ROUND")} {gameState.roundNumber} ·{" "}
+              {t(PHASE_LABEL_KEYS[gameState.phase] ?? "games.cryptography_phase_round_result", gameState.phase)}
             </span>
             <span className={styles.gameMode}>
               {gameState.config.mode === "infiltration"
-                ? "⚡ INFILTRAÇÃO"
-                : "⚔️ INTERCEPTAÇÃO"}
+                ? `⚡ ${t("games.cryptography_infiltration_action", "INFILTRATION")}`
+                : `⚔️ ${t("games.cryptography_interception_action", "INTERCEPTION")}`}
             </span>
           </div>
         )}

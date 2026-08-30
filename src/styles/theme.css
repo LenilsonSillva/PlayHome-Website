@@ -1,91 +1,146 @@
 :root {
-  /* --- ESCALA DE CINZAS METÁLICOS (Deep Space) --- */
-  /* Do mais claro ao vácuo absoluto */
-  --gray-100: #f1f5f9;
-  --gray-200: #e2e8f0;
-  --gray-300: #cbd5e1;
-  --gray-400: #94a3b8;
-  --gray-500: #64748b;
-  --gray-600: #475569;
-  --gray-700: #1e293b; /* Cor de fundos de seção */
-  --gray-800: #0f172a; /* Azul ardósia muito escuro */
-  --gray-900: #020617; /* O Vácuo (Fundo principal) */
-
-  /* --- CORES DE IDENTIDADE (Tensão e Mistério) --- */
-
-  /* Vermelho Impostor (O Perigo) */
-  --danger-neon: #ff003c;
-  --danger-glow: rgba(255, 0, 60, 0.5);
-
-  /* Amarelo Âmbar (Avisos e Sabotagem) */
-  --caution-amber: #facc15;
-  --caution-glow: rgba(250, 204, 21, 0.3);
-
-  /* Azul Plasma / Tech (Sistemas da Nave) */
-  --plasma-blue: #3b82f6;
-  --plasma-glow: rgba(59, 130, 246, 0.4);
-
-  /* Ciano Tech (Interface e Cometas) */
-  --tech-cyan: #00f2ff;
-  --tech-glow: rgba(0, 242, 255, 0.3);
-
-  /* --- GRADIENTES PARA BOTÕES 3D --- */
-
-  /* Botão Principal/Impostor */
-  --button-red: linear-gradient(180deg, #ff003c 0%, #7f1d1d 100%);
-
-  /* Botão de Sistema/Online */
-  --button-tech: linear-gradient(180deg, #00f2ff 0%, #0077ff 100%);
-
-  /* Botão de Alerta/Categorias */
-  --button-warning: linear-gradient(180deg, #facc15 0%, #a16207 100%);
-
-  /* Botão Neutro/Sair */
-  --button-system: linear-gradient(180deg, #334155 0%, #0f172a 100%);
-
-  /* --- TIPOGRAFIA --- */
-  --text-default: #f1f5f9;
-  --text-muted: #94a3b8;
-  --text-highlight: #00f2ff;
-  --text-error: #ff4d4d;
-
-  /* --- STATUS --- */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
+  --radius-sm: 0.8rem;
+  --radius-md: 1.35rem;
+  --radius-lg: 2.2rem;
+  --radius-pill: 999px;
+  --shadow-card: 0 2rem 5rem rgba(3, 6, 20, 0.2);
+  --shadow-float: 0 1.2rem 3rem rgba(3, 6, 20, 0.18);
+  --focus-ring: 0 0 0 0.3rem color-mix(in srgb, var(--tech-cyan) 28%, transparent);
+  --font-display: "Space Grotesk", "DM Sans", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-/* --- CLASSES GLOBAIS DE UTILIDADE --- */
+/* Dark is a complete palette, not a filter over the light theme. */
+:root[data-theme="dark"],
+:root:not([data-theme]) {
+  color-scheme: dark;
+  --gray-100: #f8fbff;
+  --gray-200: #dce9f7;
+  --gray-300: #b4c8df;
+  --gray-400: #8ca6c3;
+  --gray-500: #69829e;
+  --gray-600: #47617e;
+  --gray-700: #2d4564;
+  --gray-800: #172b49;
+  --gray-900: #070c1b;
 
-/* Aplicar no container principal de cada página */
-.main-bg {
-  background-color: var(--gray-900);
-  color: var(--text-default);
-  min-height: 100vh;
-  font-family: "Inter", sans-serif; /* Ou sua fonte padrão */
+  --page-bg: #080d1d;
+  --page-bg-deep: #040711;
+  --surface: rgba(16, 28, 54, 0.82);
+  --surface-strong: #111f3b;
+  --surface-soft: rgba(25, 45, 77, 0.65);
+  --surface-highlight: rgba(255, 255, 255, 0.08);
+  --surface-inset: rgba(2, 6, 18, 0.34);
+  --line: rgba(164, 196, 231, 0.16);
+  --line-strong: rgba(164, 196, 231, 0.3);
+  --control-bg: rgba(10, 19, 39, 0.84);
+  --control-line: rgba(164, 196, 231, 0.24);
+
+  --danger-neon: #ff4e88;
+  --danger-glow: rgba(255, 78, 136, 0.42);
+  --caution-amber: #ffca63;
+  --caution-glow: rgba(255, 202, 99, 0.3);
+  --plasma-blue: #6f83ff;
+  --plasma-glow: rgba(111, 131, 255, 0.4);
+  --tech-cyan: #55e8e0;
+  --tech-glow: rgba(85, 232, 224, 0.32);
+  --violet: #b28cff;
+  --violet-glow: rgba(178, 140, 255, 0.3);
+
+  --button-red: linear-gradient(135deg, #ff5e91 0%, #bd285f 100%);
+  --button-tech: linear-gradient(135deg, #55e8e0 0%, #667bff 100%);
+  --button-warning: linear-gradient(135deg, #ffd976 0%, #ee8b52 100%);
+  --button-system: linear-gradient(135deg, #314c70 0%, #182944 100%);
+
+  --text-default: #f8fbff;
+  --text-muted: #8da6c2;
+  --text-secondary: #a6bad1;
+  --text-highlight: #55e8e0;
+  --text-error: #ff9bb8;
+  --success: #57e6ae;
+  --warning: #ffca63;
+  --error: #ff5e86;
 }
 
-/* Efeito de Vidro Industrial para os Cards */
+/* Light has its own warm paper / ink system while keeping the PlayHome neon. */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --gray-100: #17213b;
+  --gray-200: #263452;
+  --gray-300: #405273;
+  --gray-400: #617695;
+  --gray-500: #7f91aa;
+  --gray-600: #a2b1c4;
+  --gray-700: #cad5e4;
+  --gray-800: #e1e9f3;
+  --gray-900: #f5f8fc;
+
+  --page-bg: #f4f7fb;
+  --page-bg-deep: #e9eff7;
+  --surface: rgba(255, 255, 255, 0.86);
+  --surface-strong: #ffffff;
+  --surface-soft: rgba(231, 239, 249, 0.9);
+  --surface-highlight: rgba(27, 45, 79, 0.06);
+  --surface-inset: rgba(210, 222, 238, 0.48);
+  --line: rgba(43, 66, 105, 0.14);
+  --line-strong: rgba(43, 66, 105, 0.26);
+  --control-bg: rgba(255, 255, 255, 0.9);
+  --control-line: rgba(43, 66, 105, 0.18);
+
+  --danger-neon: #dc286b;
+  --danger-glow: rgba(220, 40, 107, 0.22);
+  --caution-amber: #d88316;
+  --caution-glow: rgba(216, 131, 22, 0.2);
+  --plasma-blue: #5268dc;
+  --plasma-glow: rgba(82, 104, 220, 0.22);
+  --tech-cyan: #087f9c;
+  --tech-glow: rgba(8, 127, 156, 0.2);
+  --violet: #7852c9;
+  --violet-glow: rgba(120, 82, 201, 0.18);
+
+  --button-red: linear-gradient(135deg, #ed4d86 0%, #c12560 100%);
+  --button-tech: linear-gradient(135deg, #16a7b5 0%, #5969dc 100%);
+  --button-warning: linear-gradient(135deg, #e3a329 0%, #d96835 100%);
+  --button-system: linear-gradient(135deg, #6883a8 0%, #405473 100%);
+
+  --text-default: #17213b;
+  --text-muted: #61718b;
+  --text-secondary: #405273;
+  --text-highlight: #087f9c;
+  --text-error: #b72256;
+  --success: #138b67;
+  --warning: #b76b09;
+  --error: #c3295d;
+}
+
 .glass-panel {
-  background: rgba(15, 23, 42, 0.85); /* var(--gray-800) com transparência */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-  border-radius: 20px;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--surface-strong) 92%, transparent), color-mix(in srgb, var(--surface) 88%, transparent));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(1.8rem);
+  -webkit-backdrop-filter: blur(1.8rem);
 }
 
-/* Scrollbar Estilizada (Estilo Nave) */
+::selection {
+  color: var(--page-bg-deep);
+  background: var(--tech-cyan);
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 0.7rem;
+  height: 0.7rem;
 }
+
 ::-webkit-scrollbar-track {
-  background: var(--gray-900);
+  background: var(--page-bg-deep);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--gray-700);
-  border-radius: 10px;
+  border-radius: 99rem;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--tech-cyan);
 }

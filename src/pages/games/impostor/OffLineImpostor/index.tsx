@@ -12,11 +12,14 @@ import { useState, useRef, useEffect } from "react";
 import { ResultPhase } from "../components/resultPhase";
 import { initializeGame } from "../GameLogistic/gameLogistic";
 import { usePlayers } from "../../../../contexts/contextHook";
+import { getWordDatabase } from "../../../../data/words";
+import { useI18n } from "../../../../i18n";
 
 export function OfflineImpostorGame() {
   const location = useLocation();
   const navigate = useNavigate();
   const { players: playersFromContext } = usePlayers();
+  const { t } = useI18n();
 
   // 1. Captura o estado e inicializa o gameState
   const Initialstate = location.state as GameRouteState | null;
@@ -47,7 +50,7 @@ export function OfflineImpostorGame() {
     const handlePopState = () => {
       if (
         window.confirm(
-          "A partida está em andamento. Deseja realmente abandonar?",
+          t("alerts.impostor_reallyLeave", "The match is in progress. Do you really want to leave?"),
         )
       ) {
         navigate("/games/impostor/lobby", { replace: true });
@@ -105,6 +108,9 @@ export function OfflineImpostorGame() {
       selectedCategories,
       whoStart,
       impostorCanStart,
+      impostorTrap,
+      impostorCat,
+      impostorsUnited,
     } = gameState.data;
 
     const roundScores: Record<string, number> = {};
@@ -135,8 +141,12 @@ export function OfflineImpostorGame() {
       selectedCategories,
       Boolean(whoStart),
       impostorCanStart,
+      impostorTrap,
+      impostorCat,
+      impostorsUnited,
       impostorHistoryRef.current,
       wordHistoryRef.current,
+      getWordDatabase(gameState.data.language ?? "pt"),
     );
 
     const wordsUsedThisRound = newGame.allPlayers
@@ -168,10 +178,14 @@ export function OfflineImpostorGame() {
         howManyImpostors: newGame.howManyImpostors,
         impostorCanStart: newGame.impostorCanStart,
         impostorHint: newGame.impostorHasHint,
+        impostorTrap: newGame.impostorTrap,
+        impostorCat: newGame.impostorCat,
+        impostorsUnited: newGame.impostorsUnited,
         selectedCategories: newGame.selectedCategories,
         twoWordsMode: newGame.twoWordsMode,
         whoStart: newGame.whoStart ?? undefined,
         phase: "reveal",
+        language: gameState.data.language,
       },
     });
   }
@@ -215,6 +229,10 @@ export function OfflineImpostorGame() {
       selectedCategories,
       whoStart,
       impostorCanStart,
+      impostorTrap,
+      impostorCat,
+      impostorsUnited,
+      language,
     } = gameState.data;
     const newGame = initializeGame(
       players as any,
@@ -224,8 +242,12 @@ export function OfflineImpostorGame() {
       selectedCategories,
       Boolean(whoStart),
       impostorCanStart,
+      impostorTrap,
+      impostorCat,
+      impostorsUnited,
       impostorHistoryRef.current,
       wordHistoryRef.current,
+      getWordDatabase(language ?? "pt"),
     );
     const wordsUsedThisRound = newGame.allPlayers
       .map((p) => p.word)
@@ -246,7 +268,7 @@ export function OfflineImpostorGame() {
   }
 
   function goBackLobby() {
-    if (window.confirm("Deseja interromper o jogo e voltar ao lobby?")) {
+    if (window.confirm(t("alerts.impostor_leaveRoomTitle", "Leave the match and return to the lobby?"))) {
       navigate("/games/impostor/lobby");
     }
   }

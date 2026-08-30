@@ -1,30 +1,21 @@
 @keyframes scanLine {
-  0% {
-    top: 0%;
-  }
-  100% {
-    top: 100%;
-  }
+  0% { top: 0%; opacity: 0; }
+  12% { opacity: 0.75; }
+  88% { opacity: 0.75; }
+  100% { top: 100%; opacity: 0; }
 }
 
-/* Efeito de linhas de grade de monitor antigo (opcional, mas fica ótimo) */
 .crt-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
-    linear-gradient(
-      90deg,
-      rgba(255, 0, 0, 0.03),
-      rgba(0, 255, 0, 0.01),
-      rgba(0, 0, 255, 0.03)
-    );
-  background-size:
-    100% 3px,
-    3px 100%; /* Cria as micro-linhas horizontais */
-  pointer-events: none;
   z-index: 3;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025) 0,
+    rgba(255, 255, 255, 0.025) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  pointer-events: none;
 }
