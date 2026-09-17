@@ -6,7 +6,7 @@ import { SocketProvider } from "./contexts/socketContext";
 import { I18nProvider } from "./i18n";
 import { ThemeProvider } from "./contexts/themeContext";
 import { SiteControls } from "./components/SiteControls/SiteControls";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 function App() {
   return (
