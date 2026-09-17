@@ -3,6 +3,7 @@ import type { CryptoView } from "../../../../../types/cryptoOnline";
 import { Scoreboard, TeamMembers } from "./shared";
 import { CryptoHud } from "../../components/CryptoHud";
 import { WordRevealBox } from "../../components/WordRevealBox";
+import { HoldToRevealWord } from "../../components/HoldToRevealWord";
 import successSfx from "../../../../../assets/sounds/success.wav";
 import skipSfx from "../../../../../assets/sounds/skip.mp3";
 import alertSfx from "../../../../../assets/sounds/alert.wav";
@@ -218,16 +219,12 @@ export function OnlineInfiltrationAction({ view, emit }: Props) {
             {t("games.cryptography_action_isPlaying", "is playing")}
           </p>
 
-          <div className={styles.wordPeek}>
-            {waitingWord ? (
-              <>
-                <span className={styles.wordPeekLabel}>{t("games.cryptography_action_currentWord", "CURRENT WORD")}</span>
-                <span className={styles.wordPeekValue}>{waitingWord}</span>
-              </>
-            ) : (
-                <span className={styles.wordPeekHidden}>🔒 {t("games.cryptography_action_hiddenWord", "Hidden word")}</span>
-            )}
-          </div>
+          {/* 🔒 Palavra só aparece enquanto pressionada (não vaza se o aparelho virar) */}
+          <HoldToRevealWord
+            word={waitingWord}
+            revealedLabel={t("games.cryptography_action_currentWord", "CURRENT WORD")}
+            hiddenText={t("games.cryptography_action_hiddenWord", "Hidden word")}
+          />
 
           <TeamMembers team={currentTeam} />
           <Scoreboard teams={view.teams} />

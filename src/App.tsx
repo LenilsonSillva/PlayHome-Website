@@ -6,6 +6,7 @@ import { SocketProvider } from "./contexts/socketContext";
 import { I18nProvider } from "./i18n";
 import { ThemeProvider } from "./contexts/themeContext";
 import { SiteControls } from "./components/SiteControls/SiteControls";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <ThemeProvider>
         <SocketProvider>
           <PlayerContextProvider>
+            <SpeedInsights />
             <SiteControls />
             <AppRoutes />
           </PlayerContextProvider>

@@ -3,6 +3,7 @@ import type { CryptoView } from "../../../../../types/cryptoOnline";
 import { Scoreboard, TeamMembers } from "./shared";
 import { CryptoHud } from "../../components/CryptoHud";
 import { WordRevealBox } from "../../components/WordRevealBox";
+import { HoldToRevealWord } from "../../components/HoldToRevealWord";
 import successSfx from "../../../../../assets/sounds/success.wav";
 import skipSfx from "../../../../../assets/sounds/skip.mp3";
 import alertSfx from "../../../../../assets/sounds/alert.wav";
@@ -226,18 +227,12 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
             <strong>{request.requesterName}</strong> {t("games.cryptography_action_requestedNewWord", "requested a new word.")} {t("games.cryptography_action_changeNeedsConsensus", "The change happens only when all operators accept.")}
           </p>
 
-          <div className={styles.wordPeek}>
-            {waitingWord ? (
-              <>
-                <span className={styles.wordPeekLabel}>{t("games.cryptography_action_contestedWord", "WORD UNDER REVIEW")}</span>
-                <span className={styles.wordPeekValue}>{waitingWord}</span>
-              </>
-            ) : (
-              <span className={styles.wordPeekHidden}>
-                🔒 {t("games.cryptography_action_wordVisibilityRules", "Word visibility follows the match rules")}
-              </span>
-            )}
-          </div>
+          {/* 🔒 Palavra só aparece enquanto pressionada */}
+          <HoldToRevealWord
+            word={waitingWord}
+            revealedLabel={t("games.cryptography_action_contestedWord", "WORD UNDER REVIEW")}
+            hiddenText={t("games.cryptography_action_wordVisibilityRules", "Word visibility follows the match rules")}
+          />
 
           <div className={styles.consensusStatus}>
             {agreedOperators} / {totalOperators} {t("games.cryptography_action_operatorsAgreed", "OPERATORS AGREED")}
@@ -333,18 +328,12 @@ export function OnlineInterceptionAction({ view, emit }: Props) {
             {t("games.cryptography_action_tryingIntercept", "is trying to intercept the word")}
           </p>
 
-          <div className={styles.wordPeek}>
-            {waitingWord ? (
-              <>
-                <span className={styles.wordPeekLabel}>{t("games.cryptography_action_contestedWord", "WORD UNDER REVIEW")}</span>
-                <span className={styles.wordPeekValue}>{waitingWord}</span>
-              </>
-            ) : (
-              <span className={styles.wordPeekHidden}>
-                🔒 {t("games.cryptography_action_onlyOperatorSees", "Only the current operator sees the word now")}
-              </span>
-            )}
-          </div>
+          {/* 🔒 Palavra só aparece enquanto pressionada */}
+          <HoldToRevealWord
+            word={waitingWord}
+            revealedLabel={t("games.cryptography_action_contestedWord", "WORD UNDER REVIEW")}
+            hiddenText={t("games.cryptography_action_onlyOperatorSees", "Only the current operator sees the word now")}
+          />
 
           {isOperator && !running && (
             <button

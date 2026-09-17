@@ -1,0 +1,82 @@
+/* Caixa "segure para revelar" — a palavra só aparece enquanto
+   pressionada (mesma estética do .wordPeek antigo). */
+
+.holdBox {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  min-height: 6rem;
+  width: min(100%, 32rem);
+  padding: 1rem;
+  border: 1px dashed rgba(85, 230, 224, 0.35);
+  border-radius: 1.2rem;
+  background: color-mix(in srgb, var(--tech-cyan) 7%, var(--surface-strong));
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.holdBox:focus-visible {
+  outline: 2px solid var(--tech-cyan);
+  outline-offset: 2px;
+}
+
+.holdBox.active {
+  border-style: solid;
+  border-color: var(--tech-cyan);
+  background: color-mix(in srgb, var(--tech-cyan) 14%, var(--surface-strong));
+}
+
+.holdBox.noWord {
+  cursor: default;
+}
+
+.locked {
+  display: grid;
+  justify-items: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+.lockIcon {
+  font-size: 1.7rem;
+}
+
+.lockText {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.revealed {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  text-align: center;
+  width: 100%;
+}
+
+.label {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.word {
+  color: var(--tech-cyan);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.hidden {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}

@@ -358,37 +358,6 @@
 .waitingSub strong {
   color: var(--tech-cyan);
 }
-
-.wordPeek {
-  display: grid;
-  gap: 0.3rem;
-  width: min(100%, 32rem);
-  padding: 1rem;
-  border: 1px solid rgba(85, 230, 224, 0.24);
-  border-radius: 1.2rem;
-  background: color-mix(in srgb, var(--tech-cyan) 7%, var(--surface-strong));
-}
-
-.wordPeekLabel {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
-.wordPeekValue {
-  color: var(--tech-cyan);
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  font-size: 2.4rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.wordPeekHidden {
-  color: var(--text-muted);
-  font-size: 1.2rem;
-}
-
 .scoreboard {
   display: grid;
   gap: 0.5rem;
