@@ -529,6 +529,10 @@
     "needsOnlinePlayer": "कम से कम एक ऑनलाइन खिलाड़ी चाहिए",
     "playersWithoutGroup": "मैनुअल मोड में बिना समूह वाले खिलाड़ी:",
     "groupLimit": "सीमा",
-    "groupsReached": "समूह तक पहुंच गई"
+    "groupsReached": "समूह तक पहुंच गई",
+    "alreadyInRoomAs": "Você já está nesta sala como",
+    "idUsedNameBefore": "Este ID já usou o nome",
+    "inThisRoom": "nesta sala",
+    "notInRoom": "Você não está na sala"
   }
 }

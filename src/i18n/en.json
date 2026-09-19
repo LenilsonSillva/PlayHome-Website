@@ -529,6 +529,10 @@
     "needsOnlinePlayer": "needs at least one online player",
     "playersWithoutGroup": "Players without a group in manual mode:",
     "groupLimit": "The limit of",
-    "groupsReached": "groups has been reached"
+    "groupsReached": "groups has been reached",
+    "alreadyInRoomAs": "You are already in this room as",
+    "idUsedNameBefore": "This ID already used the name",
+    "inThisRoom": "in this room",
+    "notInRoom": "You are not in the room"
   }
 }

@@ -531,6 +531,10 @@
     "needsOnlinePlayer": "нужен хотя бы один онлайн-игрок",
     "playersWithoutGroup": "Игроки без группы в ручном режиме:",
     "groupLimit": "Лимит",
-    "groupsReached": "групп достигнут"
+    "groupsReached": "групп достигнут",
+    "alreadyInRoomAs": "Você já está nesta sala como",
+    "idUsedNameBefore": "Este ID já usou o nome",
+    "inThisRoom": "nesta sala",
+    "notInRoom": "Você não está na sala"
   }
 }

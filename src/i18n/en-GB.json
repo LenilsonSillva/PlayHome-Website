@@ -11,5 +11,11 @@
     "cryptography_result_round": "ROUND",
     "cryptography_result_tie": "ROUND TIE",
     "cryptography_result_roundPts": "this round"
+  },
+  "errors": {
+    "alreadyInRoomAs": "You are already in this room as",
+    "idUsedNameBefore": "This ID already used the name",
+    "inThisRoom": "in this room",
+    "notInRoom": "You are not in the room"
   }
 }

@@ -494,14 +494,11 @@ export function OnlineCryptoLobby({ mode, onModeChange }: Props) {
         {/* ============ GRUPOS ============ */}
         <div className={styles.mainColumn}>
           <div className={styles.sectionHeader}>
-            <h2>{t("games.cryptography_lobby_group", "GROUPS")} ({room.groups.length}/{room.config?.teamCount ?? 10})</h2>
+            <h2>{t("games.cryptography_lobby_group", "GROUPS")} ({room.groups.length})</h2>
             <button
               className={styles.createGroupBtn}
               onClick={handleCreateGroup}
-              disabled={
-                !canCreateGroup ||
-                room.groups.length >= (room.config?.teamCount ?? 10)
-              }
+              disabled={!canCreateGroup}
             >
               ＋ {isHost ? t("games.cryptography_online_createGroup", "CREATE GROUP") : t("games.cryptography_online_createGroupBecomeLeader", "CREATE GROUP (BECOME LEADER)")}
             </button>

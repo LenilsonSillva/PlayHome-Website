@@ -51,5 +51,11 @@
     "cryptography_card_holdToSee": "MANTÉN PRESIONADO PARA VER",
     "cryptography_action_holdToView": "MANTÉN PRESIONADO PARA VER",
     "cryptography_action_turnOf": "TURNO DE"
+  },
+  "errors": {
+    "alreadyInRoomAs": "Você já está nesta sala como",
+    "idUsedNameBefore": "Este ID já usou o nome",
+    "inThisRoom": "nesta sala",
+    "notInRoom": "Você não está na sala"
   }
 }

@@ -529,6 +529,10 @@
     "needsOnlinePlayer": "تحتاج إلى لاعب متصل واحد على الأقل",
     "playersWithoutGroup": "لاعبون بلا مجموعة في الوضع اليدوي:",
     "groupLimit": "حد",
-    "groupsReached": "المجموعات الذي تم بلوغه"
+    "groupsReached": "المجموعات الذي تم بلوغه",
+    "alreadyInRoomAs": "Você já está nesta sala como",
+    "idUsedNameBefore": "Este ID já usou o nome",
+    "inThisRoom": "nesta sala",
+    "notInRoom": "Você não está na sala"
   }
 }

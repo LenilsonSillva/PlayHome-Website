@@ -529,6 +529,10 @@
     "needsOnlinePlayer": "至少需要一名在线玩家",
     "playersWithoutGroup": "手动模式下未加入小组的玩家：",
     "groupLimit": "上限为",
-    "groupsReached": "个小组已达到上限"
+    "groupsReached": "个小组已达到上限",
+    "alreadyInRoomAs": "Você já está nesta sala como",
+    "idUsedNameBefore": "Este ID já usou o nome",
+    "inThisRoom": "nesta sala",
+    "notInRoom": "Você não está na sala"
   }
 }

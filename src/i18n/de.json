@@ -531,6 +531,10 @@
     "needsOnlinePlayer": "benötigt mindestens eine online spielende Person",
     "playersWithoutGroup": "Spieler ohne Gruppe im manuellen Modus:",
     "groupLimit": "Das Limit von",
-    "groupsReached": "Gruppen wurde erreicht"
+    "groupsReached": "Gruppen wurde erreicht",
+    "alreadyInRoomAs": "Você já está nesta sala como",
+    "idUsedNameBefore": "Este ID já usou o nome",
+    "inThisRoom": "nesta sala",
+    "notInRoom": "Você não está na sala"
   }
 }

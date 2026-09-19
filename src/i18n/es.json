@@ -529,6 +529,10 @@
     "needsOnlinePlayer": "necesita al menos un jugador online",
     "playersWithoutGroup": "Jugadores sin grupo en modo manual:",
     "groupLimit": "Se alcanzó el límite de",
-    "groupsReached": "grupos"
+    "groupsReached": "grupos",
+    "alreadyInRoomAs": "Você já está nesta sala como",
+    "idUsedNameBefore": "Este ID já usou o nome",
+    "inThisRoom": "nesta sala",
+    "notInRoom": "Você não está na sala"
   }
 }

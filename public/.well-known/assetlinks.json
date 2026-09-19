@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.usuper.playhome",
+      "sha256_cert_fingerprints": [
+        "D4:3A:DF:C9:91:FE:0F:4B:CE:66:8B:AA:8C:DC:52:0C:2C:EE:68:EE:33:42:E1:76:5B:98:EC:1F:48:84:69:D9"
+      ]
+    }
+  }
+]

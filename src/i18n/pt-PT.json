@@ -103,5 +103,11 @@
     "cryptography_result_audit_responsible": "RESPONSÁVEL:",
     "cryptography_alert_emptyTeam": "Todos os grupos precisam de pelo menos um membro!",
     "impostor_crewmateName": "Introduza o seu nome."
+  },
+  "errors": {
+    "alreadyInRoomAs": "Você já está nesta sala como",
+    "idUsedNameBefore": "Este ID já usou o nome",
+    "inThisRoom": "nesta sala",
+    "notInRoom": "Você não está na sala"
   }
 }

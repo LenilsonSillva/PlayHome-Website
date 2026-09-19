@@ -49,6 +49,26 @@ export function translateCryptoError(
     )}`;
   }
 
+  const alreadyInRoom = message.match(
+    /^You are already in this room as "(.+)"$/,
+  );
+  if (alreadyInRoom) {
+    return `${t(
+      "errors.alreadyInRoomAs",
+      "You are already in this room as",
+    )} "${alreadyInRoom[1]}"`;
+  }
+
+  const idUsedName = message.match(
+    /^This ID already used the name "(.+)" in this room$/,
+  );
+  if (idUsedName) {
+    return `${t("errors.idUsedNameBefore", "This ID already used the name")} "${idUsedName[1]}" ${t(
+      "errors.inThisRoom",
+      "in this room",
+    )}`;
+  }
+
   const exact: Record<string, [string, string]> = {
     "At least 2 groups are required to play": [
       "errors.needGroups",
